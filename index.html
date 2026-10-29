@@ -712,6 +712,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @media (prefers-reduced-motion: reduce) { .me-pulse { animation: none; opacity: 0; } }
   #loc-btn { display: flex; align-items: center; justify-content: center; color: #555; }
   #loc-btn.on { color: #1a73e8; }
+  #loc-btn.manual { color: #e8711a; }
+  .me-icon.leaflet-marker-draggable { cursor: grab; }
   #loc-btn.wait svg { animation: spin 1.2s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loc-ask { position: fixed; inset: 0; z-index: 2000; background: rgba(20,24,30,.45);
@@ -1016,19 +1018,43 @@ svg.leaflet-image-layer.leaflet-interactive path {
     clearTimeout(el._t); el._t = setTimeout(() => el.hidden = true, ms);
   };
 
-  function onPos(p) {
-    const ll = L.latLng(p.coords.latitude, p.coords.longitude);
-    const acc = p.coords.accuracy;
+  // Genauigkeit: schlechtere Messungen werden ignoriert, solange eine gute frisch ist.
+  // Am PC kann man den Punkt außerdem selbst an die richtige Stelle ziehen.
+  let best = null, manual = false;
+  function drawMe(ll, acc) {
     if (!meMarker) {
       meCircle = L.circle(ll, { radius: acc, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
-      meMarker = L.marker(ll, { icon: meIcon, zIndexOffset: 1000, keyboard: false })
+      meMarker = L.marker(ll, { icon: meIcon, zIndexOffset: 1000, keyboard: false, draggable: true })
         .bindTooltip('Du bist hier', { direction: 'top', offset: [0, -10] }).addTo(map);
+      meMarker.on('dragstart', () => meMarker.closeTooltip());
+      meMarker.on('dragend', () => {
+        manual = true;
+        const p = meMarker.getLatLng();
+        meCircle.setLatLng(p).setRadius(0);
+        meMarker.setTooltipContent('Du bist hier <small>(selbst gesetzt)</small><br><small>' + fmt(p) + '</small>');
+        locBtn.classList.add('manual');
+        toast('Standort gesetzt. Tippe auf den Standort-Knopf, um wieder GPS/WLAN zu nutzen.');
+      });
     } else {
       meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(acc);
     }
     meMarker.setTooltipContent('Du bist hier<br><small>' + fmt(ll) + ' · ±' + Math.round(acc) + ' m</small>');
+  }
+  function onPos(p) {
+    if (manual) return;
+    const ll = L.latLng(p.coords.latitude, p.coords.longitude);
+    const acc = p.coords.accuracy;
+    const now = Date.now();
+    // Ungenauere Messung ignorieren, wenn die bisher beste weniger als 30 s alt ist
+    if (best && acc > best.acc * 1.5 && now - best.t < 30000) return;
+    best = { acc, t: now };
+    drawMe(ll, acc);
     locBtn.classList.add('on');
-    if (firstFix) { firstFix = false; map.flyTo(ll, Math.max(map.getZoom(), 17), { duration: .8 }); }
+    if (firstFix) {
+      firstFix = false;
+      map.flyTo(ll, acc > 300 ? 15 : Math.max(map.getZoom(), 17), { duration: .8 });
+      if (acc > 300) toast('Standort ungenau (±' + Math.round(acc) + ' m). Am PC ist das normal: Ziehe den blauen Punkt einfach an die richtige Stelle.', 9000);
+    }
   }
   function onErr(e) {
     locBtn.classList.remove('on');
@@ -1053,7 +1079,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     toast('Standort wird gesucht …', 3000);
     watchId = navigator.geolocation.watchPosition(p => { locBtn.classList.remove('wait'); onPos(p); },
       e => { locBtn.classList.remove('wait'); if (e.code === 1) { navigator.geolocation.clearWatch(watchId); watchId = null; } onErr(e); },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
   }
 
   // Eigene Nachfrage, bevor der Browser fragt
@@ -1077,7 +1103,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
     setTimeout(() => document.getElementById('loc-yes').focus(), 50);
   }
 
-  locBtn.onclick = e => { e.preventDefault(); if (watchId !== null) startLocating(); else askOrStart(); };
+  locBtn.onclick = e => {
+    e.preventDefault();
+    if (manual) {                     // selbst gesetzten Punkt verwerfen, wieder messen
+      manual = false; best = null; firstFix = true; locBtn.classList.remove('manual');
+      if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+      startLocating(); return;
+    }
+    if (watchId !== null) startLocating(); else askOrStart();
+  };
   function askOrStart() {
     let choice = null; try { choice = localStorage.getItem(LOC_KEY); } catch (x) {}
     if (choice === 'ja') startLocating(); else askFirst();
