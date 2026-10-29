@@ -672,7 +672,24 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .coord-box { background: rgba(255,255,255,.92); padding: 6px 10px; border-radius: 6px;
     font: 14px/1.2 Consolas, monospace; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
   .pin { background: none; border: none; }
-  .pin svg { filter: drop-shadow(0 1px 2px rgba(0,0,0,.45)); }
+  .pin svg { filter: drop-shadow(0 1px 2px rgba(0,0,0,.45)); transform-origin: 15px 41px; }
+  /* Animation beim Setzen einer Markierung */
+  .pin.drop svg { animation: pin-drop .55s cubic-bezier(.3,.7,.4,1) both; }
+  @keyframes pin-drop {
+    0%   { transform: translateY(-70px) scale(.8); opacity: 0; }
+    55%  { transform: translateY(0) scale(1.05, .85); opacity: 1; }
+    75%  { transform: translateY(-8px) scale(.97, 1.04); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .ripple { position: absolute; left: 15px; top: 41px; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+    border-radius: 50%; border: 3px solid; pointer-events: none; opacity: 0;
+    animation: ripple .8s ease-out .3s; }
+  .ripple.r2 { animation-delay: .45s; }
+  @keyframes ripple {
+    0%   { transform: scale(.3) scaleY(.5); opacity: .9; }
+    100% { transform: scale(4) scaleY(.5); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pin.drop svg, .ripple { animation: none; } }
   .name-tip { font-weight: bold; font-size: 13px; padding: 2px 6px; }
   .mk-pop { font: 13px/1.4 system-ui, sans-serif; min-width: 210px; }
   .mk-pop input[type=text] { width: 100%; box-sizing: border-box; padding: 5px 6px; font-size: 14px; margin: 4px 0 8px; }
@@ -835,7 +852,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
       };
       setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
     });
-    if (openNow) m.openPopup();
+    if (openNow) {
+      const el = m.getElement();
+      el.classList.add('drop');
+      [1, 2].forEach(i => {
+        const r = document.createElement('span');
+        r.className = 'ripple' + (i === 2 ? ' r2' : '');
+        r.style.borderColor = data.color;
+        el.appendChild(r);
+      });
+      setTimeout(() => {
+        el.classList.remove('drop');
+        el.querySelectorAll('.ripple').forEach(r => r.remove());
+      }, 1400);
+      setTimeout(() => m.openPopup(), 450);
+    }
     return m;
   }
 
