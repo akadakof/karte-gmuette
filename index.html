@@ -766,6 +766,49 @@ svg.leaflet-image-layer.leaflet-interactive path {
   #photo-view .pv-cap { color: #fff; font: 600 15px system-ui, sans-serif; margin-top: 10px; }
   #photo-view button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 14px; width: 40px; height: 40px;
     border-radius: 50%; border: none; background: rgba(255,255,255,.18); color: #fff; font-size: 18px; cursor: pointer; }
+  /* ---- Teilen ---- */
+  .dlg-ov { position: fixed; inset: 0; z-index: 2500; background: rgba(20,24,30,.5); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .dlg { background: #fff; color: #222; border-radius: 14px; width: 100%; max-width: 420px; max-height: calc(100% - 32px); overflow-y: auto;
+    padding: 20px 18px 16px; box-shadow: 0 10px 40px rgba(0,0,0,.35); font: 14px/1.45 system-ui, sans-serif; box-sizing: border-box; }
+  .dlg h2 { margin: 0 0 6px; font-size: 18px; }
+  .dlg-sub { margin: 0 0 12px; color: #555; font-size: 13.5px; }
+  .dlg code { background: #f1f3f4; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+  .sh-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .sh-head b { margin-right: auto; }
+  .sh-head button, .dlg-btns button, .sh-lock button, .sh-title button { padding: 4px 10px; border: 1px solid #bbb; border-radius: 6px; background: #f4f4f4; cursor: pointer; font: inherit; }
+  .sh-pick { list-style: none; margin: 0 0 8px; padding: 4px; border: 1px solid #ddd; border-radius: 8px; max-height: 190px; overflow-y: auto; }
+  .sh-pick label { display: flex; align-items: center; gap: 8px; padding: 5px 4px; cursor: pointer; border-radius: 4px; }
+  .sh-pick label:hover { background: #f3f6fb; }
+  .sh-pick .dot, .sh-list .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(0,0,0,.3); }
+  .sh-pick .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sh-pick .np { margin-left: auto; font-size: 11.5px; color: #666; }
+  .sh-chk { display: flex; gap: 6px; align-items: center; margin: 2px 0 10px; }
+  .sh-lbl { display: block; font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+  .dlg input[type=password] { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 15px; margin-top: 3px; }
+  .pw-meter { height: 5px; background: #eee; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .pw-meter span { display: block; height: 100%; width: 0; transition: width .2s; }
+  .pw-meter .weak { background: #e53935; } .pw-meter .ok { background: #fb8c00; } .pw-meter .strong { background: #43a047; }
+  .sh-hint { font-size: 12px; color: #666; min-height: 16px; margin-top: 2px; }
+  .sh-err { color: #c62828; font-size: 13px; min-height: 18px; margin-top: 6px; }
+  .dlg-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; flex-wrap: wrap; }
+  .dlg-btns .primary { background: #1f6f54; border-color: #1f6f54; color: #fff; font-weight: 600; padding: 8px 14px; }
+  .dlg-btns .primary:disabled { opacity: .6; cursor: wait; }
+  .sh-steps { margin: 0 0 10px; padding-left: 20px; font-size: 13.5px; } .sh-steps li { margin-bottom: 6px; }
+  #sh-box { margin-top: 8px; padding-top: 8px; border-top: 1px solid #ddd; }
+  .sh-lock form { display: flex; gap: 6px; margin-top: 5px; }
+  .sh-lock input { flex: 1; min-width: 0; padding: 5px 8px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
+  .sh-lock button { background: #1f6f54; border-color: #1f6f54; color: #fff; }
+  .sh-st { font-size: 12px; color: #666; min-height: 0; margin-top: 4px; } .sh-st:empty { display: none; } .sh-st.bad { color: #c62828; font-weight: 600; }
+  .shake { animation: shake .35s; } @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .sh-title { display: flex; align-items: center; gap: 6px; } .sh-title b { margin-right: auto; }
+  .sh-list { list-style: none; margin: 4px 0 0; padding: 0; max-height: 160px; overflow-y: auto; }
+  .sh-list li { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
+  .sh-list li:hover { background: #eef3fb; }
+  .sh-list .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sh-list .np { margin-left: auto; font-size: 11.5px; color: #666; }
+  .dot.star { border-radius: 3px; transform: rotate(45deg) scale(.85); }
+  .shared-tip { background: #eef6f2; border-color: #1f6f54; }
+  .sh-name { display: block; font-size: 15px; margin: 2px 0 8px; }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -1043,9 +1086,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
     d.innerHTML = `<div class="mk-top"><b id="mk-count">0 Markierungen</b>
       <button id="mk-export" title="Alle Punkte als Datei speichern">⬇ Meine Punkte herunterladen</button>
       <label class="imp" title="Punkte aus einer Datei laden">⬆ Punkte laden<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
+      <button id="sh-open" title="Ausgewählte Punkte mit Passwort verschlüsseln">🔒 Mit Freunden teilen</button>
       <span id="mk-msg"></span></div>
       <input type="search" id="mk-search" placeholder="Markierung suchen …" autocomplete="off">
-      <ul id="mk-list"></ul>`;
+      <ul id="mk-list"></ul>
+      <div id="sh-box" hidden></div>`;
     L.DomEvent.disableClickPropagation(d);
     L.DomEvent.disableScrollPropagation(d);
     return d;
@@ -1086,7 +1131,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     });
   }
   const searchBox = document.getElementById('mk-search');
-  searchBox.addEventListener('input', updatePanel);
+  searchBox.addEventListener('input', () => { updatePanel(); renderShared(); });
   searchBox.addEventListener('keydown', e => {
     if (e.key === 'Enter') { const first = document.querySelector('#mk-list li:not(.mk-empty)'); if (first) first.click(); }
     if (e.key === 'Escape') { searchBox.value = ''; updatePanel(); }
@@ -1144,6 +1189,202 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }).catch(() => msg('Datei nicht lesbar'));
     e.target.value = '';
   };
+
+  // =====================================================================
+  // Mit Freunden teilen: AES-256-GCM, Schlüssel aus Passwort via PBKDF2-SHA256
+  // =====================================================================
+  const SHARE_FILE = 'geteilt.enc.json';
+  const KDF_ITER = 600000;
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const b64 = u8 => { let s = ''; u8.forEach(x => s += String.fromCharCode(x)); return btoa(s); };
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function deriveKey(pw, salt, iter) {
+    const base = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter },
+      base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function encryptJSON(obj, pw) {
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(pw, salt, KDF_ITER);
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(obj))));
+    return { app: 'karte-gmh', v: 1, kdf: 'PBKDF2-SHA256', iter: KDF_ITER, cipher: 'AES-256-GCM', salt: b64(salt), iv: b64(iv), data: b64(ct) };
+  }
+  async function decryptJSON(file, pw) {
+    const key = await deriveKey(pw, unb64(file.salt), file.iter);
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(file.iv) }, key, unb64(file.data));
+    return JSON.parse(dec.decode(pt));
+  }
+
+  // Datei weitergeben: am Handy Teilen-Menü, sonst Download
+  async function giveFile(blob, name) {
+    if (TOUCH && navigator.canShare) {
+      const file = new File([blob], name, { type: blob.type });
+      if (navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file] }); return true; }
+        catch (err) { if (err.name === 'AbortError') return false; }
+      }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    return true;
+  }
+
+  // ---- Dialog: Punkte auswählen, Passwort, verschlüsseln ----
+  document.getElementById('sh-open').onclick = () => {
+    if (!markers.length) { msg('Noch keine Punkte'); return; }
+    const ov = document.createElement('div'); ov.className = 'dlg-ov';
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="sh-title">
+      <h2 id="sh-title">🔒 Mit Freunden teilen</h2>
+      <p class="dlg-sub">Wähle Punkte aus und lege ein Passwort fest. Daraus wird eine verschlüsselte Datei. Nur wer das Passwort kennt, kann die Punkte sehen.</p>
+      <div class="sh-head"><b>Punkte</b><button type="button" id="sh-all">Alle</button><button type="button" id="sh-none">Keine</button></div>
+      <ul class="sh-pick">${markers.map((m, i) => `<li><label><input type="checkbox" data-i="${i}" checked>
+        <span class="dot" style="background:${m.data.color}"></span><span class="nm">${esc(m.data.name)}</span>
+        ${(m.data.photos || []).length ? `<span class="np">📷 ${m.data.photos.length}</span>` : ''}</label></li>`).join('')}</ul>
+      <label class="sh-chk"><input type="checkbox" id="sh-photos" checked> Fotos mitschicken</label>
+      <label class="sh-lbl" for="sh-pw">Passwort</label>
+      <input type="password" id="sh-pw" autocomplete="new-password" placeholder="mindestens 10 Zeichen">
+      <div class="pw-meter"><span id="sh-bar"></span></div><div id="sh-hint" class="sh-hint"></div>
+      <label class="sh-lbl" for="sh-pw2">Passwort wiederholen</label>
+      <input type="password" id="sh-pw2" autocomplete="new-password">
+      <div id="sh-err" class="sh-err"></div>
+      <div class="dlg-btns"><button type="button" id="sh-cancel">Abbrechen</button><button type="button" id="sh-go" class="primary">Verschlüsseln &amp; speichern</button></div>
+    </div>`;
+    document.body.appendChild(ov);
+    const $ = s => ov.querySelector(s);
+    const boxes = () => [...ov.querySelectorAll('.sh-pick input')];
+    $('#sh-all').onclick = () => boxes().forEach(b => b.checked = true);
+    $('#sh-none').onclick = () => boxes().forEach(b => b.checked = false);
+    $('#sh-cancel').onclick = () => ov.remove();
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
+    // grobe Passwortstärke
+    const strength = pw => {
+      let pool = 0; if (/[a-z]/.test(pw)) pool += 26; if (/[A-Z]/.test(pw)) pool += 26; if (/\d/.test(pw)) pool += 10; if (/[^a-zA-Z0-9]/.test(pw)) pool += 30;
+      return pw.length * Math.log2(pool || 1);
+    };
+    $('#sh-pw').oninput = () => {
+      const bits = strength($('#sh-pw').value);
+      const lvl = bits < 40 ? 0 : bits < 60 ? 1 : 2;
+      $('#sh-bar').style.width = Math.min(100, bits / 80 * 100) + '%';
+      $('#sh-bar').className = ['weak', 'ok', 'strong'][lvl];
+      $('#sh-hint').textContent = $('#sh-pw').value ? ['Zu schwach – die Datei liegt öffentlich, ein kurzes Passwort lässt sich erraten.', 'Geht – länger ist besser.', 'Stark ✓'][lvl] : '';
+    };
+    setTimeout(() => $('#sh-pw').focus(), 50);
+    $('#sh-go').onclick = async () => {
+      const sel = boxes().filter(b => b.checked).map(b => markers[+b.dataset.i]);
+      const pw = $('#sh-pw').value, err = $('#sh-err');
+      if (!sel.length) { err.textContent = 'Wähle mindestens einen Punkt aus.'; return; }
+      if (pw.length < 10) { err.textContent = 'Das Passwort braucht mindestens 10 Zeichen.'; return; }
+      if (pw !== $('#sh-pw2').value) { err.textContent = 'Die Passwörter stimmen nicht überein.'; return; }
+      err.textContent = ''; const go = $('#sh-go'); go.disabled = true; go.textContent = 'Wird verschlüsselt …';
+      try {
+        const withPhotos = $('#sh-photos').checked, items = [];
+        for (const m of sel) {
+          const photos = [];
+          if (withPhotos) for (const id of (m.data.photos || [])) { const b = await photoGet(id).catch(() => null); if (b) photos.push(await blobToDataURL(b)); }
+          items.push({ lat: +m.getLatLng().lat.toFixed(6), lng: +m.getLatLng().lng.toFixed(6), name: m.data.name, color: m.data.color, photos });
+        }
+        const file = await encryptJSON({ created: new Date().toISOString(), items }, pw);
+        const blob = new Blob([JSON.stringify(file)], { type: 'application/json' });
+        await giveFile(blob, SHARE_FILE);
+        ov.querySelector('.dlg').innerHTML = `<h2>✓ Datei erstellt</h2>
+          <p class="dlg-sub"><b>${items.length} ${items.length === 1 ? 'Punkt' : 'Punkte'}</b> wurden in <code>${SHARE_FILE}</code> verschlüsselt (${Math.max(1, Math.round(blob.size / 1024))} KB).</p>
+          <ol class="sh-steps"><li>Lade die Datei auf GitHub in dein Projekt <b>karte-gmuette</b> hoch (Name genau <code>${SHARE_FILE}</code>) – oder schick sie Claude, der macht das.</li>
+          <li>Schick deinen Freunden den Link zur Karte und das Passwort – das Passwort am besten auf einem anderen Weg.</li></ol>
+          <p class="dlg-sub">Wer die Karte öffnet, sieht ein Passwortfeld. Mit dem richtigen Passwort erscheinen die geteilten Punkte.</p>
+          <div class="dlg-btns"><button type="button" class="primary" id="sh-ok">Fertig</button></div>`;
+        ov.querySelector('#sh-ok').onclick = () => ov.remove();
+      } catch (e) {
+        err.textContent = 'Verschlüsseln hat nicht geklappt.'; go.disabled = false; go.textContent = 'Verschlüsseln & speichern';
+      }
+    };
+  };
+
+  // ---- Geteilte Punkte auf der Karte: Passwortfeld ----
+  const sharedLayer = L.layerGroup().addTo(map);
+  let shared = null, sharedFile = null;
+  const shBox = document.getElementById('sh-box');
+  function sharedIcon(color) {
+    return L.divIcon({
+      className: 'pin shared-pin', iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36], tooltipAnchor: [0, -38],
+      html: `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 41 15 41s14-15.6 14-26.1C29 7.2 22.7 1 15 1z" fill="${color}" stroke="#fff" stroke-width="2" stroke-dasharray="4 2.5"/><path d="M15 8.5l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#fff"/></svg>`
+    });
+  }
+  function renderShared() {
+    if (!sharedFile) return;
+    shBox.hidden = false;
+    if (!shared) {
+      shBox.innerHTML = `<div class="sh-lock"><b>🔒 Geteilte Punkte</b>
+        <form id="sh-form" autocomplete="off"><input type="password" id="sh-in" placeholder="Passwort eingeben" aria-label="Passwort für geteilte Punkte">
+        <button type="submit">Öffnen</button></form><div id="sh-st" class="sh-st"></div></div>`;
+      document.getElementById('sh-form').onsubmit = async e => {
+        e.preventDefault();
+        const pw = document.getElementById('sh-in').value, st = document.getElementById('sh-st');
+        if (!pw) return;
+        st.className = 'sh-st'; st.textContent = 'Wird geprüft …';
+        try {
+          const data = await decryptJSON(sharedFile, pw);
+          shared = data.items || [];
+          try { sessionStorage.setItem('gmh-sh-pw', pw); } catch (x) {}
+          drawShared(true);
+        } catch (err) {
+          st.className = 'sh-st bad'; st.textContent = 'Falsches Passwort.';
+          const inp = document.getElementById('sh-in'); inp.select(); inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 400);
+        }
+      };
+      return;
+    }
+    const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
+    const items = shared.filter(it => !q || (it.name || '').toLowerCase().includes(q));
+    shBox.innerHTML = `<div class="sh-title"><b>👥 Geteilt (${q ? items.length + ' von ' : ''}${shared.length})</b><button type="button" id="sh-lockbtn" title="Geteilte Punkte wieder ausblenden">Sperren</button></div>
+      <ul class="sh-list">${items.map(it => `<li data-k="${shared.indexOf(it)}"><span class="dot star" style="background:${it.color}"></span><span class="nm">${esc(it.name || 'Punkt')}</span>${(it.photos || []).length ? `<span class="np">📷 ${it.photos.length}</span>` : ''}</li>`).join('') || '<li class="mk-empty">Kein Treffer</li>'}</ul>`;
+    shBox.querySelectorAll('.sh-list li[data-k]').forEach(li => li.onclick = () => {
+      const mk = sharedLayer.getLayers().find(l => l.k === +li.dataset.k);
+      map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 });
+      map.once('moveend', () => mk.openPopup());
+    });
+    document.getElementById('sh-lockbtn').onclick = () => {
+      shared = null; sharedLayer.clearLayers();
+      try { sessionStorage.removeItem('gmh-sh-pw'); } catch (x) {}
+      renderShared();
+    };
+  }
+  function drawShared(fit) {
+    sharedLayer.clearLayers();
+    shared.forEach((it, k) => {
+      const mk = L.marker([it.lat, it.lng], { icon: sharedIcon(it.color || '#1e88e5'), zIndexOffset: -100 });
+      mk.k = k;
+      mk.bindTooltip('👥 ' + esc(it.name || 'Punkt'), { permanent: true, direction: 'top', className: 'name-tip shared-tip' });
+      mk.bindPopup(() => `<div class="mk-pop"><div class="lbl">Geteilter Punkt</div><b class="sh-name">${esc(it.name || 'Punkt')}</b>
+        ${(it.photos || []).length ? `<div class="photos">${it.photos.map((p, j) => `<div class="ph"><img src="${p}" data-j="${j}" alt="Foto"></div>`).join('')}</div>` : ''}
+        <div class="lbl">Koordinaten</div><code>${fmt(L.latLng(it.lat, it.lng))}</code>
+        <div class="row"><button data-a="take">In meine Punkte übernehmen</button></div></div>`, { minWidth: 220, maxWidth: 300 });
+      mk.on('popupopen', ev => {
+        const el = ev.popup.getElement();
+        el.querySelectorAll('.ph img').forEach(img => img.onclick = () => showPhoto(img.src, it.name || ''));
+        el.querySelector('[data-a=take]').onclick = async e => {
+          const b = e.target; b.disabled = true;
+          const ids = [];
+          for (const p of (it.photos || [])) { try { const id = newId(); await photoPut(id, await cleanPhoto(await dataURLToBlob(p))); ids.push(id); } catch (x) {} }
+          count++;
+          createMarker(L.latLng(it.lat + 0.00003, it.lng + 0.00003), { name: it.name || 'Punkt', color: it.color || COLORS[0], photos: ids }, false);
+          save(); b.textContent = 'Übernommen ✓';
+        };
+      });
+      sharedLayer.addLayer(mk);
+    });
+    renderShared();
+    if (fit && shared.length) map.fitBounds(L.latLngBounds(shared.map(it => [it.lat, it.lng])).pad(0.3), { maxZoom: 17 });
+  }
+  // Datei vom Server laden (falls vorhanden)
+  fetch(SHARE_FILE, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(async f => {
+    if (!f || f.app !== 'karte-gmh' || !f.data) return;
+    sharedFile = f;
+    let pw = null; try { pw = sessionStorage.getItem('gmh-sh-pw'); } catch (x) {}
+    if (pw) { try { shared = (await decryptJSON(f, pw)).items || []; drawShared(false); return; } catch (x) {} }
+    renderShared();
+  }).catch(() => {});
 
   // Gespeicherte Markierungen beim Start laden
   try { const s = localStorage.getItem(KEY); if (s) loadAll(JSON.parse(s)); } catch (e) {}
