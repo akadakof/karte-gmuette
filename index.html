@@ -1263,6 +1263,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       let pool = 0; if (/[a-z]/.test(pw)) pool += 26; if (/[A-Z]/.test(pw)) pool += 26; if (/\d/.test(pw)) pool += 10; if (/[^a-zA-Z0-9]/.test(pw)) pool += 30;
       return pw.length * Math.log2(pool || 1);
     };
+    ov.addEventListener('input', () => { $('#sh-err').textContent = ''; });
     $('#sh-pw').oninput = () => {
       const bits = strength($('#sh-pw').value);
       const lvl = bits < 40 ? 0 : bits < 60 ? 1 : 2;
