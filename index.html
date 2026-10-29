@@ -702,6 +702,38 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .mk-panel { background: #fff; padding: 6px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3);
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  /* Mein Standort: blauer Punkt mit weißem Rand */
+  .me-icon { background: none; border: none; }
+  .me-dot { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; box-sizing: border-box;
+    border-radius: 50%; background: #1a73e8; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.45); }
+  .me-pulse { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(26,115,232,.45); animation: me-pulse 2s ease-out infinite; }
+  @keyframes me-pulse { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(3.2); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .me-pulse { animation: none; opacity: 0; } }
+  #loc-btn { display: flex; align-items: center; justify-content: center; color: #555; }
+  #loc-btn.on { color: #1a73e8; }
+  #loc-btn.wait svg { animation: spin 1.2s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loc-ask { position: fixed; inset: 0; z-index: 2000; background: rgba(20,24,30,.45);
+    display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .loc-card { background: #fff; color: #222; border-radius: 14px; max-width: 360px; width: 100%;
+    padding: 22px 20px 18px; box-shadow: 0 10px 40px rgba(0,0,0,.35); font: 15px/1.45 system-ui, sans-serif; text-align: center; }
+  .loc-card h2 { margin: 10px 0 6px; font-size: 19px; }
+  .loc-card p { margin: 0 0 16px; color: #555; font-size: 14px; }
+  .loc-ico { position: relative; width: 22px; height: 22px; margin: 0 auto; }
+  .me-dot.big { transform: scale(1.6); }
+  .loc-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .loc-btns button { flex: 1 1 130px; padding: 11px 10px; border-radius: 9px; font: 600 14px system-ui, sans-serif; cursor: pointer; border: 1px solid #ccc; background: #f3f4f6; color: #222; }
+  .loc-btns #loc-yes { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+  .loc-btns button:focus-visible { outline: 3px solid #8ab4f8; outline-offset: 2px; }
+  #loc-toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    z-index: 1500; background: rgba(30,30,30,.92); color: #fff; padding: 10px 14px; border-radius: 8px;
+    font: 14px/1.4 system-ui, sans-serif; max-width: min(90vw, 420px); text-align: center; }
+  @media (max-width: 600px) {
+    .mk-panel { max-width: 62vw; }
+    #mk-list { max-height: 30vh; }
+    .leaflet-control-layers { font-size: 12px; }
+  }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -733,6 +765,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const CENTER = [52.2030, 8.0560];   // Georgsmarienhütte-Oesede
   const ZOOM = 16;                     // 16 = Straßen gut sichtbar
 
+  const TOUCH = matchMedia('(hover: none)').matches;   // Handy/Tablet
   const map = L.map('map').setView(CENTER, ZOOM);
 
   // Mehrere Kartendienste ohne API-Schlüssel. Fällt einer aus, wird automatisch der nächste genommen.
@@ -770,7 +803,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   // --- Live-Koordinaten unter der Maus ---
   const coordBox = L.control({ position: 'bottomleft' });
-  coordBox.onAdd = () => { const d = L.DomUtil.create('div', 'coord-box'); d.textContent = 'Maus über die Karte bewegen'; return d; };
+  coordBox.onAdd = () => { const d = L.DomUtil.create('div', 'coord-box'); d.textContent = TOUCH ? 'Lange drücken = Markierung setzen' : 'Maus über die Karte bewegen'; return d; };
   coordBox.addTo(map);
   const fmt = ll => ll.lat.toFixed(6) + ', ' + ll.lng.toFixed(6);
   map.on('mousemove', e => { document.querySelector('.coord-box').textContent = fmt(e.latlng); });
@@ -902,7 +935,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const list = document.getElementById('mk-list');
     list.innerHTML = '';
     if (!markers.length) {
-      list.innerHTML = '<li class="mk-empty">Rechtsklick auf die Karte setzt eine Markierung</li>';
+      list.innerHTML = `<li class="mk-empty">${TOUCH ? 'Lange auf die Karte drücken' : 'Rechtsklick auf die Karte'} setzt eine Markierung</li>`;
       return;
     }
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
@@ -953,6 +986,109 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // Gespeicherte Markierungen beim Start laden
   try { const s = localStorage.getItem(KEY); if (s) loadAll(JSON.parse(s)); } catch (e) {}
   updatePanel();
+
+  // ---------- Mein Standort ----------
+  const LOC_KEY = 'gmh-karte-standort';   // 'ja' | 'nein'
+  const meIcon = L.divIcon({ className: 'me-icon', iconSize: [22, 22], iconAnchor: [11, 11],
+    html: '<span class="me-pulse"></span><span class="me-dot"></span>' });
+  let meMarker = null, meCircle = null, watchId = null, firstFix = true;
+
+  const locBtnCtl = L.control({ position: 'topleft' });
+  locBtnCtl.onAdd = () => {
+    const d = L.DomUtil.create('div', 'leaflet-bar');
+    d.innerHTML = '<a href="#" id="loc-btn" title="Mein Standort" role="button" aria-label="Mein Standort">' +
+      '<svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="4" fill="currentColor"/>' +
+      '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor" stroke-width="2"/></svg></a>';
+    L.DomEvent.disableClickPropagation(d);
+    return d;
+  };
+  locBtnCtl.addTo(map);
+  // Standort-Knopf direkt unter die Zoom-Knöpfe setzen
+  const zoomEl = document.querySelector('.leaflet-control-zoom');
+  zoomEl.after(document.getElementById('loc-btn').parentElement);
+  const locBtn = document.getElementById('loc-btn');
+
+  const toast = (t, ms = 5000) => {
+    let el = document.getElementById('loc-toast');
+    if (!el) { el = document.createElement('div'); el.id = 'loc-toast'; document.body.appendChild(el); }
+    el.textContent = t; el.hidden = false;
+    clearTimeout(el._t); el._t = setTimeout(() => el.hidden = true, ms);
+  };
+
+  function onPos(p) {
+    const ll = L.latLng(p.coords.latitude, p.coords.longitude);
+    const acc = p.coords.accuracy;
+    if (!meMarker) {
+      meCircle = L.circle(ll, { radius: acc, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
+      meMarker = L.marker(ll, { icon: meIcon, zIndexOffset: 1000, keyboard: false })
+        .bindTooltip('Du bist hier', { direction: 'top', offset: [0, -10] }).addTo(map);
+    } else {
+      meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(acc);
+    }
+    meMarker.setTooltipContent('Du bist hier<br><small>' + fmt(ll) + ' · ±' + Math.round(acc) + ' m</small>');
+    locBtn.classList.add('on');
+    if (firstFix) { firstFix = false; map.flyTo(ll, Math.max(map.getZoom(), 17), { duration: .8 }); }
+  }
+  function onErr(e) {
+    locBtn.classList.remove('on');
+    if (e.code === 1) {
+      try { localStorage.setItem(LOC_KEY, 'nein'); } catch (x) {}
+      toast('Standort ist im Browser blockiert. Erlaube ihn über das Schloss-Symbol in der Adressleiste und tippe dann erneut auf den Standort-Knopf.', 8000);
+    } else if (e.code === 3) {
+      toast('Standort wird noch gesucht … Geh am besten ans Fenster oder nach draußen.');
+    } else {
+      toast('Standort konnte nicht ermittelt werden.');
+    }
+  }
+  function startLocating() {
+    if (!navigator.geolocation) { toast('Dein Browser kann den Standort nicht ermitteln.'); return; }
+    try { localStorage.setItem(LOC_KEY, 'ja'); } catch (x) {}
+    if (watchId !== null) {               // läuft schon: nur zum Standort springen
+      if (meMarker) map.flyTo(meMarker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 });
+      return;
+    }
+    firstFix = true;
+    locBtn.classList.add('wait');
+    toast('Standort wird gesucht …', 3000);
+    watchId = navigator.geolocation.watchPosition(p => { locBtn.classList.remove('wait'); onPos(p); },
+      e => { locBtn.classList.remove('wait'); if (e.code === 1) { navigator.geolocation.clearWatch(watchId); watchId = null; } onErr(e); },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
+  }
+
+  // Eigene Nachfrage, bevor der Browser fragt
+  function askFirst() {
+    const ov = document.createElement('div');
+    ov.id = 'loc-ask';
+    ov.innerHTML = `<div class="loc-card" role="dialog" aria-modal="true" aria-labelledby="loc-title">
+      <div class="loc-ico"><span class="me-dot big"></span></div>
+      <h2 id="loc-title">Standort teilen?</h2>
+      <p>Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.</p>
+      <div class="loc-btns"><button id="loc-no">Nein, danke</button><button id="loc-yes">Ja, Standort zeigen</button></div>
+    </div>`;
+    document.body.appendChild(ov);
+    L.DomEvent.disableClickPropagation(ov);
+    document.getElementById('loc-yes').onclick = () => { ov.remove(); startLocating(); };
+    document.getElementById('loc-no').onclick = () => {
+      ov.remove();
+      try { localStorage.setItem(LOC_KEY, 'nein'); } catch (x) {}
+      toast('Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.');
+    };
+    setTimeout(() => document.getElementById('loc-yes').focus(), 50);
+  }
+
+  locBtn.onclick = e => { e.preventDefault(); if (watchId !== null) startLocating(); else askOrStart(); };
+  function askOrStart() {
+    let choice = null; try { choice = localStorage.getItem(LOC_KEY); } catch (x) {}
+    if (choice === 'ja') startLocating(); else askFirst();
+  }
+
+  // Beim Öffnen: beim ersten Mal fragen, danach automatisch (außer man hat Nein gesagt)
+  (function () {
+    let choice = null; try { choice = localStorage.getItem(LOC_KEY); } catch (x) {}
+    if (choice === 'ja') startLocating();
+    else if (choice !== 'nein') askFirst();
+  })();
 </script>
 </body>
 </html>
