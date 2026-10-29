@@ -702,6 +702,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .mk-panel { background: #fff; padding: 6px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3);
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
+    border: 1px solid #bbb; border-radius: 4px; font: inherit; }
+  #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
+  #mk-list mark { background: #ffe082; color: inherit; border-radius: 2px; }
   #mk-list { list-style: none; margin: 6px 0 0; padding: 4px 0 0; border-top: 1px solid #ddd;
     max-height: 240px; overflow-y: auto; }
   #mk-list li { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
@@ -884,6 +888,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <button id="mk-export" title="Als Datei sichern">Exportieren</button>
       <label class="imp" title="Gesicherte Datei laden">Importieren<input type="file" id="mk-import" accept=".json,application/json" hidden></label>
       <span id="mk-msg"></span></div>
+      <input type="search" id="mk-search" placeholder="Markierung suchen …" autocomplete="off">
       <ul id="mk-list"></ul>`;
     L.DomEvent.disableClickPropagation(d);
     L.DomEvent.disableScrollPropagation(d);
@@ -900,10 +905,22 @@ svg.leaflet-image-layer.leaflet-interactive path {
       list.innerHTML = '<li class="mk-empty">Rechtsklick auf die Karte setzt eine Markierung</li>';
       return;
     }
-    markers.forEach(m => {
+    const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
+    const shown = q ? markers.filter(m => m.data.name.toLowerCase().includes(q)) : markers;
+    if (q) cnt.textContent = shown.length + ' von ' + markers.length;
+    if (!shown.length) {
+      list.innerHTML = '<li class="mk-empty">Keine Markierung mit „' + esc(q) + '“</li>';
+      return;
+    }
+    shown.forEach(m => {
       const li = document.createElement('li');
       li.title = fmt(m.getLatLng());
-      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${esc(m.data.name)}</span>`;
+      let nm = esc(m.data.name);
+      if (q) {
+        const i = m.data.name.toLowerCase().indexOf(q);
+        nm = esc(m.data.name.slice(0, i)) + '<mark>' + esc(m.data.name.slice(i, i + q.length)) + '</mark>' + esc(m.data.name.slice(i + q.length));
+      }
+      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>`;
       li.onclick = () => {
         map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: 0.8 });
         map.once('moveend', () => m.openPopup());
@@ -911,6 +928,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       list.appendChild(li);
     });
   }
+  const searchBox = document.getElementById('mk-search');
+  searchBox.addEventListener('input', updatePanel);
+  searchBox.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { const first = document.querySelector('#mk-list li:not(.mk-empty)'); if (first) first.click(); }
+    if (e.key === 'Escape') { searchBox.value = ''; updatePanel(); }
+  });
   const msg = t => { const s = document.getElementById('mk-msg'); s.textContent = t; setTimeout(() => s.textContent = '', 3000); };
   document.getElementById('mk-export').onclick = () => {
     const data = { count, items: markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color })) };
