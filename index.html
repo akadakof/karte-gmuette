@@ -1244,7 +1244,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         ${(m.data.photos || []).length ? `<span class="np">📷 ${m.data.photos.length}</span>` : ''}</label></li>`).join('')}</ul>
       <label class="sh-chk"><input type="checkbox" id="sh-photos" checked> Fotos mitschicken</label>
       <label class="sh-lbl" for="sh-pw">Passwort</label>
-      <input type="password" id="sh-pw" autocomplete="new-password" placeholder="mindestens 10 Zeichen">
+      <input type="password" id="sh-pw" autocomplete="new-password" placeholder="mindestens 7 Zeichen">
       <div class="pw-meter"><span id="sh-bar"></span></div><div id="sh-hint" class="sh-hint"></div>
       <label class="sh-lbl" for="sh-pw2">Passwort wiederholen</label>
       <input type="password" id="sh-pw2" autocomplete="new-password">
@@ -1269,14 +1269,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
       const lvl = bits < 40 ? 0 : bits < 60 ? 1 : 2;
       $('#sh-bar').style.width = Math.min(100, bits / 80 * 100) + '%';
       $('#sh-bar').className = ['weak', 'ok', 'strong'][lvl];
-      $('#sh-hint').textContent = $('#sh-pw').value ? ['Zu schwach – die Datei liegt öffentlich, ein kurzes Passwort lässt sich erraten.', 'Geht – länger ist besser.', 'Stark ✓'][lvl] : '';
+      $('#sh-hint').textContent = $('#sh-pw').value ? ['Schwach – mische Groß-/Kleinbuchstaben, Zahlen und Zeichen wie ! oder #.', 'Geht – länger ist besser.', 'Stark ✓'][lvl] : '';
     };
     setTimeout(() => $('#sh-pw').focus(), 50);
     $('#sh-go').onclick = async () => {
       const sel = boxes().filter(b => b.checked).map(b => markers[+b.dataset.i]);
       const pw = $('#sh-pw').value, err = $('#sh-err');
       if (!sel.length) { err.textContent = 'Wähle mindestens einen Punkt aus.'; return; }
-      if (pw.length < 10) { err.textContent = 'Das Passwort braucht mindestens 10 Zeichen.'; return; }
+      if (pw.length < 7) { err.textContent = 'Das Passwort braucht mindestens 7 Zeichen.'; return; }
       if (pw !== $('#sh-pw2').value) { err.textContent = 'Die Passwörter stimmen nicht überein.'; return; }
       err.textContent = ''; const go = $('#sh-go'); go.disabled = true; go.textContent = 'Wird verschlüsselt …';
       try {
