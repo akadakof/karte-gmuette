@@ -748,6 +748,24 @@ svg.leaflet-image-layer.leaflet-interactive path {
     box-shadow: 0 1px 4px rgba(0,0,0,.3); margin-bottom: 4px !important; }
   .off-box.off { background: #fff3cd; color: #6b4e00; font-weight: 600; }
   .off-box.ok { background: #e3f5e8; color: #1e6b37; }
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 4px 0 6px; }
+  .photos:empty { display: none; }
+  .ph { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #eee; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+  .ph-del { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; border: none;
+    background: rgba(0,0,0,.6); color: #fff; font-size: 12px; line-height: 22px; padding: 0; cursor: pointer; }
+  .add-photo { display: inline-block; padding: 5px 10px; border: 1px dashed #999; border-radius: 6px; cursor: pointer;
+    background: #fafafa; font-size: 13px; margin-bottom: 4px; }
+  .add-photo:hover { background: #f0f4fa; border-color: #1e88e5; }
+  .photo-msg { font-size: 12px; color: #2e7d32; min-height: 0; margin-bottom: 6px; }
+  .photo-msg:empty { display: none; }
+  #mk-list .np { margin-left: auto; font-size: 11.5px; color: #666; flex: none; }
+  #photo-view { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.9); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; }
+  #photo-view img { max-width: 100%; max-height: calc(100% - 40px); object-fit: contain; border-radius: 4px; }
+  #photo-view .pv-cap { color: #fff; font: 600 15px system-ui, sans-serif; margin-top: 10px; }
+  #photo-view button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 14px; width: 40px; height: 40px;
+    border-radius: 50%; border: none; background: rgba(255,255,255,.18); color: #fff; font-size: 18px; cursor: pointer; }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -837,13 +855,58 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const KEY = 'gmh-karte-markierungen';
   const markers = [];
   let count = 0;
+  // ---------- Fotos: verkleinert, ohne EXIF, in IndexedDB gespeichert ----------
+  const PHOTO_MAX = 1280;      // längste Seite in Pixeln
+  const PHOTO_Q = 0.8;         // JPEG-Qualität
+  const idb = new Promise((res, rej) => {
+    const r = indexedDB.open('gmh-fotos', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('fotos');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  const tx = async (mode, fn) => { const db = await idb; return new Promise((res, rej) => {
+    const t = db.transaction('fotos', mode); const req = fn(t.objectStore('fotos'));
+    t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error); }); };
+  const photoPut = (id, blob) => tx('readwrite', s => s.put(blob, id));
+  const photoGet = id => tx('readonly', s => s.get(id));
+  const photoDel = id => tx('readwrite', s => s.delete(id));
+  const newId = () => 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  // Bild neu zeichnen: Drehung wird übernommen, alle Metadaten (EXIF, GPS, Kamera, Datum, Vorschaubild) fallen weg
+  async function cleanPhoto(file) {
+    let src;
+    try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      src = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+    }
+    const w0 = src.width || src.naturalWidth, h0 = src.height || src.naturalHeight;
+    const k = Math.min(1, PHOTO_MAX / Math.max(w0, h0));
+    const w = Math.round(w0 * k), hh = Math.round(h0 * k);
+    const c = document.createElement('canvas'); c.width = w; c.height = hh;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, hh);
+    ctx.drawImage(src, 0, 0, w, hh);
+    if (src.close) src.close();
+    return new Promise(res => c.toBlob(res, 'image/jpeg', PHOTO_Q));
+  }
+  const blobToDataURL = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(b); });
+  const dataURLToBlob = d => fetch(d).then(r => r.blob());
+
+  // Großansicht
+  function showPhoto(url, title) {
+    const ov = document.createElement('div'); ov.id = 'photo-view';
+    ov.innerHTML = `<img src="${url}" alt=""><div class="pv-cap">${esc(title)}</div><button aria-label="Schließen">✕</button>`;
+    ov.onclick = () => ov.remove();
+    document.addEventListener('keydown', function k(e) { if (e.key === 'Escape') { ov.remove(); document.removeEventListener('keydown', k); } });
+    document.body.appendChild(ov);
+  }
+
   function save() {
-    const data = markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color }));
+    const data = markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos: m.data.photos || [] }));
     try { localStorage.setItem(KEY, JSON.stringify({ count, items: data })); } catch (e) {}
     updatePanel();
   }
   function loadAll(obj) {
-    (obj.items || []).forEach(it => createMarker(L.latLng(it.lat, it.lng), { name: it.name, color: it.color }, false));
+    (obj.items || []).forEach(it => createMarker(L.latLng(it.lat, it.lng), { name: it.name, color: it.color, photos: it.photos || [] }, false));
     count = Math.max(count, obj.count || 0, markers.length);
   }
 
@@ -864,6 +927,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <div class="lbl">Farbe</div>
         <div class="swatches">${COLORS.map(c => `<button class="sw${c === m.data.color ? ' on' : ''}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join('')}
           <input type="color" data-a="custom" value="${m.data.color}" title="Eigene Farbe" style="width:28px;height:26px;padding:0;border:none;background:none;cursor:pointer"></div>
+        <div class="lbl">Fotos</div>
+        <div class="photos" data-a="photos"></div>
+        <label class="add-photo">📷 Foto hinzufügen<input type="file" data-a="addphoto" accept="image/*" multiple hidden></label>
+        <div class="photo-msg"></div>
         <div class="lbl">Koordinaten</div>
         <code>${t}</code>
         <div class="row">
@@ -874,7 +941,26 @@ svg.leaflet-image-layer.leaflet-interactive path {
     };
     const setColor = c => { m.data.color = c; m.setIcon(pinIcon(c)); save(); };
 
-    m.bindPopup(popupHtml, { minWidth: 220 });
+    m.data.photos = m.data.photos || [];
+    const thumbURLs = [];
+    async function renderPhotos(el) {
+      const box = el.querySelector('[data-a=photos]'); if (!box) return;
+      thumbURLs.splice(0).forEach(u => URL.revokeObjectURL(u));
+      box.innerHTML = '';
+      for (const id of m.data.photos) {
+        const blob = await photoGet(id).catch(() => null);
+        if (!blob) continue;
+        const u = URL.createObjectURL(blob); thumbURLs.push(u);
+        const d = document.createElement('div'); d.className = 'ph';
+        d.innerHTML = `<img src="${u}" alt="Foto"><button class="ph-del" data-pid="${id}" title="Foto löschen" aria-label="Foto löschen">✕</button>`;
+        d.querySelector('img').onclick = () => showPhoto(u, m.data.name);
+        box.appendChild(d);
+      }
+      // Größe des Fensters anpassen, ohne den Inhalt neu zu erzeugen
+      const pp = m.getPopup();
+      if (pp && pp.isOpen()) { pp._updateLayout(); pp._updatePosition(); pp._adjustPan && pp._adjustPan(); }
+    }
+    m.bindPopup(popupHtml, { minWidth: 240, maxWidth: 300 });
     refreshLabel();
     m.on('dragend', () => { save(); m.setPopupContent(popupHtml()); m.openPopup(); });
     m.on('popupopen', ev => {
@@ -895,13 +981,36 @@ svg.leaflet-image-layer.leaflet-interactive path {
           navigator.clipboard.writeText(m.data.name + ': ' + fmt(m.getLatLng()))
             .then(() => b.textContent = 'Kopiert ✓')
             .catch(() => b.textContent = 'Nicht möglich');
+        } else if (b.dataset.pid) {
+          const id = b.dataset.pid;
+          m.data.photos = m.data.photos.filter(x => x !== id);
+          photoDel(id).catch(() => {}); save(); renderPhotos(el);
         } else if (b.dataset.a === 'del') {
+          (m.data.photos || []).forEach(id => photoDel(id).catch(() => {}));
           map.removeLayer(m);
           markers.splice(markers.indexOf(m), 1);
           save();
         }
       };
-      setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
+      renderPhotos(el);
+      const pmsg = el.querySelector('.photo-msg');
+      el.querySelector('[data-a=addphoto]').onchange = async ev3 => {
+        const files = [...ev3.target.files]; ev3.target.value = '';
+        let ok = 0;
+        for (const f of files) {
+          pmsg.textContent = 'Foto wird verkleinert und bereinigt …';
+          try {
+            const clean = await cleanPhoto(f);
+            const id = newId();
+            await photoPut(id, clean);
+            m.data.photos.push(id); ok++;
+          } catch (err) {
+            pmsg.textContent = 'Dieses Bildformat kann der Browser nicht lesen. Bitte als JPG oder PNG wählen.';
+          }
+        }
+        if (ok) { save(); await renderPhotos(el); pmsg.textContent = ok + (ok === 1 ? ' Foto' : ' Fotos') + ' gespeichert ✓ (ohne Standort- und Kameradaten)'; }
+      };
+      if (!TOUCH) setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
     });
     if (openNow) {
       const el = m.getElement();
@@ -967,7 +1076,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         const i = m.data.name.toLowerCase().indexOf(q);
         nm = esc(m.data.name.slice(0, i)) + '<mark>' + esc(m.data.name.slice(i, i + q.length)) + '</mark>' + esc(m.data.name.slice(i + q.length));
       }
-      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>`;
+      const np = (m.data.photos || []).length;
+      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${np ? `<span class="np">📷 ${np}</span>` : ''}`;
       li.onclick = () => {
         map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: 0.8 });
         map.once('moveend', () => m.openPopup());
@@ -984,7 +1094,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const msg = t => { const s = document.getElementById('mk-msg'); s.textContent = t; setTimeout(() => s.textContent = '', 3000); };
   document.getElementById('mk-export').onclick = async () => {
     if (!markers.length) { msg('Noch keine Punkte'); return; }
-    const data = { count, items: markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color })) };
+    msg('Wird vorbereitet …');
+    const items = [];
+    for (const m of markers) {
+      const photos = [];
+      for (const id of (m.data.photos || [])) { const b = await photoGet(id).catch(() => null); if (b) photos.push(await blobToDataURL(b)); }
+      items.push({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos });
+    }
+    const data = { count, items };
     const d = new Date(), pad = n => String(n).padStart(2, '0');
     const name = `meine-punkte-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1005,13 +1122,22 @@ svg.leaflet-image-layer.leaflet-interactive path {
   };
   document.getElementById('mk-import').onchange = e => {
     const f = e.target.files[0]; if (!f) return;
-    f.text().then(t => {
+    f.text().then(async t => {
       const obj = JSON.parse(t);
       if (!obj || !Array.isArray(obj.items)) throw new Error('format');
       // Doppelte Punkte (gleicher Ort + gleicher Name) überspringen
       const key = (lat, lng, n) => lat.toFixed(6) + ',' + lng.toFixed(6) + ',' + n;
       const have = new Set(markers.map(m => key(m.getLatLng().lat, m.getLatLng().lng, m.data.name)));
       const neu = obj.items.filter(it => typeof it.lat === 'number' && typeof it.lng === 'number' && !have.has(key(it.lat, it.lng, it.name)));
+      for (const it of neu) {
+        const ids = [];
+        for (const p of (Array.isArray(it.photos) ? it.photos : [])) {
+          if (typeof p !== 'string' || !p.startsWith('data:image/')) continue;
+          // auch importierte Fotos neu bereinigen
+          try { const id = newId(); await photoPut(id, await cleanPhoto(await dataURLToBlob(p))); ids.push(id); } catch (e) {}
+        }
+        it.photos = ids;
+      }
       loadAll({ count: obj.count, items: neu }); save();
       msg(neu.length ? neu.length + ' Punkte geladen ✓' : 'Alle Punkte waren schon da');
       if (neu.length) map.fitBounds(L.latLngBounds(neu.map(it => [it.lat, it.lng])).pad(0.3), { maxZoom: 17 });
