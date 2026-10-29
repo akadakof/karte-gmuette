@@ -1,0 +1,17 @@
+{
+  "name": "Karte Georgsmarienhütte",
+  "short_name": "Karte GMH",
+  "description": "Karte von Georgsmarienhütte mit eigenen Markierungen und Standort",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f0e9",
+  "theme_color": "#1f6f54",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

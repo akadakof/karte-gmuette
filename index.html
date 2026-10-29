@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Karte Georgsmarienhütte</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f6f54">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Karte GMH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>/* Leaflet 1.9.4 */
 /* required styles */
 
@@ -736,6 +744,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     #mk-list { max-height: 30vh; }
     .leaflet-control-layers { font-size: 12px; }
   }
+  .off-box { background: rgba(255,255,255,.95); padding: 5px 10px; border-radius: 6px; font: 12.5px system-ui, sans-serif;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3); margin-bottom: 4px !important; }
+  .off-box.off { background: #fff3cd; color: #6b4e00; font-weight: 600; }
+  .off-box.ok { background: #e3f5e8; color: #1e6b37; }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -773,7 +785,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // Mehrere Kartendienste ohne API-Schlüssel. Fällt einer aus, wird automatisch der nächste genommen.
   const layers = {
     'Straßenkarte (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Quellen: Esri, HERE, Garmin, &copy; OpenStreetMap-Mitwirkende'
+      maxZoom: 19, crossOrigin: true, attribution: 'Tiles &copy; Esri &mdash; Quellen: Esri, HERE, Garmin, &copy; OpenStreetMap-Mitwirkende'
     }),
     'Topografisch (OpenTopoMap)': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
       maxZoom: 17, attribution: '&copy; OpenStreetMap-Mitwirkende, SRTM | &copy; OpenTopoMap (CC-BY-SA)'
@@ -782,7 +794,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       maxZoom: 19, attribution: '&copy; OpenStreetMap-Mitwirkende'
     }),
     'Satellit (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Maxar, Earthstar Geographics'
+      maxZoom: 19, crossOrigin: true, attribution: 'Tiles &copy; Esri &mdash; Maxar, Earthstar Geographics'
     })
   };
   const order = Object.values(layers).slice(0, 3);
@@ -920,8 +932,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   panel.onAdd = () => {
     const d = L.DomUtil.create('div', 'mk-panel');
     d.innerHTML = `<div class="mk-top"><b id="mk-count">0 Markierungen</b>
-      <button id="mk-export" title="Als Datei sichern">Exportieren</button>
-      <label class="imp" title="Gesicherte Datei laden">Importieren<input type="file" id="mk-import" accept=".json,application/json" hidden></label>
+      <button id="mk-export" title="Alle Punkte als Datei speichern">⬇ Meine Punkte herunterladen</button>
+      <label class="imp" title="Punkte aus einer Datei laden">⬆ Punkte laden<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
       <span id="mk-msg"></span></div>
       <input type="search" id="mk-search" placeholder="Markierung suchen …" autocomplete="off">
       <ul id="mk-list"></ul>`;
@@ -970,24 +982,85 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (e.key === 'Escape') { searchBox.value = ''; updatePanel(); }
   });
   const msg = t => { const s = document.getElementById('mk-msg'); s.textContent = t; setTimeout(() => s.textContent = '', 3000); };
-  document.getElementById('mk-export').onclick = () => {
+  document.getElementById('mk-export').onclick = async () => {
+    if (!markers.length) { msg('Noch keine Punkte'); return; }
     const data = { count, items: markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color })) };
+    const d = new Date(), pad = n => String(n).padStart(2, '0');
+    const name = `meine-punkte-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    // Am Handy: Teilen-Menü (in Dateien speichern, an Telegram schicken …)
+    if (TOUCH && navigator.canShare) {
+      const file = new File([blob], name, { type: 'application/json' });
+      if (navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: 'Meine Punkte' }); msg('Gespeichert ✓'); return; }
+        catch (err) { if (err.name === 'AbortError') return; }
+      }
+    }
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-    a.download = 'markierungen.json';
-    a.click();
-    msg('Gespeichert');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    msg('Gespeichert ✓');
   };
   document.getElementById('mk-import').onchange = e => {
     const f = e.target.files[0]; if (!f) return;
-    f.text().then(t => { loadAll(JSON.parse(t)); save(); msg('Geladen ✓'); })
-      .catch(() => msg('Datei nicht lesbar'));
+    f.text().then(t => {
+      const obj = JSON.parse(t);
+      if (!obj || !Array.isArray(obj.items)) throw new Error('format');
+      // Doppelte Punkte (gleicher Ort + gleicher Name) überspringen
+      const key = (lat, lng, n) => lat.toFixed(6) + ',' + lng.toFixed(6) + ',' + n;
+      const have = new Set(markers.map(m => key(m.getLatLng().lat, m.getLatLng().lng, m.data.name)));
+      const neu = obj.items.filter(it => typeof it.lat === 'number' && typeof it.lng === 'number' && !have.has(key(it.lat, it.lng, it.name)));
+      loadAll({ count: obj.count, items: neu }); save();
+      msg(neu.length ? neu.length + ' Punkte geladen ✓' : 'Alle Punkte waren schon da');
+      if (neu.length) map.fitBounds(L.latLngBounds(neu.map(it => [it.lat, it.lng])).pad(0.3), { maxZoom: 17 });
+    }).catch(() => msg('Datei nicht lesbar'));
     e.target.value = '';
   };
 
   // Gespeicherte Markierungen beim Start laden
   try { const s = localStorage.getItem(KEY); if (s) loadAll(JSON.parse(s)); } catch (e) {}
   updatePanel();
+
+  // ---------- Offline-Modus (App auf dem Startbildschirm) ----------
+  const offBox = L.control({ position: 'bottomright' });
+  offBox.onAdd = () => { const d = L.DomUtil.create('div', 'off-box'); d.hidden = true; return d; };
+  offBox.addTo(map);
+  const offEl = document.querySelector('.off-box');
+  const offShow = (t, cls) => { offEl.textContent = t; offEl.className = 'off-box leaflet-control ' + (cls || ''); offEl.hidden = !t; };
+  const updateOnline = () => navigator.onLine ? offShow('') : offShow('Offline – gespeicherte Karte', 'off');
+  addEventListener('online', updateOnline); addEventListener('offline', updateOnline);
+
+  // Kacheln rund um Georgsmarienhütte (Straßenkarte, Zoom 12–16) für offline vorladen
+  function gmhTiles() {
+    const urls = [], S = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/';
+    const t = (lat, lng, z) => {
+      const n = 2 ** z, r = lat * Math.PI / 180;
+      return [Math.floor((lng + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)];
+    };
+    for (let z = 12; z <= 16; z++) {
+      const [x0, y0] = t(52.240, 7.985, z), [x1, y1] = t(52.160, 8.135, z);
+      for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) urls.push(S + z + '/' + y + '/' + x);
+    }
+    return urls;
+  }
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(reg => {
+      let done = null; try { done = localStorage.getItem('gmh-offline-v1'); } catch (x) {}
+      if (done || !navigator.onLine) return;
+      reg.active.postMessage({ type: 'precache', urls: gmhTiles() });
+    }).catch(() => {});
+    navigator.serviceWorker.addEventListener('message', e => {
+      const m = e.data || {};
+      if (m.type === 'progress') offShow('Offline-Karte wird gespeichert … ' + Math.round(m.done / m.total * 100) + ' %', 'busy');
+      if (m.type === 'precache-done') {
+        try { localStorage.setItem('gmh-offline-v1', '1'); } catch (x) {}
+        offShow('Karte ist jetzt offline verfügbar ✓', 'ok'); setTimeout(updateOnline, 4000);
+      }
+    });
+  }
+  updateOnline();
 
   // ---------- Mein Standort ----------
   const LOC_KEY = 'gmh-karte-standort';   // 'ja' | 'nein'
