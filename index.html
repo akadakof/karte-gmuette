@@ -1768,7 +1768,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // (AES-256-GCM, Schlüssel + Kanal aus Gruppenname + Passwort via PBKDF2)
   // =====================================================================
   const LIVE_KEY = 'gmh-live';
-  const BROKERS = ['wss://broker.hivemq.com:8884/mqtt', 'wss://broker.emqx.io:8084/mqtt', 'wss://test.mosquitto.org:8081/mqtt'];
+  // Alle müssen denselben Server nutzen, sonst sehen sie sich nicht – daher nur einer.
+  const BROKERS = ['wss://broker.emqx.io:8084/mqtt'];
   const FRIEND_COLORS = ['#e65100', '#6a1b9a', '#2e7d32', '#c2185b', '#00838f', '#5d4037', '#ad1457', '#283593'];
   let live = null;           // { name, group, share, key, topic, client, me }
   let liveLast = null, liveLastSent = 0;
