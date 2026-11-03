@@ -710,6 +710,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .mk-panel { background: #fff; padding: 6px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3);
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .mk-panel { position: relative; min-width: 200px; }
+  #mk-msg { font-size: 12px; }
+  .leaflet-control-layers-toggle, .leaflet-retina .leaflet-control-layers-toggle { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 3 2 8l10 5 10-5-10-5z'/%3E%3Cpath d='m2 13 10 5 10-5'/%3E%3Cpath d='m2 17.5 10 5 10-5' opacity='.5'/%3E%3C/svg%3E") !important; background-size: 26px 26px !important; }
+  #mk-more { margin-left: auto; width: 30px; height: 28px; padding: 0; border: 1px solid #bbb; border-radius: 6px; background: #f4f4f4;
+    font: 700 18px/1 system-ui, sans-serif; color: #333; cursor: pointer; }
+  #mk-more:hover, #mk-more.on { background: #e3ece8; border-color: #1f6f54; color: #1f6f54; }
+  #mk-menu { position: absolute; top: 38px; right: 6px; z-index: 1000; background: #fff; border-radius: 10px; padding: 6px;
+    box-shadow: 0 6px 24px rgba(0,0,0,.25); display: flex; flex-direction: column; gap: 2px; min-width: 230px; }
+  #mk-menu[hidden] { display: none; }
+  #mk-menu button, #mk-menu .imp { display: block; width: 100%; text-align: left; padding: 9px 12px !important; border: none !important;
+    border-radius: 6px; background: none !important; font: 14px system-ui, sans-serif; color: #222; cursor: pointer; box-sizing: border-box; }
+  #mk-menu button:hover, #mk-menu .imp:hover, #mk-menu button:focus-visible, #mk-menu .imp:focus-visible { background: #eef3fb !important; outline: none; }
   /* Mein Standort: blauer Punkt mit weißem Rand */
   .me-icon { background: none; border: none; }
   .me-dot { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; box-sizing: border-box;
@@ -912,7 +924,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
-      lang: 'Sprache',
+      lang: 'Sprache', menu: 'Mehr',
       live_btn: '📡 Freunde live', live_title: '📡 Freunde live sehen',
       live_sub: 'Du und deine Freunde seht gegenseitig euren Standort. Alle nehmen denselben Gruppennamen und dasselbe Gruppen-Passwort. Die Positionen werden damit verschlüsselt – der Server sieht nur unlesbare Daten.',
       live_name: 'Benutzername (sehen deine Freunde)', live_name_ph: 'z. B. arthur_gmh', live_color: 'Farbe deines Standorts', live_you: 'Du', live_edit: 'Ändern', fr_color: 'Farbe für diesen Freund (nur bei dir)', fr_reset: 'Seine Farbe', live_name_hint: '3–20 Zeichen: Buchstaben, Zahlen, _ - .', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
@@ -961,7 +973,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
-      lang: 'Язык',
+      lang: 'Язык', menu: 'Ещё',
       live_btn: '📡 Друзья онлайн', live_title: '📡 Видеть друзей онлайн',
       live_sub: 'Ты и твои друзья видите местоположение друг друга. Все вводят одинаковое название группы и одинаковый пароль группы. Им шифруются координаты — сервер видит только непонятные данные.',
       live_name: 'Имя пользователя (видят друзья)', live_name_ph: 'например, artur_gmh', live_color: 'Цвет твоей точки', live_you: 'Ты', live_edit: 'Изменить', fr_color: 'Цвет этого друга (только у тебя)', fr_reset: 'Его цвет', live_name_hint: '3–20 символов: буквы, цифры, _ - .', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
@@ -1010,7 +1022,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
-      lang: 'Language',
+      lang: 'Language', menu: 'More',
       live_btn: '📡 Friends live', live_title: '📡 See friends live',
       live_sub: 'You and your friends see each other’s location. Everyone uses the same group name and the same group password. Positions are encrypted with it – the server only sees unreadable data.',
       live_name: 'Username (your friends see it)', live_name_ph: 'e.g. arthur_gmh', live_color: 'Your location colour', live_you: 'You', live_edit: 'Edit', fr_color: 'Colour for this friend (only for you)', fr_reset: 'Their colour', live_name_hint: '3–20 characters: letters, numbers, _ - .', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
@@ -1075,7 +1087,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return d;
   };
   langCtl.addTo(map);
-  L.control.layers(layers, null, { collapsed: false }).addTo(map);
+  L.control.layers(layers, null, { collapsed: innerWidth < 700 }).addTo(map);   // am Handy als kleines Symbol
   L.control.scale({ imperial: false }).addTo(map);
 
   // --- Live-Koordinaten unter der Maus ---
@@ -1286,11 +1298,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
   panel.onAdd = () => {
     const d = L.DomUtil.create('div', 'mk-panel');
     d.innerHTML = `<div class="mk-top"><b id="mk-count">${T('count', 0)}</b>
-      <button id="mk-export" title="${T('export_t')}">${T('export')}</button>
-      <label class="imp" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
-      <button id="sh-open" title="${T('share_t')}">${T('share_btn')}</button>
-      <button id="live-open">${T('live_btn')}</button>
-      <span id="mk-msg"></span></div>
+      <span id="mk-msg"></span>
+      <button id="mk-more" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="mk-menu" title="${T('menu')}" aria-label="${T('menu')}">⋮</button></div>
+      <div id="mk-menu" role="menu" hidden>
+        <button id="mk-export" role="menuitem" title="${T('export_t')}">${T('export')}</button>
+        <label class="imp" role="menuitem" tabindex="0" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
+        <button id="sh-open" role="menuitem" title="${T('share_t')}">${T('share_btn')}</button>
+        <button id="live-open" role="menuitem">${T('live_btn')}</button>
+      </div>
       <input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
       <ul id="mk-list"></ul>
       <div id="sh-box" hidden></div>
@@ -1300,6 +1315,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return d;
   };
   panel.addTo(map);
+  // ---- Drei-Punkte-Menü ----
+  const moreBtn = document.getElementById('mk-more'), menuEl = document.getElementById('mk-menu');
+  const setMenu = open => { menuEl.hidden = !open; moreBtn.setAttribute('aria-expanded', open); moreBtn.classList.toggle('on', open); };
+  moreBtn.onclick = e => { e.stopPropagation(); setMenu(menuEl.hidden); if (!menuEl.hidden) menuEl.querySelector('button, label').focus(); };
+  menuEl.addEventListener('click', () => setTimeout(() => setMenu(false), 0));
+  document.addEventListener('click', e => { if (!menuEl.hidden && !menuEl.contains(e.target) && e.target !== moreBtn) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menuEl.hidden) { setMenu(false); moreBtn.focus(); } });
+  map.on('movestart', () => setMenu(false));
   function updatePanel() {
     const cnt = document.getElementById('mk-count');
     if (!cnt) return;
