@@ -809,6 +809,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .dot.star { border-radius: 3px; transform: rotate(45deg) scale(.85); }
   .shared-tip { background: #eef6f2; border-color: #1f6f54; }
   .sh-name { display: block; font-size: 15px; margin: 2px 0 8px; }
+  .lang-sw { display: flex; background: #fff; overflow: hidden; }
+  .lang-sw button { border: none; background: #fff; padding: 6px 10px; font: 600 12.5px system-ui, sans-serif; color: #444; cursor: pointer; }
+  .lang-sw button + button { border-left: 1px solid #ccc; }
+  .lang-sw button:hover { background: #f0f4fa; }
+  .lang-sw button.on { background: #1f6f54; color: #fff; }
+  .lang-sw button:focus-visible { outline: 2px solid #1e88e5; outline-offset: -2px; }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -841,20 +847,148 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const ZOOM = 16;                     // 16 = Straßen gut sichtbar
 
   const TOUCH = matchMedia('(hover: none)').matches;   // Handy/Tablet
+
+  // ---------- Sprachen ----------
+  const ruN = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
+  const I18N = {
+    de: {
+      layer_street: 'Straßenkarte (Esri)', layer_topo: 'Topografisch (OpenTopoMap)', layer_osm: 'OSM Deutschland', layer_sat: 'Satellit (Esri)',
+      coord_touch: 'Lange drücken = Markierung setzen', coord_mouse: 'Maus über die Karte bewegen', close: 'Schließen',
+      name: 'Name', color: 'Farbe', photos: 'Fotos', coords: 'Koordinaten', name_ph: 'z. B. Zuhause', own_color: 'Eigene Farbe',
+      add_photo: '📷 Foto hinzufügen', copy: 'Kopieren', copied: 'Kopiert ✓', copy_fail: 'Nicht möglich', del: 'Löschen',
+      photo: 'Foto', photo_del: 'Foto löschen', photo_busy: 'Foto wird verkleinert und bereinigt …',
+      photo_bad: 'Dieses Bildformat kann der Browser nicht lesen. Bitte als JPG oder PNG wählen.',
+      photo_saved: n => n + (n === 1 ? ' Foto' : ' Fotos') + ' gespeichert ✓ (ohne Standort- und Kameradaten)',
+      place: 'Ort', export: '⬇ Meine Punkte herunterladen', export_t: 'Alle Punkte als Datei speichern',
+      import: '⬆ Punkte laden', import_t: 'Punkte aus einer Datei laden', share_btn: '🔒 Mit Freunden teilen', share_t: 'Ausgewählte Punkte mit Passwort verschlüsseln',
+      search_ph: 'Markierung suchen …', count: n => n + (n === 1 ? ' Markierung' : ' Markierungen'), of: (a, b) => a + ' von ' + b,
+      empty: touch => (touch ? 'Lange auf die Karte drücken' : 'Rechtsklick auf die Karte') + ' setzt eine Markierung',
+      no_match: q => 'Keine Markierung mit „' + q + '“', no_points: 'Noch keine Punkte', preparing: 'Wird vorbereitet …',
+      my_points: 'Meine Punkte', saved: 'Gespeichert ✓', loaded: n => n + ' Punkte geladen ✓', all_there: 'Alle Punkte waren schon da', unreadable: 'Datei nicht lesbar',
+      sh_sub: 'Wähle Punkte aus und lege ein Passwort fest. Daraus wird eine verschlüsselte Datei. Nur wer das Passwort kennt, kann die Punkte sehen.',
+      points: 'Punkte', all: 'Alle', none: 'Keine', with_photos: 'Fotos mitschicken', password: 'Passwort', pw_ph: 'mindestens 7 Zeichen',
+      pw_repeat: 'Passwort wiederholen', cancel: 'Abbrechen', enc_save: 'Verschlüsseln & speichern',
+      pw_lvls: ['Schwach – mische Groß-/Kleinbuchstaben, Zahlen und Zeichen wie ! oder #.', 'Geht – länger ist besser.', 'Stark ✓'],
+      err_none: 'Wähle mindestens einen Punkt aus.', err_short: 'Das Passwort braucht mindestens 7 Zeichen.', err_mismatch: 'Die Passwörter stimmen nicht überein.',
+      encrypting: 'Wird verschlüsselt …', done_title: '✓ Datei erstellt',
+      done_body: (n, f, kb) => `<b>${n} ${n === 1 ? 'Punkt' : 'Punkte'}</b> wurden in <code>${f}</code> verschlüsselt (${kb} KB).`,
+      step1: f => `Lade die Datei auf GitHub in dein Projekt <b>karte-gmuette</b> hoch (Name genau <code>${f}</code>) – oder schick sie Claude, der macht das.`,
+      step2: 'Schick deinen Freunden den Link zur Karte und das Passwort – das Passwort am besten auf einem anderen Weg.',
+      done_after: 'Wer die Karte öffnet, sieht ein Passwortfeld. Mit dem richtigen Passwort erscheinen die geteilten Punkte.',
+      finish: 'Fertig', enc_fail: 'Verschlüsseln hat nicht geklappt.',
+      shared_lock: '🔒 Geteilte Punkte', pw_enter: 'Passwort eingeben', pw_aria: 'Passwort für geteilte Punkte', open: 'Öffnen', checking: 'Wird geprüft …',
+      wrong_pw: 'Falsches Passwort.', shared_head: '👥 Geteilt', lock: 'Sperren', lock_t: 'Geteilte Punkte wieder ausblenden', no_hit: 'Kein Treffer',
+      point: 'Punkt', shared_point: 'Geteilter Punkt', take: 'In meine Punkte übernehmen', taken: 'Übernommen ✓',
+      offline: 'Offline – gespeicherte Karte', off_progress: p => 'Offline-Karte wird gespeichert … ' + p + ' %', off_done: 'Karte ist jetzt offline verfügbar ✓',
+      my_loc: 'Mein Standort', you_here: 'Du bist hier', manual: '(selbst gesetzt)',
+      loc_set: 'Standort gesetzt. Tippe auf den Standort-Knopf, um wieder GPS/WLAN zu nutzen.',
+      loc_inacc: a => 'Standort ungenau (±' + a + ' m). Am PC ist das normal: Ziehe den blauen Punkt einfach an die richtige Stelle.',
+      loc_blocked: 'Standort ist im Browser blockiert. Erlaube ihn über das Schloss-Symbol in der Adressleiste und tippe dann erneut auf den Standort-Knopf.',
+      loc_timeout: 'Standort wird noch gesucht … Geh am besten ans Fenster oder nach draußen.', loc_fail: 'Standort konnte nicht ermittelt werden.',
+      loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
+      ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
+      ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
+      lang: 'Sprache'
+    },
+    ru: {
+      layer_street: 'Карта улиц (Esri)', layer_topo: 'Топографическая (OpenTopoMap)', layer_osm: 'OSM Германия', layer_sat: 'Спутник (Esri)',
+      coord_touch: 'Долгое нажатие = поставить метку', coord_mouse: 'Наведи мышь на карту', close: 'Закрыть',
+      name: 'Название', color: 'Цвет', photos: 'Фото', coords: 'Координаты', name_ph: 'например, Дом', own_color: 'Свой цвет',
+      add_photo: '📷 Добавить фото', copy: 'Копировать', copied: 'Скопировано ✓', copy_fail: 'Не получилось', del: 'Удалить',
+      photo: 'Фото', photo_del: 'Удалить фото', photo_busy: 'Фото уменьшается и очищается …',
+      photo_bad: 'Браузер не может прочитать этот формат. Выбери JPG или PNG.',
+      photo_saved: n => 'Сохранено фото: ' + n + ' ✓ (без координат и данных камеры)',
+      place: 'Место', export: '⬇ Скачать мои точки', export_t: 'Сохранить все точки в файл',
+      import: '⬆ Загрузить точки', import_t: 'Загрузить точки из файла', share_btn: '🔒 Поделиться с друзьями', share_t: 'Зашифровать выбранные точки паролем',
+      search_ph: 'Поиск меток …', count: n => n + ' ' + ruN(n, 'метка', 'метки', 'меток'), of: (a, b) => a + ' из ' + b,
+      empty: touch => (touch ? 'Долгое нажатие на карту' : 'Правый клик по карте') + ' ставит метку',
+      no_match: q => 'Нет меток с «' + q + '»', no_points: 'Пока нет точек', preparing: 'Подготовка …',
+      my_points: 'Мои точки', saved: 'Сохранено ✓', loaded: n => 'Загружено точек: ' + n + ' ✓', all_there: 'Все точки уже были', unreadable: 'Не удалось прочитать файл',
+      sh_sub: 'Выбери точки и задай пароль. Из них получится зашифрованный файл. Увидеть точки сможет только тот, кто знает пароль.',
+      points: 'Точки', all: 'Все', none: 'Ни одной', with_photos: 'Отправить с фото', password: 'Пароль', pw_ph: 'минимум 7 символов',
+      pw_repeat: 'Повтори пароль', cancel: 'Отмена', enc_save: 'Зашифровать и сохранить',
+      pw_lvls: ['Слабый — смешай большие и маленькие буквы, цифры и знаки вроде ! или #.', 'Нормальный — длиннее лучше.', 'Надёжный ✓'],
+      err_none: 'Выбери хотя бы одну точку.', err_short: 'Пароль должен быть не короче 7 символов.', err_mismatch: 'Пароли не совпадают.',
+      encrypting: 'Шифрование …', done_title: '✓ Файл создан',
+      done_body: (n, f, kb) => `<b>${n} ${ruN(n, 'точка', 'точки', 'точек')}</b> зашифровано в <code>${f}</code> (${kb} КБ).`,
+      step1: f => `Загрузи файл на GitHub в проект <b>karte-gmuette</b> (имя точно <code>${f}</code>) — или отправь его Claude, он сделает это.`,
+      step2: 'Отправь друзьям ссылку на карту и пароль — пароль лучше другим способом.',
+      done_after: 'Кто открывает карту, видит поле для пароля. С правильным паролем появляются общие точки.',
+      finish: 'Готово', enc_fail: 'Не удалось зашифровать.',
+      shared_lock: '🔒 Общие точки', pw_enter: 'Введи пароль', pw_aria: 'Пароль для общих точек', open: 'Открыть', checking: 'Проверка …',
+      wrong_pw: 'Неверный пароль.', shared_head: '👥 Общие', lock: 'Скрыть', lock_t: 'Снова скрыть общие точки', no_hit: 'Ничего не найдено',
+      point: 'Точка', shared_point: 'Общая точка', take: 'Добавить в мои точки', taken: 'Добавлено ✓',
+      offline: 'Офлайн — сохранённая карта', off_progress: p => 'Карта сохраняется для офлайна … ' + p + ' %', off_done: 'Карта теперь доступна офлайн ✓',
+      my_loc: 'Моё местоположение', you_here: 'Ты здесь', manual: '(вручную)',
+      loc_set: 'Место задано вручную. Нажми кнопку местоположения, чтобы снова использовать GPS/Wi-Fi.',
+      loc_inacc: a => 'Местоположение неточное (±' + a + ' м). На компьютере это нормально: просто перетащи синюю точку в нужное место.',
+      loc_blocked: 'Доступ к местоположению запрещён в браузере. Разреши его через значок замка в адресной строке и снова нажми кнопку местоположения.',
+      loc_timeout: 'Местоположение ещё ищется … Лучше подойди к окну или выйди на улицу.', loc_fail: 'Не удалось определить местоположение.',
+      loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
+      ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
+      ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
+      lang: 'Язык'
+    },
+    en: {
+      layer_street: 'Street map (Esri)', layer_topo: 'Topographic (OpenTopoMap)', layer_osm: 'OSM Germany', layer_sat: 'Satellite (Esri)',
+      coord_touch: 'Long press = add marker', coord_mouse: 'Move the mouse over the map', close: 'Close',
+      name: 'Name', color: 'Colour', photos: 'Photos', coords: 'Coordinates', name_ph: 'e.g. Home', own_color: 'Custom colour',
+      add_photo: '📷 Add photo', copy: 'Copy', copied: 'Copied ✓', copy_fail: 'Not possible', del: 'Delete',
+      photo: 'Photo', photo_del: 'Delete photo', photo_busy: 'Shrinking and cleaning photo …',
+      photo_bad: 'The browser can’t read this image format. Please choose a JPG or PNG.',
+      photo_saved: n => n + (n === 1 ? ' photo' : ' photos') + ' saved ✓ (no location or camera data)',
+      place: 'Place', export: '⬇ Download my points', export_t: 'Save all points to a file',
+      import: '⬆ Load points', import_t: 'Load points from a file', share_btn: '🔒 Share with friends', share_t: 'Encrypt selected points with a password',
+      search_ph: 'Search markers …', count: n => n + (n === 1 ? ' marker' : ' markers'), of: (a, b) => a + ' of ' + b,
+      empty: touch => (touch ? 'Long press on the map' : 'Right-click on the map') + ' to add a marker',
+      no_match: q => 'No marker with “' + q + '”', no_points: 'No points yet', preparing: 'Preparing …',
+      my_points: 'My points', saved: 'Saved ✓', loaded: n => n + ' points loaded ✓', all_there: 'All points were already there', unreadable: 'File could not be read',
+      sh_sub: 'Choose points and set a password. They are turned into an encrypted file. Only people who know the password can see the points.',
+      points: 'Points', all: 'All', none: 'None', with_photos: 'Include photos', password: 'Password', pw_ph: 'at least 7 characters',
+      pw_repeat: 'Repeat password', cancel: 'Cancel', enc_save: 'Encrypt & save',
+      pw_lvls: ['Weak – mix upper and lower case, numbers and symbols like ! or #.', 'OK – longer is better.', 'Strong ✓'],
+      err_none: 'Choose at least one point.', err_short: 'The password needs at least 7 characters.', err_mismatch: 'The passwords don’t match.',
+      encrypting: 'Encrypting …', done_title: '✓ File created',
+      done_body: (n, f, kb) => `<b>${n} ${n === 1 ? 'point' : 'points'}</b> encrypted into <code>${f}</code> (${kb} KB).`,
+      step1: f => `Upload the file to your GitHub project <b>karte-gmuette</b> (named exactly <code>${f}</code>) – or send it to Claude, who will do it.`,
+      step2: 'Send your friends the map link and the password – ideally the password by a different route.',
+      done_after: 'Anyone who opens the map sees a password field. With the right password the shared points appear.',
+      finish: 'Done', enc_fail: 'Encryption failed.',
+      shared_lock: '🔒 Shared points', pw_enter: 'Enter password', pw_aria: 'Password for shared points', open: 'Open', checking: 'Checking …',
+      wrong_pw: 'Wrong password.', shared_head: '👥 Shared', lock: 'Lock', lock_t: 'Hide shared points again', no_hit: 'No match',
+      point: 'Point', shared_point: 'Shared point', take: 'Add to my points', taken: 'Added ✓',
+      offline: 'Offline – saved map', off_progress: p => 'Saving map for offline … ' + p + ' %', off_done: 'Map is now available offline ✓',
+      my_loc: 'My location', you_here: 'You are here', manual: '(set manually)',
+      loc_set: 'Location set. Tap the location button to use GPS/Wi-Fi again.',
+      loc_inacc: a => 'Location is imprecise (±' + a + ' m). That’s normal on a computer: just drag the blue dot to the right spot.',
+      loc_blocked: 'Location is blocked in the browser. Allow it via the lock icon in the address bar, then tap the location button again.',
+      loc_timeout: 'Still looking for your location … Try moving to a window or outside.', loc_fail: 'Your location could not be determined.',
+      loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
+      ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
+      ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
+      lang: 'Language'
+    }
+  };
+  const LANGS = [['de', 'Deutsch'], ['ru', 'Русский'], ['en', 'English']];
+  let LANG = null;
+  try { LANG = localStorage.getItem('gmh-lang'); } catch (e) {}
+  if (!I18N[LANG]) { const nl = (navigator.language || 'de').slice(0, 2); LANG = I18N[nl] ? nl : 'de'; }
+  document.documentElement.lang = LANG;
+  const T = (k, ...a) => { const v = I18N[LANG][k] ?? I18N.de[k]; return typeof v === 'function' ? v(...a) : v; };
   const map = L.map('map').setView(CENTER, ZOOM);
 
   // Mehrere Kartendienste ohne API-Schlüssel. Fällt einer aus, wird automatisch der nächste genommen.
   const layers = {
-    'Straßenkarte (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    [T('layer_street')]: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, crossOrigin: true, attribution: 'Tiles &copy; Esri &mdash; Quellen: Esri, HERE, Garmin, &copy; OpenStreetMap-Mitwirkende'
     }),
-    'Topografisch (OpenTopoMap)': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    [T('layer_topo')]: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
       maxZoom: 17, attribution: '&copy; OpenStreetMap-Mitwirkende, SRTM | &copy; OpenTopoMap (CC-BY-SA)'
     }),
-    'OSM Deutschland': L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+    [T('layer_osm')]: L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; OpenStreetMap-Mitwirkende'
     }),
-    'Satellit (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    [T('layer_sat')]: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, crossOrigin: true, attribution: 'Tiles &copy; Esri &mdash; Maxar, Earthstar Geographics'
     })
   };
@@ -873,12 +1007,26 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
     });
   });
+  const langCtl = L.control({ position: 'topright' });
+  langCtl.onAdd = () => {
+    const d = L.DomUtil.create('div', 'lang-sw leaflet-bar');
+    d.setAttribute('role', 'group'); d.setAttribute('aria-label', T('lang'));
+    d.innerHTML = LANGS.map(([c, n]) => `<button type="button" data-l="${c}" title="${n}" aria-pressed="${c === LANG}"${c === LANG ? ' class="on"' : ''}>${c.toUpperCase()}</button>`).join('');
+    d.onclick = e => {
+      const l = e.target.dataset.l; if (!l || l === LANG) return;
+      try { localStorage.setItem('gmh-lang', l); } catch (x) {}
+      location.reload();
+    };
+    L.DomEvent.disableClickPropagation(d);
+    return d;
+  };
+  langCtl.addTo(map);
   L.control.layers(layers, null, { collapsed: false }).addTo(map);
   L.control.scale({ imperial: false }).addTo(map);
 
   // --- Live-Koordinaten unter der Maus ---
   const coordBox = L.control({ position: 'bottomleft' });
-  coordBox.onAdd = () => { const d = L.DomUtil.create('div', 'coord-box'); d.textContent = TOUCH ? 'Lange drücken = Markierung setzen' : 'Maus über die Karte bewegen'; return d; };
+  coordBox.onAdd = () => { const d = L.DomUtil.create('div', 'coord-box'); d.textContent = TOUCH ? T('coord_touch') : T('coord_mouse'); return d; };
   coordBox.addTo(map);
   const fmt = ll => ll.lat.toFixed(6) + ', ' + ll.lng.toFixed(6);
   map.on('mousemove', e => { document.querySelector('.coord-box').textContent = fmt(e.latlng); });
@@ -937,7 +1085,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // Großansicht
   function showPhoto(url, title) {
     const ov = document.createElement('div'); ov.id = 'photo-view';
-    ov.innerHTML = `<img src="${url}" alt=""><div class="pv-cap">${esc(title)}</div><button aria-label="Schließen">✕</button>`;
+    ov.innerHTML = `<img src="${url}" alt=""><div class="pv-cap">${esc(title)}</div><button aria-label="${T('close')}">✕</button>`;
     ov.onclick = () => ov.remove();
     document.addEventListener('keydown', function k(e) { if (e.key === 'Escape') { ov.remove(); document.removeEventListener('keydown', k); } });
     document.body.appendChild(ov);
@@ -965,20 +1113,20 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const popupHtml = () => {
       const t = fmt(m.getLatLng());
       return `<div class="mk-pop">
-        <div class="lbl">Name</div>
-        <input type="text" data-a="name" value="${esc(m.data.name)}" placeholder="z. B. Zuhause">
-        <div class="lbl">Farbe</div>
+        <div class="lbl">${T('name')}</div>
+        <input type="text" data-a="name" value="${esc(m.data.name)}" placeholder="${T('name_ph')}">
+        <div class="lbl">${T('color')}</div>
         <div class="swatches">${COLORS.map(c => `<button class="sw${c === m.data.color ? ' on' : ''}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join('')}
-          <input type="color" data-a="custom" value="${m.data.color}" title="Eigene Farbe" style="width:28px;height:26px;padding:0;border:none;background:none;cursor:pointer"></div>
-        <div class="lbl">Fotos</div>
+          <input type="color" data-a="custom" value="${m.data.color}" title="${T('own_color')}" style="width:28px;height:26px;padding:0;border:none;background:none;cursor:pointer"></div>
+        <div class="lbl">${T('photos')}</div>
         <div class="photos" data-a="photos"></div>
-        <label class="add-photo">📷 Foto hinzufügen<input type="file" data-a="addphoto" accept="image/*" multiple hidden></label>
+        <label class="add-photo">${T('add_photo')}<input type="file" data-a="addphoto" accept="image/*" multiple hidden></label>
         <div class="photo-msg"></div>
-        <div class="lbl">Koordinaten</div>
+        <div class="lbl">${T('coords')}</div>
         <code>${t}</code>
         <div class="row">
-          <button data-a="copy">Kopieren</button>
-          <button data-a="del">Löschen</button>
+          <button data-a="copy">${T('copy')}</button>
+          <button data-a="del">${T('del')}</button>
           <a href="https://www.google.com/maps?q=${t.replace(' ', '')}" target="_blank">Google Maps</a>
         </div></div>`;
     };
@@ -995,7 +1143,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         if (!blob) continue;
         const u = URL.createObjectURL(blob); thumbURLs.push(u);
         const d = document.createElement('div'); d.className = 'ph';
-        d.innerHTML = `<img src="${u}" alt="Foto"><button class="ph-del" data-pid="${id}" title="Foto löschen" aria-label="Foto löschen">✕</button>`;
+        d.innerHTML = `<img src="${u}" alt="${T('photo')}"><button class="ph-del" data-pid="${id}" title="${T('photo_del')}" aria-label="${T('photo_del')}">✕</button>`;
         d.querySelector('img').onclick = () => showPhoto(u, m.data.name);
         box.appendChild(d);
       }
@@ -1022,8 +1170,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
           el.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s === b));
         } else if (b.dataset.a === 'copy') {
           navigator.clipboard.writeText(m.data.name + ': ' + fmt(m.getLatLng()))
-            .then(() => b.textContent = 'Kopiert ✓')
-            .catch(() => b.textContent = 'Nicht möglich');
+            .then(() => b.textContent = T('copied'))
+            .catch(() => b.textContent = T('copy_fail'));
         } else if (b.dataset.pid) {
           const id = b.dataset.pid;
           m.data.photos = m.data.photos.filter(x => x !== id);
@@ -1041,17 +1189,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
         const files = [...ev3.target.files]; ev3.target.value = '';
         let ok = 0;
         for (const f of files) {
-          pmsg.textContent = 'Foto wird verkleinert und bereinigt …';
+          pmsg.textContent = T('photo_busy');
           try {
             const clean = await cleanPhoto(f);
             const id = newId();
             await photoPut(id, clean);
             m.data.photos.push(id); ok++;
           } catch (err) {
-            pmsg.textContent = 'Dieses Bildformat kann der Browser nicht lesen. Bitte als JPG oder PNG wählen.';
+            pmsg.textContent = T('photo_bad');
           }
         }
-        if (ok) { save(); await renderPhotos(el); pmsg.textContent = ok + (ok === 1 ? ' Foto' : ' Fotos') + ' gespeichert ✓ (ohne Standort- und Kameradaten)'; }
+        if (ok) { save(); await renderPhotos(el); pmsg.textContent = T('photo_saved', ok); }
       };
       if (!TOUCH) setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
     });
@@ -1075,7 +1223,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   map.on('contextmenu', e => {
     count++;
-    createMarker(e.latlng, { name: 'Ort ' + count, color: COLORS[0] }, true);
+    createMarker(e.latlng, { name: T('place') + ' ' + count, color: COLORS[0] }, true);
     save();
   });
 
@@ -1083,12 +1231,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const panel = L.control({ position: 'topleft' });
   panel.onAdd = () => {
     const d = L.DomUtil.create('div', 'mk-panel');
-    d.innerHTML = `<div class="mk-top"><b id="mk-count">0 Markierungen</b>
-      <button id="mk-export" title="Alle Punkte als Datei speichern">⬇ Meine Punkte herunterladen</button>
-      <label class="imp" title="Punkte aus einer Datei laden">⬆ Punkte laden<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
-      <button id="sh-open" title="Ausgewählte Punkte mit Passwort verschlüsseln">🔒 Mit Freunden teilen</button>
+    d.innerHTML = `<div class="mk-top"><b id="mk-count">${T('count', 0)}</b>
+      <button id="mk-export" title="${T('export_t')}">${T('export')}</button>
+      <label class="imp" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
+      <button id="sh-open" title="${T('share_t')}">${T('share_btn')}</button>
       <span id="mk-msg"></span></div>
-      <input type="search" id="mk-search" placeholder="Markierung suchen …" autocomplete="off">
+      <input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
       <ul id="mk-list"></ul>
       <div id="sh-box" hidden></div>`;
     L.DomEvent.disableClickPropagation(d);
@@ -1099,18 +1247,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function updatePanel() {
     const cnt = document.getElementById('mk-count');
     if (!cnt) return;
-    cnt.textContent = markers.length + (markers.length === 1 ? ' Markierung' : ' Markierungen');
+    cnt.textContent = T('count', markers.length);
     const list = document.getElementById('mk-list');
     list.innerHTML = '';
     if (!markers.length) {
-      list.innerHTML = `<li class="mk-empty">${TOUCH ? 'Lange auf die Karte drücken' : 'Rechtsklick auf die Karte'} setzt eine Markierung</li>`;
+      list.innerHTML = `<li class="mk-empty">${T('empty', TOUCH)}</li>`;
       return;
     }
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
     const shown = q ? markers.filter(m => m.data.name.toLowerCase().includes(q)) : markers;
-    if (q) cnt.textContent = shown.length + ' von ' + markers.length;
+    if (q) cnt.textContent = T('of', shown.length, markers.length);
     if (!shown.length) {
-      list.innerHTML = '<li class="mk-empty">Keine Markierung mit „' + esc(q) + '“</li>';
+      list.innerHTML = '<li class="mk-empty">' + T('no_match', esc(q)) + '</li>';
       return;
     }
     shown.forEach(m => {
@@ -1138,8 +1286,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   });
   const msg = t => { const s = document.getElementById('mk-msg'); s.textContent = t; setTimeout(() => s.textContent = '', 3000); };
   document.getElementById('mk-export').onclick = async () => {
-    if (!markers.length) { msg('Noch keine Punkte'); return; }
-    msg('Wird vorbereitet …');
+    if (!markers.length) { msg(T('no_points')); return; }
+    msg(T('preparing'));
     const items = [];
     for (const m of markers) {
       const photos = [];
@@ -1154,7 +1302,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (TOUCH && navigator.canShare) {
       const file = new File([blob], name, { type: 'application/json' });
       if (navigator.canShare({ files: [file] })) {
-        try { await navigator.share({ files: [file], title: 'Meine Punkte' }); msg('Gespeichert ✓'); return; }
+        try { await navigator.share({ files: [file], title: T('my_points') }); msg(T('saved')); return; }
         catch (err) { if (err.name === 'AbortError') return; }
       }
     }
@@ -1163,7 +1311,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    msg('Gespeichert ✓');
+    msg(T('saved'));
   };
   document.getElementById('mk-import').onchange = e => {
     const f = e.target.files[0]; if (!f) return;
@@ -1184,9 +1332,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
         it.photos = ids;
       }
       loadAll({ count: obj.count, items: neu }); save();
-      msg(neu.length ? neu.length + ' Punkte geladen ✓' : 'Alle Punkte waren schon da');
+      msg(neu.length ? T('loaded', neu.length) : T('all_there'));
       if (neu.length) map.fitBounds(L.latLngBounds(neu.map(it => [it.lat, it.lng])).pad(0.3), { maxZoom: 17 });
-    }).catch(() => msg('Datei nicht lesbar'));
+    }).catch(() => msg(T('unreadable')));
     e.target.value = '';
   };
 
@@ -1233,23 +1381,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   // ---- Dialog: Punkte auswählen, Passwort, verschlüsseln ----
   document.getElementById('sh-open').onclick = () => {
-    if (!markers.length) { msg('Noch keine Punkte'); return; }
+    if (!markers.length) { msg(T('no_points')); return; }
     const ov = document.createElement('div'); ov.className = 'dlg-ov';
     ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="sh-title">
-      <h2 id="sh-title">🔒 Mit Freunden teilen</h2>
-      <p class="dlg-sub">Wähle Punkte aus und lege ein Passwort fest. Daraus wird eine verschlüsselte Datei. Nur wer das Passwort kennt, kann die Punkte sehen.</p>
-      <div class="sh-head"><b>Punkte</b><button type="button" id="sh-all">Alle</button><button type="button" id="sh-none">Keine</button></div>
+      <h2 id="sh-title">${T('share_btn')}</h2>
+      <p class="dlg-sub">${T('sh_sub')}</p>
+      <div class="sh-head"><b>${T('points')}</b><button type="button" id="sh-all">${T('all')}</button><button type="button" id="sh-none">${T('none')}</button></div>
       <ul class="sh-pick">${markers.map((m, i) => `<li><label><input type="checkbox" data-i="${i}" checked>
         <span class="dot" style="background:${m.data.color}"></span><span class="nm">${esc(m.data.name)}</span>
         ${(m.data.photos || []).length ? `<span class="np">📷 ${m.data.photos.length}</span>` : ''}</label></li>`).join('')}</ul>
-      <label class="sh-chk"><input type="checkbox" id="sh-photos" checked> Fotos mitschicken</label>
-      <label class="sh-lbl" for="sh-pw">Passwort</label>
-      <input type="password" id="sh-pw" autocomplete="new-password" placeholder="mindestens 7 Zeichen">
+      <label class="sh-chk"><input type="checkbox" id="sh-photos" checked> ${T('with_photos')}</label>
+      <label class="sh-lbl" for="sh-pw">${T('password')}</label>
+      <input type="password" id="sh-pw" autocomplete="new-password" placeholder="${T('pw_ph')}">
       <div class="pw-meter"><span id="sh-bar"></span></div><div id="sh-hint" class="sh-hint"></div>
-      <label class="sh-lbl" for="sh-pw2">Passwort wiederholen</label>
+      <label class="sh-lbl" for="sh-pw2">${T('pw_repeat')}</label>
       <input type="password" id="sh-pw2" autocomplete="new-password">
       <div id="sh-err" class="sh-err"></div>
-      <div class="dlg-btns"><button type="button" id="sh-cancel">Abbrechen</button><button type="button" id="sh-go" class="primary">Verschlüsseln &amp; speichern</button></div>
+      <div class="dlg-btns"><button type="button" id="sh-cancel">${T('cancel')}</button><button type="button" id="sh-go" class="primary">${esc(T('enc_save'))}</button></div>
     </div>`;
     document.body.appendChild(ov);
     const $ = s => ov.querySelector(s);
@@ -1269,16 +1417,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       const lvl = bits < 40 ? 0 : bits < 60 ? 1 : 2;
       $('#sh-bar').style.width = Math.min(100, bits / 80 * 100) + '%';
       $('#sh-bar').className = ['weak', 'ok', 'strong'][lvl];
-      $('#sh-hint').textContent = $('#sh-pw').value ? ['Schwach – mische Groß-/Kleinbuchstaben, Zahlen und Zeichen wie ! oder #.', 'Geht – länger ist besser.', 'Stark ✓'][lvl] : '';
+      $('#sh-hint').textContent = $('#sh-pw').value ? T('pw_lvls')[lvl] : '';
     };
     setTimeout(() => $('#sh-pw').focus(), 50);
     $('#sh-go').onclick = async () => {
       const sel = boxes().filter(b => b.checked).map(b => markers[+b.dataset.i]);
       const pw = $('#sh-pw').value, err = $('#sh-err');
-      if (!sel.length) { err.textContent = 'Wähle mindestens einen Punkt aus.'; return; }
-      if (pw.length < 7) { err.textContent = 'Das Passwort braucht mindestens 7 Zeichen.'; return; }
-      if (pw !== $('#sh-pw2').value) { err.textContent = 'Die Passwörter stimmen nicht überein.'; return; }
-      err.textContent = ''; const go = $('#sh-go'); go.disabled = true; go.textContent = 'Wird verschlüsselt …';
+      if (!sel.length) { err.textContent = T('err_none'); return; }
+      if (pw.length < 7) { err.textContent = T('err_short'); return; }
+      if (pw !== $('#sh-pw2').value) { err.textContent = T('err_mismatch'); return; }
+      err.textContent = ''; const go = $('#sh-go'); go.disabled = true; go.textContent = T('encrypting');
       try {
         const withPhotos = $('#sh-photos').checked, items = [];
         for (const m of sel) {
@@ -1289,15 +1437,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
         const file = await encryptJSON({ created: new Date().toISOString(), items }, pw);
         const blob = new Blob([JSON.stringify(file)], { type: 'application/json' });
         await giveFile(blob, SHARE_FILE);
-        ov.querySelector('.dlg').innerHTML = `<h2>✓ Datei erstellt</h2>
-          <p class="dlg-sub"><b>${items.length} ${items.length === 1 ? 'Punkt' : 'Punkte'}</b> wurden in <code>${SHARE_FILE}</code> verschlüsselt (${Math.max(1, Math.round(blob.size / 1024))} KB).</p>
-          <ol class="sh-steps"><li>Lade die Datei auf GitHub in dein Projekt <b>karte-gmuette</b> hoch (Name genau <code>${SHARE_FILE}</code>) – oder schick sie Claude, der macht das.</li>
-          <li>Schick deinen Freunden den Link zur Karte und das Passwort – das Passwort am besten auf einem anderen Weg.</li></ol>
-          <p class="dlg-sub">Wer die Karte öffnet, sieht ein Passwortfeld. Mit dem richtigen Passwort erscheinen die geteilten Punkte.</p>
-          <div class="dlg-btns"><button type="button" class="primary" id="sh-ok">Fertig</button></div>`;
+        ov.querySelector('.dlg').innerHTML = `<h2>${T('done_title')}</h2>
+          <p class="dlg-sub">${T('done_body', items.length, SHARE_FILE, Math.max(1, Math.round(blob.size / 1024)))}</p>
+          <ol class="sh-steps"><li>${T('step1', SHARE_FILE)}</li>
+          <li>${T('step2')}</li></ol>
+          <p class="dlg-sub">${T('done_after')}</p>
+          <div class="dlg-btns"><button type="button" class="primary" id="sh-ok">${T('finish')}</button></div>`;
         ov.querySelector('#sh-ok').onclick = () => ov.remove();
       } catch (e) {
-        err.textContent = 'Verschlüsseln hat nicht geklappt.'; go.disabled = false; go.textContent = 'Verschlüsseln & speichern';
+        err.textContent = T('enc_fail'); go.disabled = false; go.textContent = T('enc_save');
       }
     };
   };
@@ -1316,21 +1464,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (!sharedFile) return;
     shBox.hidden = false;
     if (!shared) {
-      shBox.innerHTML = `<div class="sh-lock"><b>🔒 Geteilte Punkte</b>
-        <form id="sh-form" autocomplete="off"><input type="password" id="sh-in" placeholder="Passwort eingeben" aria-label="Passwort für geteilte Punkte">
-        <button type="submit">Öffnen</button></form><div id="sh-st" class="sh-st"></div></div>`;
+      shBox.innerHTML = `<div class="sh-lock"><b>${T('shared_lock')}</b>
+        <form id="sh-form" autocomplete="off"><input type="password" id="sh-in" placeholder="${T('pw_enter')}" aria-label="${T('pw_aria')}">
+        <button type="submit">${T('open')}</button></form><div id="sh-st" class="sh-st"></div></div>`;
       document.getElementById('sh-form').onsubmit = async e => {
         e.preventDefault();
         const pw = document.getElementById('sh-in').value, st = document.getElementById('sh-st');
         if (!pw) return;
-        st.className = 'sh-st'; st.textContent = 'Wird geprüft …';
+        st.className = 'sh-st'; st.textContent = T('checking');
         try {
           const data = await decryptJSON(sharedFile, pw);
           shared = data.items || [];
           try { sessionStorage.setItem('gmh-sh-pw', pw); } catch (x) {}
           drawShared(true);
         } catch (err) {
-          st.className = 'sh-st bad'; st.textContent = 'Falsches Passwort.';
+          st.className = 'sh-st bad'; st.textContent = T('wrong_pw');
           const inp = document.getElementById('sh-in'); inp.select(); inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 400);
         }
       };
@@ -1338,8 +1486,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
     const items = shared.filter(it => !q || (it.name || '').toLowerCase().includes(q));
-    shBox.innerHTML = `<div class="sh-title"><b>👥 Geteilt (${q ? items.length + ' von ' : ''}${shared.length})</b><button type="button" id="sh-lockbtn" title="Geteilte Punkte wieder ausblenden">Sperren</button></div>
-      <ul class="sh-list">${items.map(it => `<li data-k="${shared.indexOf(it)}"><span class="dot star" style="background:${it.color}"></span><span class="nm">${esc(it.name || 'Punkt')}</span>${(it.photos || []).length ? `<span class="np">📷 ${it.photos.length}</span>` : ''}</li>`).join('') || '<li class="mk-empty">Kein Treffer</li>'}</ul>`;
+    shBox.innerHTML = `<div class="sh-title"><b>${T('shared_head')} (${q ? T('of', items.length, shared.length) : shared.length})</b><button type="button" id="sh-lockbtn" title="${T('lock_t')}">${T('lock')}</button></div>
+      <ul class="sh-list">${items.map(it => `<li data-k="${shared.indexOf(it)}"><span class="dot star" style="background:${it.color}"></span><span class="nm">${esc(it.name || T('point'))}</span>${(it.photos || []).length ? `<span class="np">📷 ${it.photos.length}</span>` : ''}</li>`).join('') || '<li class="mk-empty">' + T('no_hit') + '</li>'}</ul>`;
     shBox.querySelectorAll('.sh-list li[data-k]').forEach(li => li.onclick = () => {
       const mk = sharedLayer.getLayers().find(l => l.k === +li.dataset.k);
       map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 });
@@ -1356,11 +1504,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
     shared.forEach((it, k) => {
       const mk = L.marker([it.lat, it.lng], { icon: sharedIcon(it.color || '#1e88e5'), zIndexOffset: -100 });
       mk.k = k;
-      mk.bindTooltip('👥 ' + esc(it.name || 'Punkt'), { permanent: true, direction: 'top', className: 'name-tip shared-tip' });
-      mk.bindPopup(() => `<div class="mk-pop"><div class="lbl">Geteilter Punkt</div><b class="sh-name">${esc(it.name || 'Punkt')}</b>
-        ${(it.photos || []).length ? `<div class="photos">${it.photos.map((p, j) => `<div class="ph"><img src="${p}" data-j="${j}" alt="Foto"></div>`).join('')}</div>` : ''}
-        <div class="lbl">Koordinaten</div><code>${fmt(L.latLng(it.lat, it.lng))}</code>
-        <div class="row"><button data-a="take">In meine Punkte übernehmen</button></div></div>`, { minWidth: 220, maxWidth: 300 });
+      mk.bindTooltip('👥 ' + esc(it.name || T('point')), { permanent: true, direction: 'top', className: 'name-tip shared-tip' });
+      mk.bindPopup(() => `<div class="mk-pop"><div class="lbl">${T('shared_point')}</div><b class="sh-name">${esc(it.name || T('point'))}</b>
+        ${(it.photos || []).length ? `<div class="photos">${it.photos.map((p, j) => `<div class="ph"><img src="${p}" data-j="${j}" alt="${T('photo')}"></div>`).join('')}</div>` : ''}
+        <div class="lbl">${T('coords')}</div><code>${fmt(L.latLng(it.lat, it.lng))}</code>
+        <div class="row"><button data-a="take">${T('take')}</button></div></div>`, { minWidth: 220, maxWidth: 300 });
       mk.on('popupopen', ev => {
         const el = ev.popup.getElement();
         el.querySelectorAll('.ph img').forEach(img => img.onclick = () => showPhoto(img.src, it.name || ''));
@@ -1369,8 +1517,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
           const ids = [];
           for (const p of (it.photos || [])) { try { const id = newId(); await photoPut(id, await cleanPhoto(await dataURLToBlob(p))); ids.push(id); } catch (x) {} }
           count++;
-          createMarker(L.latLng(it.lat + 0.00003, it.lng + 0.00003), { name: it.name || 'Punkt', color: it.color || COLORS[0], photos: ids }, false);
-          save(); b.textContent = 'Übernommen ✓';
+          createMarker(L.latLng(it.lat + 0.00003, it.lng + 0.00003), { name: it.name || T('point'), color: it.color || COLORS[0], photos: ids }, false);
+          save(); b.textContent = T('taken');
         };
       });
       sharedLayer.addLayer(mk);
@@ -1397,7 +1545,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   offBox.addTo(map);
   const offEl = document.querySelector('.off-box');
   const offShow = (t, cls) => { offEl.textContent = t; offEl.className = 'off-box leaflet-control ' + (cls || ''); offEl.hidden = !t; };
-  const updateOnline = () => navigator.onLine ? offShow('') : offShow('Offline – gespeicherte Karte', 'off');
+  const updateOnline = () => navigator.onLine ? offShow('') : offShow(T('offline'), 'off');
   addEventListener('online', updateOnline); addEventListener('offline', updateOnline);
 
   // Kacheln rund um Georgsmarienhütte (Straßenkarte, Zoom 12–16) für offline vorladen
@@ -1421,10 +1569,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }).catch(() => {});
     navigator.serviceWorker.addEventListener('message', e => {
       const m = e.data || {};
-      if (m.type === 'progress') offShow('Offline-Karte wird gespeichert … ' + Math.round(m.done / m.total * 100) + ' %', 'busy');
+      if (m.type === 'progress') offShow(T('off_progress', Math.round(m.done / m.total * 100)), 'busy');
       if (m.type === 'precache-done') {
         try { localStorage.setItem('gmh-offline-v1', '1'); } catch (x) {}
-        offShow('Karte ist jetzt offline verfügbar ✓', 'ok'); setTimeout(updateOnline, 4000);
+        offShow(T('off_done'), 'ok'); setTimeout(updateOnline, 4000);
       }
     });
   }
@@ -1439,7 +1587,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const locBtnCtl = L.control({ position: 'topleft' });
   locBtnCtl.onAdd = () => {
     const d = L.DomUtil.create('div', 'leaflet-bar');
-    d.innerHTML = '<a href="#" id="loc-btn" title="Mein Standort" role="button" aria-label="Mein Standort">' +
+    d.innerHTML = '<a href="#" id="loc-btn" title="' + T('my_loc') + '" role="button" aria-label="' + T('my_loc') + '">' +
       '<svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="4" fill="currentColor"/>' +
       '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/>' +
       '<path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor" stroke-width="2"/></svg></a>';
@@ -1466,20 +1614,20 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (!meMarker) {
       meCircle = L.circle(ll, { radius: acc, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
       meMarker = L.marker(ll, { icon: meIcon, zIndexOffset: 1000, keyboard: false, draggable: true })
-        .bindTooltip('Du bist hier', { direction: 'top', offset: [0, -10] }).addTo(map);
+        .bindTooltip(T('you_here'), { direction: 'top', offset: [0, -10] }).addTo(map);
       meMarker.on('dragstart', () => meMarker.closeTooltip());
       meMarker.on('dragend', () => {
         manual = true;
         const p = meMarker.getLatLng();
         meCircle.setLatLng(p).setRadius(0);
-        meMarker.setTooltipContent('Du bist hier <small>(selbst gesetzt)</small><br><small>' + fmt(p) + '</small>');
+        meMarker.setTooltipContent(T('you_here') + ' <small>' + T('manual') + '</small><br><small>' + fmt(p) + '</small>');
         locBtn.classList.add('manual');
-        toast('Standort gesetzt. Tippe auf den Standort-Knopf, um wieder GPS/WLAN zu nutzen.');
+        toast(T('loc_set'));
       });
     } else {
       meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(acc);
     }
-    meMarker.setTooltipContent('Du bist hier<br><small>' + fmt(ll) + ' · ±' + Math.round(acc) + ' m</small>');
+    meMarker.setTooltipContent(T('you_here') + '<br><small>' + fmt(ll) + ' · ±' + Math.round(acc) + ' m</small>');
   }
   function onPos(p) {
     if (manual) return;
@@ -1494,22 +1642,22 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (firstFix) {
       firstFix = false;
       map.flyTo(ll, acc > 300 ? 15 : Math.max(map.getZoom(), 17), { duration: .8 });
-      if (acc > 300) toast('Standort ungenau (±' + Math.round(acc) + ' m). Am PC ist das normal: Ziehe den blauen Punkt einfach an die richtige Stelle.', 9000);
+      if (acc > 300) toast(T('loc_inacc', Math.round(acc)), 9000);
     }
   }
   function onErr(e) {
     locBtn.classList.remove('on');
     if (e.code === 1) {
       try { localStorage.setItem(LOC_KEY, 'nein'); } catch (x) {}
-      toast('Standort ist im Browser blockiert. Erlaube ihn über das Schloss-Symbol in der Adressleiste und tippe dann erneut auf den Standort-Knopf.', 8000);
+      toast(T('loc_blocked'), 8000);
     } else if (e.code === 3) {
-      toast('Standort wird noch gesucht … Geh am besten ans Fenster oder nach draußen.');
+      toast(T('loc_timeout'));
     } else {
-      toast('Standort konnte nicht ermittelt werden.');
+      toast(T('loc_fail'));
     }
   }
   function startLocating() {
-    if (!navigator.geolocation) { toast('Dein Browser kann den Standort nicht ermitteln.'); return; }
+    if (!navigator.geolocation) { toast(T('loc_nobrowser')); return; }
     try { localStorage.setItem(LOC_KEY, 'ja'); } catch (x) {}
     if (watchId !== null) {               // läuft schon: nur zum Standort springen
       if (meMarker) map.flyTo(meMarker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 });
@@ -1517,7 +1665,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
     firstFix = true;
     locBtn.classList.add('wait');
-    toast('Standort wird gesucht …', 3000);
+    toast(T('loc_searching'), 3000);
     watchId = navigator.geolocation.watchPosition(p => { locBtn.classList.remove('wait'); onPos(p); },
       e => { locBtn.classList.remove('wait'); if (e.code === 1) { navigator.geolocation.clearWatch(watchId); watchId = null; } onErr(e); },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
@@ -1529,9 +1677,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     ov.id = 'loc-ask';
     ov.innerHTML = `<div class="loc-card" role="dialog" aria-modal="true" aria-labelledby="loc-title">
       <div class="loc-ico"><span class="me-dot big"></span></div>
-      <h2 id="loc-title">Standort teilen?</h2>
-      <p>Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.</p>
-      <div class="loc-btns"><button id="loc-no">Nein, danke</button><button id="loc-yes">Ja, Standort zeigen</button></div>
+      <h2 id="loc-title">${T('ask_title')}</h2>
+      <p>${T('ask_body')}</p>
+      <div class="loc-btns"><button id="loc-no">${T('ask_no')}</button><button id="loc-yes">${T('ask_yes')}</button></div>
     </div>`;
     document.body.appendChild(ov);
     L.DomEvent.disableClickPropagation(ov);
@@ -1539,7 +1687,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     document.getElementById('loc-no').onclick = () => {
       ov.remove();
       try { localStorage.setItem(LOC_KEY, 'nein'); } catch (x) {}
-      toast('Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.');
+      toast(T('ask_later'));
     };
     setTimeout(() => document.getElementById('loc-yes').focus(), 50);
   }
