@@ -815,6 +815,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .lang-sw button:hover { background: #f0f4fa; }
   .lang-sw button.on { background: #1f6f54; color: #fff; }
   .lang-sw button:focus-visible { outline: 2px solid #1e88e5; outline-offset: -2px; }
+  /* ---- Freunde live ---- */
+  #live-box { margin-top: 8px; padding-top: 8px; border-top: 1px solid #ddd; }
+  #live-stop { background: #c62828 !important; border-color: #c62828 !important; color: #fff; }
+  .live-st { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; margin: 4px 0 2px; }
+  .live-dot { width: 9px; height: 9px; border-radius: 50%; background: #9e9e9e; flex: none; }
+  .live-st.share .live-dot { background: #2e7d32; animation: livepulse 1.6s infinite; }
+  .live-st.share { color: #2e7d32; font-weight: 600; }
+  .live-st.watch .live-dot { background: #1e88e5; }
+  @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(46,125,50,.6); } 100% { box-shadow: 0 0 0 8px rgba(46,125,50,0); } }
+  .live-note { font-size: 12.5px; color: #6b4e00; background: #fff8e1; border-radius: 6px; padding: 7px 9px; margin: 6px 0 0; }
+  .dlg input[type=text] { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 15px; margin-top: 3px; }
+  .fr-icon { background: none; border: none; }
+  .fr-dot { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 2px; box-sizing: border-box;
+    border-radius: 50%; border: 3px solid #fff; color: #fff; font: 700 14px system-ui, sans-serif; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
+  .fr-icon.stale .fr-dot { filter: grayscale(1); opacity: .65; }
+  .fr-tip { font-weight: 600; }
+  .fr-tip small { font-weight: 400; color: #666; }
   #mk-search { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 5px 8px;
     border: 1px solid #bbb; border-radius: 4px; font: inherit; }
   #mk-search:focus { outline: 2px solid #1e88e5; outline-offset: 0; border-color: #1e88e5; }
@@ -888,7 +905,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
-      lang: 'Sprache'
+      lang: 'Sprache',
+      live_btn: '📡 Freunde live', live_title: '📡 Freunde live sehen',
+      live_sub: 'Du und deine Freunde seht gegenseitig euren Standort. Alle nehmen denselben Gruppennamen und dasselbe Gruppen-Passwort. Die Positionen werden damit verschlüsselt – der Server sieht nur unlesbare Daten.',
+      live_name: 'Dein Name (sehen die Freunde)', live_name_ph: 'z. B. Arthur', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
+      live_pw: 'Gruppen-Passwort', live_share: 'Meinen Standort teilen', live_start: 'Starten',
+      live_note: 'Nur solange die Karte offen ist. Ist das Handy gesperrt oder die App geschlossen, wird dein Standort nicht mehr gesendet.',
+      live_err_name: 'Gib einen Namen ein.', live_err_group: 'Gib einen Gruppennamen ein.',
+      live_connecting: 'Verbinde …', live_on_share: 'Du teilst deinen Standort live', live_on_watch: 'Du siehst deine Freunde',
+      live_stop: 'Stopp', live_offline: 'Keine Verbindung – versuche erneut …', live_fail: 'Keine Verbindung zum Live-Server möglich.',
+      live_none: 'Noch keine Freunde online', live_friends: '📡 Freunde live', live_ago: s => s < 60 ? 'gerade eben' : s < 3600 ? 'vor ' + Math.floor(s / 60) + ' Min.' : 'vor ' + Math.floor(s / 3600) + ' Std.',
+      live_need_loc: 'Für das Teilen braucht die Karte deinen Standort.'
     },
     ru: {
       layer_street: 'Карта улиц (Esri)', layer_topo: 'Топографическая (OpenTopoMap)', layer_osm: 'OSM Германия', layer_sat: 'Спутник (Esri)',
@@ -927,7 +954,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
-      lang: 'Язык'
+      lang: 'Язык',
+      live_btn: '📡 Друзья онлайн', live_title: '📡 Видеть друзей онлайн',
+      live_sub: 'Ты и твои друзья видите местоположение друг друга. Все вводят одинаковое название группы и одинаковый пароль группы. Им шифруются координаты — сервер видит только непонятные данные.',
+      live_name: 'Твоё имя (видят друзья)', live_name_ph: 'например, Артур', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
+      live_pw: 'Пароль группы', live_share: 'Делиться моим местоположением', live_start: 'Начать',
+      live_note: 'Работает, только пока карта открыта. Если телефон заблокирован или приложение закрыто, местоположение не отправляется.',
+      live_err_name: 'Введи имя.', live_err_group: 'Введи название группы.',
+      live_connecting: 'Подключение …', live_on_share: 'Ты делишься местоположением', live_on_watch: 'Ты видишь друзей',
+      live_stop: 'Стоп', live_offline: 'Нет соединения — пробую снова …', live_fail: 'Не удалось подключиться к серверу.',
+      live_none: 'Пока никого из друзей нет онлайн', live_friends: '📡 Друзья онлайн', live_ago: s => s < 60 ? 'только что' : s < 3600 ? Math.floor(s / 60) + ' мин. назад' : Math.floor(s / 3600) + ' ч. назад',
+      live_need_loc: 'Чтобы делиться, карте нужно твоё местоположение.'
     },
     en: {
       layer_street: 'Street map (Esri)', layer_topo: 'Topographic (OpenTopoMap)', layer_osm: 'OSM Germany', layer_sat: 'Satellite (Esri)',
@@ -966,7 +1003,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
-      lang: 'Language'
+      lang: 'Language',
+      live_btn: '📡 Friends live', live_title: '📡 See friends live',
+      live_sub: 'You and your friends see each other’s location. Everyone uses the same group name and the same group password. Positions are encrypted with it – the server only sees unreadable data.',
+      live_name: 'Your name (friends see it)', live_name_ph: 'e.g. Arthur', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
+      live_pw: 'Group password', live_share: 'Share my location', live_start: 'Start',
+      live_note: 'Only while the map is open. When the phone is locked or the app is closed, your location is no longer sent.',
+      live_err_name: 'Enter a name.', live_err_group: 'Enter a group name.',
+      live_connecting: 'Connecting …', live_on_share: 'You are sharing your location live', live_on_watch: 'You are watching your friends',
+      live_stop: 'Stop', live_offline: 'No connection – retrying …', live_fail: 'Could not connect to the live server.',
+      live_none: 'No friends online yet', live_friends: '📡 Friends live', live_ago: s => s < 60 ? 'just now' : s < 3600 ? Math.floor(s / 60) + ' min ago' : Math.floor(s / 3600) + ' h ago',
+      live_need_loc: 'To share, the map needs your location.'
     }
   };
   const LANGS = [['de', 'Deutsch'], ['ru', 'Русский'], ['en', 'English']];
@@ -1235,10 +1282,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <button id="mk-export" title="${T('export_t')}">${T('export')}</button>
       <label class="imp" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
       <button id="sh-open" title="${T('share_t')}">${T('share_btn')}</button>
+      <button id="live-open">${T('live_btn')}</button>
       <span id="mk-msg"></span></div>
       <input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
       <ul id="mk-list"></ul>
-      <div id="sh-box" hidden></div>`;
+      <div id="sh-box" hidden></div>
+      <div id="live-box" hidden></div>`;
     L.DomEvent.disableClickPropagation(d);
     L.DomEvent.disableScrollPropagation(d);
     return d;
@@ -1622,6 +1671,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         meCircle.setLatLng(p).setRadius(0);
         meMarker.setTooltipContent(T('you_here') + ' <small>' + T('manual') + '</small><br><small>' + fmt(p) + '</small>');
         locBtn.classList.add('manual');
+        liveOnPos(p, 0);
         toast(T('loc_set'));
       });
     } else {
@@ -1638,6 +1688,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (best && acc > best.acc * 1.5 && now - best.t < 30000) return;
     best = { acc, t: now };
     drawMe(ll, acc);
+    liveOnPos(ll, acc);
     locBtn.classList.add('on');
     if (firstFix) {
       firstFix = false;
@@ -1712,6 +1763,181 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (choice === 'ja') startLocating();
     else if (choice !== 'nein') askFirst();
   })();
+  // =====================================================================
+  // Freunde live: Standort über öffentlichen MQTT-Server, Ende-zu-Ende verschlüsselt
+  // (AES-256-GCM, Schlüssel + Kanal aus Gruppenname + Passwort via PBKDF2)
+  // =====================================================================
+  const LIVE_KEY = 'gmh-live';
+  const BROKERS = ['wss://broker.hivemq.com:8884/mqtt', 'wss://broker.emqx.io:8084/mqtt', 'wss://test.mosquitto.org:8081/mqtt'];
+  const FRIEND_COLORS = ['#e65100', '#6a1b9a', '#2e7d32', '#c2185b', '#00838f', '#5d4037', '#ad1457', '#283593'];
+  let live = null;           // { name, group, share, key, topic, client, me }
+  let liveLast = null, liveLastSent = 0;
+  const friends = new Map(); // id -> { name, lat, lng, acc, t, marker }
+  const liveBox = document.getElementById('live-box');
+  let myLiveId = null; try { myLiveId = localStorage.getItem('gmh-live-id'); } catch (x) {}
+  if (!myLiveId) { myLiveId = Array.from(crypto.getRandomValues(new Uint8Array(8)), b => b.toString(16).padStart(2, '0')).join(''); try { localStorage.setItem('gmh-live-id', myLiveId); } catch (x) {} }
+
+  async function liveKeys(group, pw) {
+    const base = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']);
+    const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode('karte-gmh-live-v1|' + group.trim().toLowerCase()), iterations: 200000 }, base, 512));
+    const key = await crypto.subtle.importKey('raw', bits.slice(0, 32), 'AES-GCM', false, ['encrypt', 'decrypt']);
+    const topic = Array.from(bits.slice(32, 48), b => b.toString(16).padStart(2, '0')).join('');
+    return { key, topic };
+  }
+  async function liveEncrypt(obj) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, live.key, enc.encode(JSON.stringify(obj))));
+    const out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12); return out;
+  }
+  async function liveDecrypt(buf) {
+    const u = new Uint8Array(buf);
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: u.slice(0, 12) }, live.key, u.slice(12));
+    return JSON.parse(dec.decode(pt));
+  }
+  const colorFor = s => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return FRIEND_COLORS[x % FRIEND_COLORS.length]; };
+  function friendIcon(name, stale) {
+    const ini = esc((name || '?').trim().charAt(0).toUpperCase() || '?');
+    return L.divIcon({ className: 'fr-icon' + (stale ? ' stale' : ''), iconSize: [34, 34], iconAnchor: [17, 17], tooltipAnchor: [0, -18],
+      html: `<span class="fr-dot" style="background:${colorFor(name || '?')}">${ini}</span>` });
+  }
+  let mqttLoading = null;
+  const loadMqtt = () => mqttLoading || (mqttLoading = new Promise((res, rej) => {
+    if (window.mqtt) return res(); const s = document.createElement('script'); s.src = 'mqtt.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  }));
+
+  function liveSend(force) {
+    if (!live || !live.share || !live.client || !live.client.connected) return;
+    const ll = meMarker ? meMarker.getLatLng() : null; if (!ll) return;
+    const now = Date.now();
+    const moved = !liveLast || ll.distanceTo(liveLast) > 8;
+    if (!force && !moved && now - liveLastSent < 45000) return;
+    if (!force && now - liveLastSent < 4000) return;
+    liveLast = ll; liveLastSent = now;
+    liveEncrypt({ id: myLiveId, name: live.name, lat: +ll.lat.toFixed(6), lng: +ll.lng.toFixed(6), acc: Math.round(meCircle ? meCircle.getRadius() : 0), t: now })
+      .then(payload => live.client.publish(`karte-gmh/${live.topic}/${myLiveId}`, payload, { qos: 0, retain: true }));
+  }
+  function liveOnPos() { liveSend(false); }
+
+  function onFriend(id, obj) {
+    if (id === myLiveId) return;
+    let f = friends.get(id);
+    if (!obj) { if (f) { map.removeLayer(f.marker); friends.delete(id); renderLive(); } return; }
+    if (Date.now() - obj.t > 6 * 3600 * 1000) return;   // älter als 6 Std. ignorieren
+    if (!f) {
+      f = { marker: L.marker([obj.lat, obj.lng], { icon: friendIcon(obj.name), zIndexOffset: 900, keyboard: false }).addTo(map) };
+      f.marker.bindTooltip('', { permanent: true, direction: 'top', className: 'name-tip fr-tip' });
+      f.marker.on('click', () => map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }));
+      friends.set(id, f);
+    }
+    Object.assign(f, obj);
+    f.marker.setLatLng([obj.lat, obj.lng]);
+    renderLive();
+  }
+  function friendLabel(f) { return esc(f.name || '?') + ' <small>· ' + T('live_ago', Math.max(0, Math.round((Date.now() - f.t) / 1000))) + '</small>'; }
+
+  function renderLive() {
+    if (!live) { liveBox.hidden = true; liveBox.innerHTML = ''; return; }
+    liveBox.hidden = false;
+    const st = !live.client || live.status === 'connecting' ? T('live_connecting') : live.status === 'offline' ? T('live_offline') : live.share ? T('live_on_share') : T('live_on_watch');
+    const list = [...friends.entries()].sort((a, b) => b[1].t - a[1].t);
+    liveBox.innerHTML = `<div class="sh-title"><b>${T('live_friends')}</b><button type="button" id="live-stop">${T('live_stop')}</button></div>
+      <div class="live-st ${live.status === 'ok' ? (live.share ? 'share' : 'watch') : 'wait'}"><span class="live-dot"></span>${esc(st)}</div>
+      <ul class="sh-list">${list.map(([id, f]) => `<li data-id="${id}"><span class="dot" style="background:${colorFor(f.name || '?')}"></span><span class="nm">${friendLabel(f)}</span></li>`).join('') || `<li class="mk-empty">${T('live_none')}</li>`}</ul>`;
+    liveBox.querySelectorAll('li[data-id]').forEach(li => li.onclick = () => { const f = friends.get(li.dataset.id); map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); });
+    document.getElementById('live-stop').onclick = liveStop;
+    friends.forEach(f => {
+      const stale = Date.now() - f.t > 10 * 60 * 1000;
+      f.marker.setIcon(friendIcon(f.name, stale));
+      f.marker.setTooltipContent(friendLabel(f));
+    });
+  }
+  setInterval(() => { if (live) renderLive(); }, 30000);
+
+  async function liveStart(cfg) {
+    live = { ...cfg, status: 'connecting' };
+    renderLive();
+    try {
+      const k = await liveKeys(cfg.group, cfg.pw);
+      live.key = k.key; live.topic = k.topic;
+      await loadMqtt();
+    } catch (e) { toast(T('live_fail')); liveStop(); return; }
+    let bi = 0;
+    const connect = () => {
+      const c = mqtt.connect(BROKERS[bi], { clientId: 'gmh_' + myLiveId + '_' + Math.random().toString(16).slice(2, 6), reconnectPeriod: 4000, connectTimeout: 8000, clean: true,
+        will: { topic: `karte-gmh/${live.topic}/${myLiveId}`, payload: new Uint8Array(0), qos: 0, retain: false } });
+      live.client = c;
+      let everOk = false;
+      c.on('connect', () => {
+        everOk = true; live.status = 'ok';
+        c.subscribe(`karte-gmh/${live.topic}/+`);
+        liveSend(true); renderLive();
+      });
+      c.on('message', async (topic, payload) => {
+        const id = topic.split('/').pop();
+        if (!payload || !payload.length) { onFriend(id, null); return; }
+        try { onFriend(id, await liveDecrypt(payload)); } catch (e) { /* falsches Passwort / fremde Daten */ }
+      });
+      c.on('offline', () => { if (live) { live.status = 'offline'; renderLive(); } });
+      c.on('error', () => {});
+      c.on('close', () => {
+        if (live && !everOk && bi < BROKERS.length - 1 && live.client === c) { c.end(true); bi++; connect(); }
+      });
+    };
+    connect();
+    if (cfg.share) {
+      if (!meMarker) { toast(T('live_need_loc')); startLocating(); }
+    }
+    try { localStorage.setItem(LIVE_KEY, JSON.stringify({ name: cfg.name, group: cfg.group, pw: cfg.pw, share: cfg.share, on: true })); } catch (x) {}
+  }
+  function liveStop() {
+    if (live && live.client) {
+      const c = live.client;
+      if (c.connected) c.publish(`karte-gmh/${live.topic}/${myLiveId}`, new Uint8Array(0), { qos: 0, retain: true }, () => c.end());
+      else c.end(true);
+    }
+    friends.forEach(f => map.removeLayer(f.marker)); friends.clear();
+    live = null; liveLast = null;
+    try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s) { s.on = false; localStorage.setItem(LIVE_KEY, JSON.stringify(s)); } } catch (x) {}
+    renderLive();
+  }
+  addEventListener('pagehide', () => { if (live && live.client && live.client.connected) live.client.end(true); });
+  setInterval(() => liveSend(false), 50000);
+
+  document.getElementById('live-open').onclick = () => {
+    let saved = {}; try { saved = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (x) {}
+    const ov = document.createElement('div'); ov.className = 'dlg-ov';
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="live-title">
+      <h2 id="live-title">${T('live_title')}</h2>
+      <p class="dlg-sub">${T('live_sub')}</p>
+      <label class="sh-lbl" for="lv-name">${T('live_name')}</label>
+      <input type="text" id="lv-name" maxlength="24" placeholder="${T('live_name_ph')}" value="${esc(saved.name || '')}">
+      <label class="sh-lbl" for="lv-group">${T('live_group')}</label>
+      <input type="text" id="lv-group" maxlength="40" autocapitalize="off" placeholder="${T('live_group_ph')}" value="${esc(saved.group || '')}">
+      <label class="sh-lbl" for="lv-pw">${T('live_pw')}</label>
+      <input type="password" id="lv-pw" autocomplete="off" placeholder="${T('pw_ph')}" value="${esc(saved.pw || '')}">
+      <label class="sh-chk" style="margin-top:10px"><input type="checkbox" id="lv-share" ${saved.share === false ? '' : 'checked'}> ${T('live_share')}</label>
+      <p class="live-note">${T('live_note')}</p>
+      <div id="lv-err" class="sh-err"></div>
+      <div class="dlg-btns"><button type="button" id="lv-cancel">${T('cancel')}</button><button type="button" id="lv-go" class="primary">${T('live_start')}</button></div>
+    </div>`;
+    document.body.appendChild(ov);
+    const $ = s => ov.querySelector(s);
+    $('#lv-cancel').onclick = () => ov.remove();
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
+    ov.addEventListener('input', () => { $('#lv-err').textContent = ''; });
+    setTimeout(() => $(saved.name ? '#lv-pw' : '#lv-name').focus(), 50);
+    $('#lv-go').onclick = () => {
+      const name = $('#lv-name').value.trim(), group = $('#lv-group').value.trim(), pw = $('#lv-pw').value, err = $('#lv-err');
+      if (!name) { err.textContent = T('live_err_name'); return; }
+      if (!group) { err.textContent = T('live_err_group'); return; }
+      if (pw.length < 7) { err.textContent = T('err_short'); return; }
+      ov.remove();
+      if (live) liveStop();
+      liveStart({ name, group, pw, share: $('#lv-share').checked });
+    };
+  };
+  // War Live beim letzten Mal an? Dann wieder verbinden.
+  try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s && s.on && s.name && s.group && s.pw) liveStart(s); } catch (x) {}
 </script>
 </body>
 </html>
