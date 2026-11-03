@@ -713,10 +713,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   /* Mein Standort: blauer Punkt mit weißem Rand */
   .me-icon { background: none; border: none; }
   .me-dot { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; box-sizing: border-box;
-    border-radius: 50%; background: #1a73e8; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.45); }
+    border-radius: 50%; background: var(--me, #1a73e8); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.45); }
   .me-pulse { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%;
-    background: rgba(26,115,232,.45); animation: me-pulse 2s ease-out infinite; }
-  @keyframes me-pulse { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(3.2); opacity: 0; } }
+    background: var(--me, #1a73e8); animation: me-pulse 2s ease-out infinite; }
+  @keyframes me-pulse { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(3.2); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .me-pulse { animation: none; opacity: 0; } }
   #loc-btn { display: flex; align-items: center; justify-content: center; color: #555; }
   #loc-btn.on { color: #1a73e8; }
@@ -827,6 +827,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .live-note { font-size: 12.5px; color: #6b4e00; background: #fff8e1; border-radius: 6px; padding: 7px 9px; margin: 6px 0 0; }
   .dlg input[type=text] { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 15px; margin-top: 3px; }
   .fr-icon { background: none; border: none; }
+  .live-me { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-top: 5px; }
+  .live-me .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.3); flex: none; }
+  .live-me b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .live-me button { margin-left: auto; padding: 2px 8px; border: 1px solid #bbb; border-radius: 5px; background: #f4f4f4; cursor: pointer; font: inherit; font-size: 12px; }
+  .lv-colors { align-items: center; margin-top: 4px; }
+  .lv-prev { margin-left: 6px; display: inline-flex; align-items: center; }
+  .fr-reset { padding: 3px 9px; border: 1px solid #bbb; border-radius: 5px; background: #f4f4f4; cursor: pointer; font: inherit; font-size: 12px; }
   .fr-dot { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 2px; box-sizing: border-box;
     border-radius: 50%; border: 3px solid #fff; color: #fff; font: 700 14px system-ui, sans-serif; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
   .fr-icon.stale .fr-dot { filter: grayscale(1); opacity: .65; }
@@ -908,10 +915,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       lang: 'Sprache',
       live_btn: '📡 Freunde live', live_title: '📡 Freunde live sehen',
       live_sub: 'Du und deine Freunde seht gegenseitig euren Standort. Alle nehmen denselben Gruppennamen und dasselbe Gruppen-Passwort. Die Positionen werden damit verschlüsselt – der Server sieht nur unlesbare Daten.',
-      live_name: 'Dein Name (sehen die Freunde)', live_name_ph: 'z. B. Arthur', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
+      live_name: 'Benutzername (sehen deine Freunde)', live_name_ph: 'z. B. arthur_gmh', live_color: 'Farbe deines Standorts', live_you: 'Du', live_edit: 'Ändern', fr_color: 'Farbe für diesen Freund (nur bei dir)', fr_reset: 'Seine Farbe', live_name_hint: '3–20 Zeichen: Buchstaben, Zahlen, _ - .', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
       live_pw: 'Gruppen-Passwort', live_share: 'Meinen Standort teilen', live_start: 'Starten',
       live_note: 'Nur solange die Karte offen ist. Ist das Handy gesperrt oder die App geschlossen, wird dein Standort nicht mehr gesendet.',
-      live_err_name: 'Gib einen Namen ein.', live_err_group: 'Gib einen Gruppennamen ein.',
+      live_err_name: 'Denk dir einen Benutzernamen aus (3–20 Zeichen: Buchstaben, Zahlen, _ - .).', live_err_group: 'Gib einen Gruppennamen ein.',
       live_connecting: 'Verbinde …', live_on_share: 'Du teilst deinen Standort live', live_on_watch: 'Du siehst deine Freunde',
       live_stop: 'Stopp', live_offline: 'Keine Verbindung – versuche erneut …', live_fail: 'Keine Verbindung zum Live-Server möglich.',
       live_none: 'Noch keine Freunde online', live_friends: '📡 Freunde live', live_ago: s => s < 60 ? 'gerade eben' : s < 3600 ? 'vor ' + Math.floor(s / 60) + ' Min.' : 'vor ' + Math.floor(s / 3600) + ' Std.',
@@ -957,10 +964,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       lang: 'Язык',
       live_btn: '📡 Друзья онлайн', live_title: '📡 Видеть друзей онлайн',
       live_sub: 'Ты и твои друзья видите местоположение друг друга. Все вводят одинаковое название группы и одинаковый пароль группы. Им шифруются координаты — сервер видит только непонятные данные.',
-      live_name: 'Твоё имя (видят друзья)', live_name_ph: 'например, Артур', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
+      live_name: 'Имя пользователя (видят друзья)', live_name_ph: 'например, artur_gmh', live_color: 'Цвет твоей точки', live_you: 'Ты', live_edit: 'Изменить', fr_color: 'Цвет этого друга (только у тебя)', fr_reset: 'Его цвет', live_name_hint: '3–20 символов: буквы, цифры, _ - .', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
       live_pw: 'Пароль группы', live_share: 'Делиться моим местоположением', live_start: 'Начать',
       live_note: 'Работает, только пока карта открыта. Если телефон заблокирован или приложение закрыто, местоположение не отправляется.',
-      live_err_name: 'Введи имя.', live_err_group: 'Введи название группы.',
+      live_err_name: 'Придумай имя пользователя (3–20 символов: буквы, цифры, _ - .).', live_err_group: 'Введи название группы.',
       live_connecting: 'Подключение …', live_on_share: 'Ты делишься местоположением', live_on_watch: 'Ты видишь друзей',
       live_stop: 'Стоп', live_offline: 'Нет соединения — пробую снова …', live_fail: 'Не удалось подключиться к серверу.',
       live_none: 'Пока никого из друзей нет онлайн', live_friends: '📡 Друзья онлайн', live_ago: s => s < 60 ? 'только что' : s < 3600 ? Math.floor(s / 60) + ' мин. назад' : Math.floor(s / 3600) + ' ч. назад',
@@ -1006,10 +1013,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       lang: 'Language',
       live_btn: '📡 Friends live', live_title: '📡 See friends live',
       live_sub: 'You and your friends see each other’s location. Everyone uses the same group name and the same group password. Positions are encrypted with it – the server only sees unreadable data.',
-      live_name: 'Your name (friends see it)', live_name_ph: 'e.g. Arthur', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
+      live_name: 'Username (your friends see it)', live_name_ph: 'e.g. arthur_gmh', live_color: 'Your location colour', live_you: 'You', live_edit: 'Edit', fr_color: 'Colour for this friend (only for you)', fr_reset: 'Their colour', live_name_hint: '3–20 characters: letters, numbers, _ - .', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
       live_pw: 'Group password', live_share: 'Share my location', live_start: 'Start',
       live_note: 'Only while the map is open. When the phone is locked or the app is closed, your location is no longer sent.',
-      live_err_name: 'Enter a name.', live_err_group: 'Enter a group name.',
+      live_err_name: 'Make up a username (3–20 characters: letters, numbers, _ - .).', live_err_group: 'Enter a group name.',
       live_connecting: 'Connecting …', live_on_share: 'You are sharing your location live', live_on_watch: 'You are watching your friends',
       live_stop: 'Stop', live_offline: 'No connection – retrying …', live_fail: 'Could not connect to the live server.',
       live_none: 'No friends online yet', live_friends: '📡 Friends live', live_ago: s => s < 60 ? 'just now' : s < 3600 ? Math.floor(s / 60) + ' min ago' : Math.floor(s / 3600) + ' h ago',
@@ -1661,7 +1668,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   let best = null, manual = false;
   function drawMe(ll, acc) {
     if (!meMarker) {
-      meCircle = L.circle(ll, { radius: acc, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
+      meCircle = L.circle(ll, { radius: acc, color: myColor(), weight: 1, fillColor: myColor(), fillOpacity: .12, interactive: false }).addTo(map);
       meMarker = L.marker(ll, { icon: meIcon, zIndexOffset: 1000, keyboard: false, draggable: true })
         .bindTooltip(T('you_here'), { direction: 'top', offset: [0, -10] }).addTo(map);
       meMarker.on('dragstart', () => meMarker.closeTooltip());
@@ -1768,6 +1775,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // (AES-256-GCM, Schlüssel + Kanal aus Gruppenname + Passwort via PBKDF2)
   // =====================================================================
   const LIVE_KEY = 'gmh-live';
+  const ME_COLORS = ['#1a73e8', '#e53935', '#fb8c00', '#43a047', '#8e24aa', '#ec407a', '#00838f', '#212121'];
+  const FR_KEY = 'gmh-friend-colors';
+  let frColors = {}; try { frColors = JSON.parse(localStorage.getItem(FR_KEY) || '{}') || {}; } catch (x) {}
+  function myColor() { try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s && /^#[0-9a-f]{6}$/i.test(s.color || '')) return s.color; } catch (x) {} return '#1a73e8'; }
+  function applyMyColor() {
+    const c = myColor();
+    document.documentElement.style.setProperty('--me', c);
+    if (meCircle) meCircle.setStyle({ color: c, fillColor: c });
+  }
+  applyMyColor();
+  const validColor = c => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c);
+  const friendColor = (id, f) => frColors[id] || (validColor(f.color) ? f.color : colorFor(f.name || '?'));
   // Alle müssen denselben Server nutzen, sonst sehen sie sich nicht – daher nur einer.
   const BROKERS = ['wss://broker.emqx.io:8084/mqtt'];
   const FRIEND_COLORS = ['#e65100', '#6a1b9a', '#2e7d32', '#c2185b', '#00838f', '#5d4037', '#ad1457', '#283593'];
@@ -1796,10 +1815,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return JSON.parse(dec.decode(pt));
   }
   const colorFor = s => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return FRIEND_COLORS[x % FRIEND_COLORS.length]; };
-  function friendIcon(name, stale) {
+  function friendIcon(name, stale, color) {
     const ini = esc((name || '?').trim().charAt(0).toUpperCase() || '?');
     return L.divIcon({ className: 'fr-icon' + (stale ? ' stale' : ''), iconSize: [34, 34], iconAnchor: [17, 17], tooltipAnchor: [0, -18],
-      html: `<span class="fr-dot" style="background:${colorFor(name || '?')}">${ini}</span>` });
+      html: `<span class="fr-dot" style="background:${color || colorFor(name || '?')}">${ini}</span>` });
   }
   let mqttLoading = null;
   const loadMqtt = () => mqttLoading || (mqttLoading = new Promise((res, rej) => {
@@ -1814,7 +1833,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (!force && !moved && now - liveLastSent < 45000) return;
     if (!force && now - liveLastSent < 4000) return;
     liveLast = ll; liveLastSent = now;
-    liveEncrypt({ id: myLiveId, name: live.name, lat: +ll.lat.toFixed(6), lng: +ll.lng.toFixed(6), acc: Math.round(meCircle ? meCircle.getRadius() : 0), t: now })
+    liveEncrypt({ id: myLiveId, name: live.name, color: myColor(), lat: +ll.lat.toFixed(6), lng: +ll.lng.toFixed(6), acc: Math.round(meCircle ? meCircle.getRadius() : 0), t: now })
       .then(payload => live.client.publish(`karte-gmh/${live.topic}/${myLiveId}`, payload, { qos: 0, retain: true }));
   }
   function liveOnPos() { liveSend(false); }
@@ -1827,7 +1846,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (!f) {
       f = { marker: L.marker([obj.lat, obj.lng], { icon: friendIcon(obj.name), zIndexOffset: 900, keyboard: false }).addTo(map) };
       f.marker.bindTooltip('', { permanent: true, direction: 'top', className: 'name-tip fr-tip' });
-      f.marker.on('click', () => map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }));
+      f.marker.bindPopup(() => `<div class="mk-pop"><b class="sh-name">${esc(f.name || '?')}</b>
+        <div class="lbl">${T('fr_color')}</div>
+        <div class="swatches">${ME_COLORS.map(c => `<button class="sw${c === friendColor(id, f) ? ' on' : ''}" data-fc="${c}" style="background:${c}" title="${c}"></button>`).join('')}</div>
+        ${frColors[id] ? `<button type="button" class="fr-reset" data-fc="">${T('fr_reset')}</button>` : ''}</div>`, { minWidth: 200 });
+      f.marker.on('popupopen', ev => {
+        ev.popup.getElement().onclick = e => {
+          const c = e.target.dataset.fc; if (c === undefined) return;
+          if (c) frColors[id] = c; else delete frColors[id];
+          try { localStorage.setItem(FR_KEY, JSON.stringify(frColors)); } catch (x) {}
+          e.stopPropagation(); renderLive(); f.marker.getPopup().update();
+        };
+      });
       friends.set(id, f);
     }
     Object.assign(f, obj);
@@ -1842,13 +1872,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const st = !live.client || live.status === 'connecting' ? T('live_connecting') : live.status === 'offline' ? T('live_offline') : live.share ? T('live_on_share') : T('live_on_watch');
     const list = [...friends.entries()].sort((a, b) => b[1].t - a[1].t);
     liveBox.innerHTML = `<div class="sh-title"><b>${T('live_friends')}</b><button type="button" id="live-stop">${T('live_stop')}</button></div>
+      <div class="live-me"><span class="dot" style="background:${myColor()}"></span>${T('live_you')}: <b>${esc(live.name)}</b><button type="button" id="live-me-edit">${T('live_edit')}</button></div>
       <div class="live-st ${live.status === 'ok' ? (live.share ? 'share' : 'watch') : 'wait'}"><span class="live-dot"></span>${esc(st)}</div>
-      <ul class="sh-list">${list.map(([id, f]) => `<li data-id="${id}"><span class="dot" style="background:${colorFor(f.name || '?')}"></span><span class="nm">${friendLabel(f)}</span></li>`).join('') || `<li class="mk-empty">${T('live_none')}</li>`}</ul>`;
-    liveBox.querySelectorAll('li[data-id]').forEach(li => li.onclick = () => { const f = friends.get(li.dataset.id); map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); });
+      <ul class="sh-list">${list.map(([id, f]) => `<li data-id="${id}"><span class="dot" style="background:${friendColor(id, f)}"></span><span class="nm">${friendLabel(f)}</span></li>`).join('') || `<li class="mk-empty">${T('live_none')}</li>`}</ul>`;
+    liveBox.querySelectorAll('li[data-id]').forEach(li => li.onclick = () => { const f = friends.get(li.dataset.id); map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); map.once('moveend', () => f.marker.openPopup()); });
+    document.getElementById('live-me-edit').onclick = () => document.getElementById('live-open').click();
     document.getElementById('live-stop').onclick = liveStop;
-    friends.forEach(f => {
+    friends.forEach((f, id) => {
       const stale = Date.now() - f.t > 10 * 60 * 1000;
-      f.marker.setIcon(friendIcon(f.name, stale));
+      f.marker.setIcon(friendIcon(f.name, stale, friendColor(id, f)));
       f.marker.setTooltipContent(friendLabel(f));
     });
   }
@@ -1888,7 +1920,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (cfg.share) {
       if (!meMarker) { toast(T('live_need_loc')); startLocating(); }
     }
-    try { localStorage.setItem(LIVE_KEY, JSON.stringify({ name: cfg.name, group: cfg.group, pw: cfg.pw, share: cfg.share, on: true })); } catch (x) {}
+    try { localStorage.setItem(LIVE_KEY, JSON.stringify({ name: cfg.name, color: cfg.color, group: cfg.group, pw: cfg.pw, share: cfg.share, on: true })); } catch (x) {}
   }
   function liveStop() {
     if (live && live.client) {
@@ -1911,7 +1943,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <h2 id="live-title">${T('live_title')}</h2>
       <p class="dlg-sub">${T('live_sub')}</p>
       <label class="sh-lbl" for="lv-name">${T('live_name')}</label>
-      <input type="text" id="lv-name" maxlength="24" placeholder="${T('live_name_ph')}" value="${esc(saved.name || '')}">
+      <input type="text" id="lv-name" maxlength="20" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="${T('live_name_ph')}" value="${esc(saved.name || '')}">
+      <div class="sh-hint">${T('live_name_hint')}</div>
+      <div class="sh-lbl">${T('live_color')}</div>
+      <div class="swatches lv-colors">${ME_COLORS.map(c => `<button type="button" class="sw${c === (saved.color || ME_COLORS[0]) ? ' on' : ''}" data-mc="${c}" style="background:${c}" title="${c}"></button>`).join('')}
+        <span class="lv-prev"><span class="me-dot" style="position:static;display:inline-block;background:${saved.color || ME_COLORS[0]}"></span></span></div>
       <label class="sh-lbl" for="lv-group">${T('live_group')}</label>
       <input type="text" id="lv-group" maxlength="40" autocapitalize="off" placeholder="${T('live_group_ph')}" value="${esc(saved.group || '')}">
       <label class="sh-lbl" for="lv-pw">${T('live_pw')}</label>
@@ -1924,17 +1960,32 @@ svg.leaflet-image-layer.leaflet-interactive path {
     document.body.appendChild(ov);
     const $ = s => ov.querySelector(s);
     $('#lv-cancel').onclick = () => ov.remove();
+    let pick = saved.color || ME_COLORS[0];
+    ov.querySelectorAll('[data-mc]').forEach(b => b.onclick = () => {
+      pick = b.dataset.mc;
+      ov.querySelectorAll('[data-mc]').forEach(x => x.classList.toggle('on', x === b));
+      ov.querySelector('.lv-prev .me-dot').style.background = pick;
+    });
     ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
     ov.addEventListener('input', () => { $('#lv-err').textContent = ''; });
     setTimeout(() => $(saved.name ? '#lv-pw' : '#lv-name').focus(), 50);
     $('#lv-go').onclick = () => {
       const name = $('#lv-name').value.trim(), group = $('#lv-group').value.trim(), pw = $('#lv-pw').value, err = $('#lv-err');
-      if (!name) { err.textContent = T('live_err_name'); return; }
+      if (!/^[\p{L}\p{N}_.-]{3,20}$/u.test(name)) { err.textContent = T('live_err_name'); return; }
       if (!group) { err.textContent = T('live_err_group'); return; }
       if (pw.length < 7) { err.textContent = T('err_short'); return; }
       ov.remove();
+      const share = $('#lv-share').checked;
+      // Nur Name/Farbe geändert, gleiche Gruppe: ohne Neuverbinden übernehmen
+      if (live && live.group === group && live.pw === pw && live.share === share) {
+        live.name = name; live.color = pick;
+        try { localStorage.setItem(LIVE_KEY, JSON.stringify({ name, color: pick, group, pw, share, on: true })); } catch (x) {}
+        applyMyColor(); liveSend(true); renderLive(); return;
+      }
       if (live) liveStop();
-      liveStart({ name, group, pw, share: $('#lv-share').checked });
+      try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; s.color = pick; localStorage.setItem(LIVE_KEY, JSON.stringify(s)); } catch (x) {}
+      applyMyColor();
+      liveStart({ name, color: pick, group, pw, share });
     };
   };
   // War Live beim letzten Mal an? Dann wieder verbinden.
