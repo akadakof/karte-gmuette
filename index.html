@@ -895,6 +895,26 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .live-me button { margin-left: auto; padding: 2px 8px; border: 1px solid #bbb; border-radius: 5px; background: #f4f4f4; cursor: pointer; font: inherit; font-size: 12px; }
   .lv-colors { align-items: center; margin-top: 4px; }
   .lv-prev { margin-left: 6px; display: inline-flex; align-items: center; }
+  /* ---- Profilbild ---- */
+  .av { display: inline-block; flex: none; width: 22px; height: 22px; border-radius: 50%; background: #dfe5e1 center / cover no-repeat;
+    border: 2px solid #fff; box-shadow: 0 0 0 2px var(--ring, #1a73e8); box-sizing: border-box; }
+  .av-row { display: flex; align-items: center; gap: 14px; margin: 6px 0 2px; }
+  .av.av-big { width: 64px; height: 64px; border-width: 3px; box-shadow: 0 0 0 3px var(--ring, #1a73e8), 0 2px 8px rgba(0,0,0,.2);
+    display: flex; align-items: center; justify-content: center; font: 800 26px var(--font, system-ui); color: #fff; }
+  .av.av-big.empty { background: var(--ring, #1a73e8); }
+  .av-btns { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .av-pick, #lv-av-rm { border: none; border-radius: 10px; padding: 8px 12px; background: var(--soft, #f3f5f2); font: 600 13.5px var(--font, system-ui); cursor: pointer; color: #222; }
+  .av-pick:hover { background: #e5f1eb; color: #1f6f54; }
+  #lv-av-rm { color: #c62828; padding: 5px 10px; font-size: 12.5px; }
+  #lv-av-hint.bad { color: #c62828; }
+  .fr-dot.fr-av { background: #dfe5e1 center / cover no-repeat; box-shadow: 0 0 0 2.5px var(--ring), 0 2px 6px rgba(0,0,0,.4); }
+  .fr-icon.stale .fr-dot.fr-av { filter: grayscale(1); }
+  .live-me .av, .sh-list .av { width: 20px; height: 20px; }
+  /* eigener Standort mit Profilbild */
+  html.has-avatar .me-dot { left: -5px; top: -5px; width: 32px; height: 32px; background: var(--me-img) center / cover no-repeat;
+    border: 3px solid #fff; box-shadow: 0 0 0 2.5px var(--me, #1a73e8), 0 2px 6px rgba(0,0,0,.4); }
+  html.has-avatar .me-pulse { left: -5px; top: -5px; width: 32px; height: 32px; }
+  html.has-avatar .lv-prev .me-dot { width: 18px; height: 18px; background: var(--me, #1a73e8); border-width: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.45); }
   .fr-reset { padding: 3px 9px; border: 1px solid #bbb; border-radius: 5px; background: #f4f4f4; cursor: pointer; font: inherit; font-size: 12px; }
   .fr-dot { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 2px; box-sizing: border-box;
     border-radius: 50%; border: 3px solid #fff; color: #fff; font: 700 14px system-ui, sans-serif; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
@@ -1133,7 +1153,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_round: n => 'Im Kreisverkehr die ' + n + '. Ausfahrt nehmen',
       live_btn: '📡 Freunde live', live_title: '📡 Freunde live sehen',
       live_sub: 'Du und deine Freunde seht gegenseitig euren Standort. Alle nehmen denselben Gruppennamen und dasselbe Gruppen-Passwort. Die Positionen werden damit verschlüsselt – der Server sieht nur unlesbare Daten.',
-      live_name: 'Benutzername (sehen deine Freunde)', live_name_ph: 'z. B. arthur_gmh', live_color: 'Farbe deines Standorts', live_you: 'Du', live_edit: 'Ändern', fr_color: 'Farbe für diesen Freund (nur bei dir)', fr_reset: 'Seine Farbe', live_name_hint: '3–20 Zeichen: Buchstaben, Zahlen, _ - .', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
+      live_name: 'Benutzername (sehen deine Freunde)', live_name_ph: 'z. B. arthur_gmh', live_color: 'Farbe deines Standorts', live_you: 'Du', live_edit: 'Ändern', fr_color: 'Farbe für diesen Freund (nur bei dir)', fr_reset: 'Seine Farbe', live_name_hint: '3–20 Zeichen: Buchstaben, Zahlen, _ - .', av_label: 'Profilbild', av_pick: '📷 Bild wählen', av_change: '📷 Anderes Bild', av_remove: 'Entfernen', av_hint: 'Wird quadratisch zugeschnitten, verkleinert und ohne versteckte Daten (z. B. Standort) gespeichert.', av_bad: 'Dieses Bild kann der Browser nicht lesen. Nimm ein JPG oder PNG.', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
       live_pw: 'Gruppen-Passwort', live_share: 'Meinen Standort teilen', live_share_pts: 'Meine Markierungen teilen (ohne Fotos)', fr_from: n => 'von ' + n, fr_pts: n => n + (n === 1 ? ' Markierung' : ' Markierungen'), live_start: 'Starten',
       live_note: 'Nur solange die Karte offen ist. Ist das Handy gesperrt oder die App geschlossen, wird dein Standort nicht mehr gesendet.',
       live_err_name: 'Denk dir einen Benutzernamen aus (3–20 Zeichen: Buchstaben, Zahlen, _ - .).', live_err_group: 'Gib einen Gruppennamen ein.',
@@ -1192,7 +1212,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_round: n => 'На круговом движении — ' + n + '-й съезд',
       live_btn: '📡 Друзья онлайн', live_title: '📡 Видеть друзей онлайн',
       live_sub: 'Ты и твои друзья видите местоположение друг друга. Все вводят одинаковое название группы и одинаковый пароль группы. Им шифруются координаты — сервер видит только непонятные данные.',
-      live_name: 'Имя пользователя (видят друзья)', live_name_ph: 'например, artur_gmh', live_color: 'Цвет твоей точки', live_you: 'Ты', live_edit: 'Изменить', fr_color: 'Цвет этого друга (только у тебя)', fr_reset: 'Его цвет', live_name_hint: '3–20 символов: буквы, цифры, _ - .', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
+      live_name: 'Имя пользователя (видят друзья)', live_name_ph: 'например, artur_gmh', live_color: 'Цвет твоей точки', live_you: 'Ты', live_edit: 'Изменить', fr_color: 'Цвет этого друга (только у тебя)', fr_reset: 'Его цвет', live_name_hint: '3–20 символов: буквы, цифры, _ - .', av_label: 'Фото профиля', av_pick: '📷 Выбрать фото', av_change: '📷 Другое фото', av_remove: 'Убрать', av_hint: 'Обрезается до квадрата, уменьшается и сохраняется без скрытых данных (например, координат).', av_bad: 'Браузер не может прочитать это изображение. Выбери JPG или PNG.', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
       live_pw: 'Пароль группы', live_share: 'Делиться моим местоположением', live_share_pts: 'Делиться моими метками (без фото)', fr_from: n => 'от ' + n, fr_pts: n => n + ' ' + ruN(n, 'метка', 'метки', 'меток'), live_start: 'Начать',
       live_note: 'Работает, только пока карта открыта. Если телефон заблокирован или приложение закрыто, местоположение не отправляется.',
       live_err_name: 'Придумай имя пользователя (3–20 символов: буквы, цифры, _ - .).', live_err_group: 'Введи название группы.',
@@ -1251,7 +1271,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_round: n => 'At the roundabout take exit ' + n,
       live_btn: '📡 Friends live', live_title: '📡 See friends live',
       live_sub: 'You and your friends see each other’s location. Everyone uses the same group name and the same group password. Positions are encrypted with it – the server only sees unreadable data.',
-      live_name: 'Username (your friends see it)', live_name_ph: 'e.g. arthur_gmh', live_color: 'Your location colour', live_you: 'You', live_edit: 'Edit', fr_color: 'Colour for this friend (only for you)', fr_reset: 'Their colour', live_name_hint: '3–20 characters: letters, numbers, _ - .', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
+      live_name: 'Username (your friends see it)', live_name_ph: 'e.g. arthur_gmh', live_color: 'Your location colour', live_you: 'You', live_edit: 'Edit', fr_color: 'Colour for this friend (only for you)', fr_reset: 'Their colour', live_name_hint: '3–20 characters: letters, numbers, _ - .', av_label: 'Profile picture', av_pick: '📷 Choose picture', av_change: '📷 Other picture', av_remove: 'Remove', av_hint: 'Cropped to a square, shrunk and saved without hidden data (e.g. location).', av_bad: 'The browser can\u2019t read this image. Use a JPG or PNG.', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
       live_pw: 'Group password', live_share: 'Share my location', live_share_pts: 'Share my markers (without photos)', fr_from: n => 'by ' + n, fr_pts: n => n + (n === 1 ? ' marker' : ' markers'), live_start: 'Start',
       live_note: 'Only while the map is open. When the phone is locked or the app is closed, your location is no longer sent.',
       live_err_name: 'Make up a username (3–20 characters: letters, numbers, _ - .).', live_err_group: 'Enter a group name.',
@@ -2041,9 +2061,26 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const FR_KEY = 'gmh-friend-colors';
   let frColors = {}; try { frColors = JSON.parse(localStorage.getItem(FR_KEY) || '{}') || {}; } catch (x) {}
   function myColor() { try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s && /^#[0-9a-f]{6}$/i.test(s.color || '')) return s.color; } catch (x) {} return '#1a73e8'; }
+  const AV_KEY = 'gmh-avatar';
+  const validAv = s => typeof s === 'string' && s.length < 90000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(s);
+  function myAvatar() { try { const a = localStorage.getItem(AV_KEY); return validAv(a) ? a : ''; } catch (x) { return ''; } }
+  // Bild quadratisch zuschneiden, auf 160 px verkleinern; durch das Neuzeichnen fallen EXIF/GPS-Daten weg
+  async function makeAvatar(file) {
+    let src;
+    try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) { src = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); }); }
+    const w = src.width || src.naturalWidth, hh = src.height || src.naturalHeight, s = Math.min(w, hh), N = 160;
+    const c = document.createElement('canvas'); c.width = c.height = N;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, N, N);
+    ctx.drawImage(src, (w - s) / 2, (hh - s) / 2, s, s, 0, 0, N, N);
+    if (src.close) src.close();
+    return c.toDataURL('image/jpeg', 0.82);
+  }
   function applyMyColor() {
-    const c = myColor();
+    const c = myColor(), av = myAvatar();
     document.documentElement.style.setProperty('--me', c);
+    document.documentElement.style.setProperty('--me-img', av ? `url("${av}")` : 'none');
+    document.documentElement.classList.toggle('has-avatar', !!av);
     if (meCircle) meCircle.setStyle({ color: c, fillColor: c });
   }
   applyMyColor();
@@ -2077,10 +2114,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return JSON.parse(dec.decode(pt));
   }
   const colorFor = s => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return FRIEND_COLORS[x % FRIEND_COLORS.length]; };
-  function friendIcon(name, stale, color) {
+  const avatars = new Map();   // id -> Bild (data:URL)
+  function friendIcon(name, stale, color, img) {
     const ini = esc((name || '?').trim().charAt(0).toUpperCase() || '?');
     return L.divIcon({ className: 'fr-icon' + (stale ? ' stale' : ''), iconSize: [34, 34], iconAnchor: [17, 17], tooltipAnchor: [0, -18],
-      html: `<span class="fr-dot" style="background:${color || colorFor(name || '?')}">${ini}</span>` });
+      html: img ? `<span class="fr-dot fr-av" style="--ring:${color || colorFor(name || '?')};background-image:url('${img}')"></span>`
+                : `<span class="fr-dot" style="background:${color || colorFor(name || '?')}">${ini}</span>` });
   }
   let mqttLoading = null;
   const loadMqtt = () => mqttLoading || (mqttLoading = new Promise((res, rej) => {
@@ -2134,15 +2173,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const st = !live.client || live.status === 'connecting' ? T('live_connecting') : live.status === 'offline' ? T('live_offline') : live.share ? T('live_on_share') : T('live_on_watch');
     const list = [...friends.entries()].sort((a, b) => b[1].t - a[1].t);
     liveBox.innerHTML = `<div class="sh-title"><b>${T('live_friends')}</b><button type="button" id="live-stop">${T('live_stop')}</button></div>
-      <div class="live-me"><span class="dot" style="background:${myColor()}"></span>${T('live_you')}: <b>${esc(live.name)}</b><button type="button" id="live-me-edit">${T('live_edit')}</button></div>
+      <div class="live-me">${myAvatar() ? `<span class="av" style="--ring:${myColor()};background-image:url('${myAvatar()}')"></span>` : `<span class="dot" style="background:${myColor()}"></span>`}${T('live_you')}: <b>${esc(live.name)}</b><button type="button" id="live-me-edit">${T('live_edit')}</button></div>
       <div class="live-st ${live.status === 'ok' ? (live.share ? 'share' : 'watch') : 'wait'}"><span class="live-dot"></span>${esc(st)}</div>
-      <ul class="sh-list">${list.map(([id, f]) => `<li data-id="${id}"><span class="dot" style="background:${friendColor(id, f)}"></span><span class="nm">${friendLabel(f)}</span>${friendPts.get(id) && friendPts.get(id).items.length ? `<span class="np">📍 ${friendPts.get(id).items.length}</span>` : ''}</li>`).join('') || `<li class="mk-empty">${T('live_none')}</li>`}</ul>`;
+      <ul class="sh-list">${list.map(([id, f]) => `<li data-id="${id}">${avatars.get(id) ? `<span class="av" style="--ring:${friendColor(id, f)};background-image:url('${avatars.get(id)}')"></span>` : `<span class="dot" style="background:${friendColor(id, f)}"></span>`}<span class="nm">${friendLabel(f)}</span>${friendPts.get(id) && friendPts.get(id).items.length ? `<span class="np">📍 ${friendPts.get(id).items.length}</span>` : ''}</li>`).join('') || `<li class="mk-empty">${T('live_none')}</li>`}</ul>`;
     liveBox.querySelectorAll('li[data-id]').forEach(li => li.onclick = () => { const f = friends.get(li.dataset.id); map.flyTo(f.marker.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); map.once('moveend', () => f.marker.openPopup()); });
     document.getElementById('live-me-edit').onclick = () => document.getElementById('live-open').click();
     document.getElementById('live-stop').onclick = liveStop;
     friends.forEach((f, id) => {
       const stale = Date.now() - f.t > 10 * 60 * 1000;
-      f.marker.setIcon(friendIcon(f.name, stale, friendColor(id, f)));
+      f.marker.setIcon(friendIcon(f.name, stale, friendColor(id, f), avatars.get(id)));
       f.marker.setTooltipContent(friendLabel(f));
     });
   }
@@ -2197,6 +2236,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (live) renderLive();
   }
 
+  async function liveAvSend() {
+    if (!live || !live.client || !live.client.connected) return;
+    const t = `karte-gmh/${live.topic}/${myLiveId}/a`, av = myAvatar();
+    live.client.publish(t, av ? await liveEncrypt({ id: myLiveId, img: av }) : new Uint8Array(0), { qos: 0, retain: true });
+  }
+  function onFriendAv(id, obj) {
+    if (id === myLiveId) return;
+    if (obj && validAv(obj.img)) avatars.set(id, obj.img); else avatars.delete(id);
+    if (live) renderLive();
+  }
+
   async function liveStart(cfg) {
     live = { ...cfg, status: 'connecting' };
     renderLive();
@@ -2214,14 +2264,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
       c.on('connect', () => {
         everOk = true; live.status = 'ok';
         c.subscribe(`karte-gmh/${live.topic}/#`);
-        liveSend(true); livePtsSend(); renderLive();
+        liveSend(true); livePtsSend(); liveAvSend(); renderLive();
       });
       c.on('message', async (topic, payload) => {
         const parts = topic.split('/');            // karte-gmh/<kanal>/<id>[/p]
-        const id = parts[2], isPts = parts[3] === 'p';
+        const id = parts[2], isPts = parts[3] === 'p', isAv = parts[3] === 'a';
         if (!id || parts.length > 4) return;
-        if (!payload || !payload.length) { isPts ? onFriendPts(id, null) : onFriend(id, null); return; }
-        try { const obj = await liveDecrypt(payload); isPts ? onFriendPts(id, obj) : onFriend(id, obj); } catch (e) { /* falsches Passwort / fremde Daten */ }
+        if (parts[3] && !isPts && !isAv) return;
+        if (!payload || !payload.length) { isAv ? onFriendAv(id, null) : isPts ? onFriendPts(id, null) : onFriend(id, null); return; }
+        try { const obj = await liveDecrypt(payload); isAv ? onFriendAv(id, obj) : isPts ? onFriendPts(id, obj) : onFriend(id, obj); } catch (e) { /* falsches Passwort / fremde Daten */ }
       });
       c.on('offline', () => { if (live) { live.status = 'offline'; renderLive(); } });
       c.on('error', () => {});
@@ -2240,11 +2291,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       const c = live.client;
       if (c.connected) {
         c.publish(`karte-gmh/${live.topic}/${myLiveId}/p`, new Uint8Array(0), { qos: 0, retain: true });
+        c.publish(`karte-gmh/${live.topic}/${myLiveId}/a`, new Uint8Array(0), { qos: 0, retain: true });
         c.publish(`karte-gmh/${live.topic}/${myLiveId}`, new Uint8Array(0), { qos: 0, retain: true }, () => c.end());
       } else c.end(true);
     }
     friends.forEach(f => map.removeLayer(f.marker)); friends.clear();
-    friendPts.forEach(fp => map.removeLayer(fp.layer)); friendPts.clear();
+    friendPts.forEach(fp => map.removeLayer(fp.layer)); friendPts.clear(); avatars.clear();
     live = null; liveLast = null;
     try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s) { s.on = false; localStorage.setItem(LIVE_KEY, JSON.stringify(s)); } } catch (x) {}
     renderLive();
@@ -2264,6 +2316,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div class="sh-lbl">${T('live_color')}</div>
       <div class="swatches lv-colors">${ME_COLORS.map(c => `<button type="button" class="sw${c === (saved.color || ME_COLORS[0]) ? ' on' : ''}" data-mc="${c}" style="background:${c}" title="${c}"></button>`).join('')}
         <span class="lv-prev"><span class="me-dot" style="position:static;display:inline-block;background:${saved.color || ME_COLORS[0]}"></span></span></div>
+      <div class="sh-lbl">${T('av_label')}</div>
+      <div class="av-row"><span class="av av-big" id="lv-av" style="--ring:${saved.color || ME_COLORS[0]}"></span>
+        <div class="av-btns"><label class="av-pick" tabindex="0"><span id="lv-av-txt">${myAvatar() ? T('av_change') : T('av_pick')}</span><input type="file" id="lv-av-file" accept="image/*" hidden></label>
+        <button type="button" id="lv-av-rm" ${myAvatar() ? '' : 'hidden'}>${T('av_remove')}</button></div></div>
+      <div class="sh-hint" id="lv-av-hint">${T('av_hint')}</div>
       <label class="sh-lbl" for="lv-group">${T('live_group')}</label>
       <input type="text" id="lv-group" maxlength="40" autocapitalize="off" placeholder="${T('live_group_ph')}" value="${esc(saved.group || '')}">
       <label class="sh-lbl" for="lv-pw">${T('live_pw')}</label>
@@ -2278,10 +2335,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const $ = s => ov.querySelector(s);
     $('#lv-cancel').onclick = () => ov.remove();
     let pick = saved.color || ME_COLORS[0];
+    let avPick = myAvatar();
+    const showAv = () => {
+      const el = $('#lv-av');
+      el.style.backgroundImage = avPick ? `url('${avPick}')` : '';
+      el.textContent = avPick ? '' : (($('#lv-name').value.trim() || '?').charAt(0).toUpperCase());
+      el.classList.toggle('empty', !avPick); el.style.setProperty('--ring', pick);
+      $('#lv-av-rm').hidden = !avPick; $('#lv-av-txt').textContent = avPick ? T('av_change') : T('av_pick');
+    };
+    showAv();
+    $('#lv-name').addEventListener('input', showAv);
+    $('#lv-av-file').onchange = async e => {
+      const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+      try { avPick = await makeAvatar(f); $('#lv-av-hint').textContent = T('av_hint'); $('#lv-av-hint').classList.remove('bad'); }
+      catch (x) { $('#lv-av-hint').textContent = T('av_bad'); $('#lv-av-hint').classList.add('bad'); }
+      showAv();
+    };
+    $('.av-pick').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#lv-av-file').click(); } };
+    $('#lv-av-rm').onclick = () => { avPick = ''; showAv(); };
     ov.querySelectorAll('[data-mc]').forEach(b => b.onclick = () => {
       pick = b.dataset.mc;
       ov.querySelectorAll('[data-mc]').forEach(x => x.classList.toggle('on', x === b));
       ov.querySelector('.lv-prev .me-dot').style.background = pick;
+      showAv();
     });
     ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
     ov.addEventListener('input', () => { $('#lv-err').textContent = ''; });
@@ -2292,12 +2368,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
       if (!group) { err.textContent = T('live_err_group'); return; }
       if (pw.length < 7) { err.textContent = T('err_short'); return; }
       ov.remove();
+      try { if (avPick) localStorage.setItem(AV_KEY, avPick); else localStorage.removeItem(AV_KEY); } catch (x) {}
       const share = $('#lv-share').checked, sharePts = $('#lv-pts').checked;
       // Gleiche Gruppe: Änderungen ohne Neuverbinden übernehmen
       if (live && live.group === group && live.pw === pw && live.share === share) {
         live.name = name; live.color = pick; live.sharePts = sharePts;
         try { localStorage.setItem(LIVE_KEY, JSON.stringify({ name, color: pick, group, pw, share, sharePts, on: true })); } catch (x) {}
-        applyMyColor(); liveSend(true); livePtsSend(true); renderLive(); return;
+        applyMyColor(); liveSend(true); livePtsSend(true); liveAvSend(); renderLive(); return;
       }
       if (live) liveStop();
       try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; s.color = pick; localStorage.setItem(LIVE_KEY, JSON.stringify(s)); } catch (x) {}
