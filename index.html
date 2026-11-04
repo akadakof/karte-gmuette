@@ -711,6 +711,48 @@ svg.leaflet-image-layer.leaflet-interactive path {
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .mk-panel { position: relative; min-width: 200px; }
+  /* ---- Route ---- */
+  .rt-go { display: block; width: 100%; margin: 8px 0 2px; padding: 7px 10px; border: none; border-radius: 8px; background: #1a73e8; color: #fff;
+    font: 600 13.5px system-ui, sans-serif; cursor: pointer; }
+  .rt-go:hover { background: #1765cc; }
+  #rt-panel { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 1200;
+    width: min(440px, calc(100% - 20px)); max-height: 55vh; overflow-y: auto; box-sizing: border-box; background: #fff; color: #222;
+    border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.3); padding: 10px 12px 12px; font: 14px/1.4 system-ui, sans-serif; }
+  body.rt-on .coord-box, body.rt-on .off-box { display: none; }
+  @media (max-width: 700px) { body.rt-on .mk-panel { display: none; } }
+  .rt-head { display: flex; align-items: center; gap: 8px; }
+  .rt-head > b { font-size: 15px; white-space: nowrap; }
+  .rt-modes { display: flex; gap: 4px; margin-left: auto; }
+  .rt-modes button { display: flex; align-items: center; gap: 4px; padding: 5px 9px; border: 1px solid #d0d5da; border-radius: 18px; background: #fff;
+    font: 600 12.5px system-ui, sans-serif; color: #333; cursor: pointer; }
+  .rt-modes button.on { background: #e8f0fe; border-color: #1a73e8; color: #1a5fc6; }
+  @media (max-width: 420px) { .rt-modes button span { display: none; } }
+  .rt-x { width: 30px; height: 30px; border: none; border-radius: 50%; background: #f1f3f4; cursor: pointer; font-size: 14px; flex: none; }
+  .rt-stops { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .rt-row { display: flex; align-items: center; gap: 8px; }
+  .rt-l { width: 22px; height: 22px; border-radius: 50%; background: #5f6368; color: #fff; font: 700 12px/22px system-ui, sans-serif; text-align: center; flex: none; }
+  .rt-row:first-child .rt-l { background: #1a73e8; }
+  .rt-row:nth-last-child(2) .rt-l { background: #d93025; }
+  .rt-row select { flex: 1; min-width: 0; padding: 7px 8px; border: 1px solid #ccc; border-radius: 8px; font: 14px system-ui, sans-serif; background: #fff; color: #222; }
+  .rt-sw, .rt-rm { width: 30px; height: 30px; border: 1px solid #d0d5da; border-radius: 50%; background: #fff; cursor: pointer; font-size: 15px; flex: none; }
+  .rt-sp { width: 30px; flex: none; }
+  .rt-add { align-self: flex-start; margin-left: 30px; padding: 4px 8px; border: none; background: none; color: #1a73e8; font: 600 13px system-ui, sans-serif; cursor: pointer; }
+  .rt-msg { margin-top: 10px; color: #555; font-size: 13.5px; }
+  .rt-msg.bad { color: #c62828; font-weight: 600; }
+  .rt-sum { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+  .rt-sum b { font-size: 20px; color: #188038; }
+  .rt-sum span { color: #555; }
+  .rt-sum button { margin-left: auto; border: none; background: none; color: #1a73e8; font: 600 13px system-ui, sans-serif; cursor: pointer; }
+  .rt-steps { list-style: none; margin: 8px 0 0; padding: 0; }
+  .rt-steps li { display: flex; gap: 10px; align-items: baseline; padding: 7px 4px; border-top: 1px solid #f1f1f1; cursor: pointer; border-radius: 6px; }
+  .rt-steps li:hover, .rt-steps li.on { background: #f1f6fe; }
+  .rt-steps .ar { width: 20px; text-align: center; font-size: 16px; color: #1a73e8; flex: none; }
+  .rt-steps .tx { flex: 1; min-width: 0; }
+  .rt-steps .ds { color: #777; font-size: 12.5px; white-space: nowrap; }
+  .rt-stop { background: none; border: none; }
+  .rt-stop span { display: block; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #fff; box-sizing: border-box; color: #fff;
+    font: 700 11px/18px system-ui, sans-serif; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.4); background: #5f6368; }
+  .rt-stop .st { background: #1a73e8; } .rt-stop .en { background: #d93025; }
   #mk-msg { font-size: 12px; }
   .leaflet-control-layers-toggle, .leaflet-retina .leaflet-control-layers-toggle { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 3 2 8l10 5 10-5-10-5z'/%3E%3Cpath d='m2 13 10 5 10-5'/%3E%3Cpath d='m2 17.5 10 5 10-5' opacity='.5'/%3E%3C/svg%3E") !important; background-size: 26px 26px !important; }
   #mk-more { margin-left: auto; width: 30px; height: 28px; padding: 0; border: 1px solid #bbb; border-radius: 6px; background: #f4f4f4;
@@ -927,6 +969,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
       lang: 'Sprache', menu: 'Mehr',
+      rt_menu: '🧭 Route planen', rt_title: '🧭 Route', rt_here: '🧭 Route hierher', rt_from: 'Start', rt_to: 'Ziel', rt_via: 'Zwischenstopp',
+      rt_add: '+ Zwischenstopp', rt_swap: 'Start und Ziel tauschen', rt_me: '📍 Mein Standort', rt_choose: 'Bitte wählen …',
+      rt_mine: 'Meine Markierungen', rt_shared: 'Geteilte Punkte', rt_friends: 'Markierungen von Freunden',
+      rt_foot: 'Zu Fuß', rt_bike: 'Fahrrad', rt_car: 'Auto', rt_loading: 'Route wird berechnet …', rt_wait_loc: 'Warte auf deinen Standort …',
+      rt_err: 'Keine Route gefunden. Bist du online?', rt_need2: 'Wähle Start und Ziel.', rt_steps: 'Wegbeschreibung', rt_close: 'Route schließen', rt_remove: 'Entfernen',
+      rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace('.', ',') + ' km',
+      rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' Min.' : Math.floor(s / 3600) + ' Std. ' + Math.round(s % 3600 / 60) + ' Min.',
+      rt_dir: { left: 'Links abbiegen', right: 'Rechts abbiegen', 'slight left': 'Leicht links halten', 'slight right': 'Leicht rechts halten', 'sharp left': 'Scharf links abbiegen', 'sharp right': 'Scharf rechts abbiegen', straight: 'Geradeaus weiter', uturn: 'Wenden' },
+      rt_onto: n => ' auf ' + n, rt_depart: 'Start', rt_arrive: 'Ziel erreicht', rt_arrive_via: 'Zwischenstopp erreicht', rt_continue: 'Weiter',
+      rt_round: n => 'Im Kreisverkehr die ' + n + '. Ausfahrt nehmen',
       live_btn: '📡 Freunde live', live_title: '📡 Freunde live sehen',
       live_sub: 'Du und deine Freunde seht gegenseitig euren Standort. Alle nehmen denselben Gruppennamen und dasselbe Gruppen-Passwort. Die Positionen werden damit verschlüsselt – der Server sieht nur unlesbare Daten.',
       live_name: 'Benutzername (sehen deine Freunde)', live_name_ph: 'z. B. arthur_gmh', live_color: 'Farbe deines Standorts', live_you: 'Du', live_edit: 'Ändern', fr_color: 'Farbe für diesen Freund (nur bei dir)', fr_reset: 'Seine Farbe', live_name_hint: '3–20 Zeichen: Buchstaben, Zahlen, _ - .', live_group: 'Gruppenname', live_group_ph: 'z. B. gmh-crew',
@@ -976,6 +1028,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
       lang: 'Язык', menu: 'Ещё',
+      rt_menu: '🧭 Проложить маршрут', rt_title: '🧭 Маршрут', rt_here: '🧭 Маршрут сюда', rt_from: 'Откуда', rt_to: 'Куда', rt_via: 'Промежуточная точка',
+      rt_add: '+ Промежуточная точка', rt_swap: 'Поменять местами', rt_me: '📍 Моё местоположение', rt_choose: 'Выбери …',
+      rt_mine: 'Мои метки', rt_shared: 'Общие точки', rt_friends: 'Метки друзей',
+      rt_foot: 'Пешком', rt_bike: 'Велосипед', rt_car: 'Машина', rt_loading: 'Маршрут строится …', rt_wait_loc: 'Жду твоё местоположение …',
+      rt_err: 'Маршрут не найден. Есть интернет?', rt_need2: 'Выбери начало и конец маршрута.', rt_steps: 'Пошаговый маршрут', rt_close: 'Закрыть маршрут', rt_remove: 'Убрать',
+      rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' м' : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace('.', ',') + ' км',
+      rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' мин' : Math.floor(s / 3600) + ' ч ' + Math.round(s % 3600 / 60) + ' мин',
+      rt_dir: { left: 'Поверни налево', right: 'Поверни направо', 'slight left': 'Держись левее', 'slight right': 'Держись правее', 'sharp left': 'Резко налево', 'sharp right': 'Резко направо', straight: 'Прямо', uturn: 'Развернись' },
+      rt_onto: n => ' на ' + n, rt_depart: 'Начало пути', rt_arrive: 'Ты на месте', rt_arrive_via: 'Промежуточная точка', rt_continue: 'Дальше',
+      rt_round: n => 'На круговом движении — ' + n + '-й съезд',
       live_btn: '📡 Друзья онлайн', live_title: '📡 Видеть друзей онлайн',
       live_sub: 'Ты и твои друзья видите местоположение друг друга. Все вводят одинаковое название группы и одинаковый пароль группы. Им шифруются координаты — сервер видит только непонятные данные.',
       live_name: 'Имя пользователя (видят друзья)', live_name_ph: 'например, artur_gmh', live_color: 'Цвет твоей точки', live_you: 'Ты', live_edit: 'Изменить', fr_color: 'Цвет этого друга (только у тебя)', fr_reset: 'Его цвет', live_name_hint: '3–20 символов: буквы, цифры, _ - .', live_group: 'Название группы', live_group_ph: 'например, gmh-crew',
@@ -1025,6 +1087,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
       lang: 'Language', menu: 'More',
+      rt_menu: '🧭 Plan a route', rt_title: '🧭 Route', rt_here: '🧭 Route here', rt_from: 'Start', rt_to: 'Destination', rt_via: 'Stop',
+      rt_add: '+ Add stop', rt_swap: 'Swap start and destination', rt_me: '📍 My location', rt_choose: 'Choose …',
+      rt_mine: 'My markers', rt_shared: 'Shared points', rt_friends: 'Friends’ markers',
+      rt_foot: 'Walk', rt_bike: 'Bike', rt_car: 'Car', rt_loading: 'Calculating route …', rt_wait_loc: 'Waiting for your location …',
+      rt_err: 'No route found. Are you online?', rt_need2: 'Choose a start and a destination.', rt_steps: 'Directions', rt_close: 'Close route', rt_remove: 'Remove',
+      rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(m < 10000 ? 1 : 0) + ' km',
+      rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' min' : Math.floor(s / 3600) + ' h ' + Math.round(s % 3600 / 60) + ' min',
+      rt_dir: { left: 'Turn left', right: 'Turn right', 'slight left': 'Keep left', 'slight right': 'Keep right', 'sharp left': 'Turn sharp left', 'sharp right': 'Turn sharp right', straight: 'Go straight', uturn: 'Make a U-turn' },
+      rt_onto: n => ' onto ' + n, rt_depart: 'Start', rt_arrive: 'You have arrived', rt_arrive_via: 'Stop reached', rt_continue: 'Continue',
+      rt_round: n => 'At the roundabout take exit ' + n,
       live_btn: '📡 Friends live', live_title: '📡 See friends live',
       live_sub: 'You and your friends see each other’s location. Everyone uses the same group name and the same group password. Positions are encrypted with it – the server only sees unreadable data.',
       live_name: 'Username (your friends see it)', live_name_ph: 'e.g. arthur_gmh', live_color: 'Your location colour', live_you: 'You', live_edit: 'Edit', fr_color: 'Colour for this friend (only for you)', fr_reset: 'Their colour', live_name_hint: '3–20 characters: letters, numbers, _ - .', live_group: 'Group name', live_group_ph: 'e.g. gmh-crew',
@@ -1193,6 +1265,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <div class="photo-msg"></div>
         <div class="lbl">${T('coords')}</div>
         <code>${t}</code>
+        <button type="button" class="rt-go" data-rk="m:${rid(m)}">${T('rt_here')}</button>
         <div class="row">
           <button data-a="copy">${T('copy')}</button>
           <button data-a="del">${T('del')}</button>
@@ -1308,6 +1381,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <label class="imp" role="menuitem" tabindex="0" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
         <button id="sh-open" role="menuitem" title="${T('share_t')}">${T('share_btn')}</button>
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
+        <button id="rt-open" role="menuitem">${T('rt_menu')}</button>
       </div>
       <input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
       <ul id="mk-list"></ul>
@@ -1590,6 +1664,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       mk.bindPopup(() => `<div class="mk-pop"><div class="lbl">${T('shared_point')}</div><b class="sh-name">${esc(it.name || T('point'))}</b>
         ${(it.photos || []).length ? `<div class="photos">${it.photos.map((p, j) => `<div class="ph"><img src="${p}" data-j="${j}" alt="${T('photo')}"></div>`).join('')}</div>` : ''}
         <div class="lbl">${T('coords')}</div><code>${fmt(L.latLng(it.lat, it.lng))}</code>
+        <button type="button" class="rt-go" data-rk="s:${k}">${T('rt_here')}</button>
         <div class="row"><button data-a="take">${T('take')}</button></div></div>`, { minWidth: 220, maxWidth: 300 });
       mk.on('popupopen', ev => {
         const el = ev.popup.getElement();
@@ -1938,13 +2013,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
       const layer = L.layerGroup().addTo(map);
       const ring = frColors[id] || (validColor(obj.color) ? obj.color : colorFor(obj.name || '?'));
       const ini = esc((obj.name || '?').trim().charAt(0).toUpperCase() || '?');
-      obj.items.forEach(it => {
+      obj.items.forEach((it, ix) => {
         if (typeof it.lat !== 'number' || typeof it.lng !== 'number') return;
         const col = validColor(it.color) ? it.color : '#e53935';
         const mk = L.marker([it.lat, it.lng], { icon: friendPin(col, ring, ini), zIndexOffset: -200 });
         mk.bindTooltip(esc(it.name || T('point')) + ' <small>· ' + T('fr_from', esc(obj.name || '?')) + '</small>', { permanent: true, direction: 'top', className: 'name-tip fr-pt-tip' });
         mk.bindPopup(() => `<div class="mk-pop"><div class="lbl">${T('fr_from', esc(obj.name || '?'))}</div><b class="sh-name">${esc(it.name || T('point'))}</b>
           <div class="lbl">${T('coords')}</div><code>${fmt(L.latLng(it.lat, it.lng))}</code>
+          <button type="button" class="rt-go" data-rk="f:${id}:${ix}">${T('rt_here')}</button>
           <div class="row"><button data-a="take">${T('take')}</button></div></div>`, { minWidth: 210 });
         mk.on('popupopen', ev => {
           ev.popup.getElement().querySelector('[data-a=take]').onclick = e => {
@@ -2070,6 +2146,154 @@ svg.leaflet-image-layer.leaflet-interactive path {
   };
   // War Live beim letzten Mal an? Dann wieder verbinden.
   try { const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null'); if (s && s.on && s.name && s.group && s.pw) liveStart(s); } catch (x) {}
+  // =====================================================================
+  // Route planen (wie Google Maps): OSRM-Router von FOSSGIS (routing.openstreetmap.de)
+  // =====================================================================
+  const ROUTERS = {
+    foot: ['https://routing.openstreetmap.de/routed-foot/route/v1/driving/'],
+    bike: ['https://routing.openstreetmap.de/routed-bike/route/v1/driving/'],
+    car: ['https://routing.openstreetmap.de/routed-car/route/v1/driving/', 'https://router.project-osrm.org/route/v1/driving/']
+  };
+  const RT_COLORS = { foot: '#1a73e8', bike: '#2e7d32', car: '#1a73e8' };
+  let ridN = 0;
+  function rid(m) { return m._rid || (m._rid = 'r' + (++ridN)); }
+  const rt = { open: false, stops: ['me', ''], mode: 'foot', layer: L.layerGroup().addTo(map), req: 0, res: null, showSteps: false };
+  try { const md = localStorage.getItem('gmh-rt-mode'); if (ROUTERS[md]) rt.mode = md; } catch (x) {}
+  const rtEl = document.createElement('div'); rtEl.id = 'rt-panel'; rtEl.hidden = true; document.body.appendChild(rtEl);
+  L.DomEvent.disableClickPropagation(rtEl); L.DomEvent.disableScrollPropagation(rtEl);
+
+  function rtResolve(key) {
+    if (!key) return null;
+    if (key === 'me') return meMarker ? { ll: meMarker.getLatLng(), label: T('rt_me') } : { wait: true, label: T('rt_me') };
+    const [kind, a, b] = key.split(':');
+    if (kind === 'm') { const m = markers.find(x => rid(x) === a); return m && { ll: m.getLatLng(), label: m.data.name }; }
+    if (kind === 's' && shared && shared[+a]) { const it = shared[+a]; return { ll: L.latLng(it.lat, it.lng), label: it.name || T('point') }; }
+    if (kind === 'f' && friendPts.get(a)) { const fp = friendPts.get(a), it = fp.items[+b]; return it && { ll: L.latLng(it.lat, it.lng), label: (it.name || T('point')) + ' (' + fp.name + ')' }; }
+    return null;
+  }
+  function rtOptions(sel) {
+    const o = (v, l) => `<option value="${esc(v)}"${v === sel ? ' selected' : ''}>${esc(l)}</option>`;
+    let s = o('', T('rt_choose')) + o('me', T('rt_me'));
+    if (markers.length) s += `<optgroup label="${esc(T('rt_mine'))}">` + markers.map(m => o('m:' + rid(m), m.data.name)).join('') + '</optgroup>';
+    if (shared && shared.length) s += `<optgroup label="${esc(T('rt_shared'))}">` + shared.map((it, k) => o('s:' + k, it.name || T('point'))).join('') + '</optgroup>';
+    friendPts.forEach((fp, id) => { s += `<optgroup label="${esc(T('rt_friends') + ' – ' + fp.name)}">` + fp.items.map((it, ix) => o('f:' + id + ':' + ix, it.name || T('point'))).join('') + '</optgroup>'; });
+    if (sel && !rtResolve(sel)) s += o(sel, '?');
+    return s;
+  }
+  function stepText(st, legLast, isFinal) {
+    const mv = st.maneuver || {}, nm = st.name || st.ref || '', dir = T('rt_dir');
+    const onto = nm ? T('rt_onto', nm) : '';
+    if (mv.type === 'depart') return T('rt_depart') + onto;
+    if (mv.type === 'arrive') return isFinal ? T('rt_arrive') : T('rt_arrive_via');
+    if (mv.type === 'roundabout' || mv.type === 'rotary' || mv.type === 'exit roundabout') return T('rt_round', mv.exit || 1) + onto;
+    if ((mv.type === 'continue' || mv.type === 'new name') && (!mv.modifier || mv.modifier === 'straight')) return T('rt_continue') + onto;
+    return (dir[mv.modifier] || T('rt_continue')) + onto;
+  }
+  const arrow = mod => ({ left: '↰', right: '↱', 'slight left': '↖', 'slight right': '↗', 'sharp left': '↶', 'sharp right': '↷', uturn: '↩', straight: '↑' }[mod] || '↑');
+
+  function renderRoute() {
+    if (!rt.open) { rtEl.hidden = true; document.body.classList.remove('rt-on'); return; }
+    rtEl.hidden = false; document.body.classList.add('rt-on');
+    const n = rt.stops.length;
+    const letter = i => String.fromCharCode(65 + i);
+    const r = rt.res;
+    let body = '';
+    if (rt.status === 'loading') body = `<div class="rt-msg">${T('rt_loading')}</div>`;
+    else if (rt.status === 'wait') body = `<div class="rt-msg">${T('rt_wait_loc')}</div>`;
+    else if (rt.status === 'err') body = `<div class="rt-msg bad">${T('rt_err')}</div>`;
+    else if (rt.status === 'need') body = `<div class="rt-msg">${T('rt_need2')}</div>`;
+    else if (r) {
+      const steps = [];
+      r.legs.forEach((leg, li) => leg.steps.forEach(st => {
+        if (st.maneuver.type === 'arrive' && li < r.legs.length - 1) { steps.push({ st, txt: stepText(st, true, false) }); return; }
+        if (st.maneuver.type === 'depart' && li > 0) return;
+        if (st.distance < 1 && st.maneuver.type !== 'depart' && st.maneuver.type !== 'arrive') return;
+        steps.push({ st, txt: stepText(st, false, li === r.legs.length - 1) });
+      }));
+      body = `<div class="rt-sum"><b>${T('rt_dur', r.duration)}</b><span>${T('rt_dist', r.distance)}</span>
+        <button type="button" id="rt-tgl" aria-expanded="${rt.showSteps}">${T('rt_steps')} ${rt.showSteps ? '▴' : '▾'}</button></div>
+        ${rt.showSteps ? `<ol class="rt-steps">${steps.map((s, i) => `<li data-i="${i}"><span class="ar">${s.st.maneuver.type === 'arrive' ? '⚑' : s.st.maneuver.type === 'depart' ? '●' : arrow(s.st.maneuver.modifier)}</span><span class="tx">${esc(s.txt)}</span><span class="ds">${s.st.distance >= 1 ? T('rt_dist', s.st.distance) : ''}</span></li>`).join('')}</ol>` : ''}`;
+      rt.stepList = steps;
+    }
+    rtEl.innerHTML = `<div class="rt-head"><b>${T('rt_title')}</b>
+        <div class="rt-modes" role="radiogroup">${['foot', 'bike', 'car'].map(md => `<button type="button" role="radio" aria-checked="${md === rt.mode}" data-md="${md}" class="${md === rt.mode ? 'on' : ''}" title="${T('rt_' + md)}">${{ foot: '🚶', bike: '🚲', car: '🚗' }[md]}<span>${T('rt_' + md)}</span></button>`).join('')}</div>
+        <button type="button" class="rt-x" id="rt-close" aria-label="${T('rt_close')}" title="${T('rt_close')}">✕</button></div>
+      <div class="rt-stops">${rt.stops.map((k, i) => `<div class="rt-row"><span class="rt-l">${letter(i)}</span>
+          <select data-si="${i}" aria-label="${i === 0 ? T('rt_from') : i === n - 1 ? T('rt_to') : T('rt_via')}">${rtOptions(k)}</select>
+          ${n > 2 && i > 0 && i < n - 1 ? `<button type="button" class="rt-rm" data-rm="${i}" title="${T('rt_remove')}" aria-label="${T('rt_remove')}">✕</button>` : i === 0 && n === 2 ? `<button type="button" class="rt-sw" id="rt-swap" title="${T('rt_swap')}" aria-label="${T('rt_swap')}">⇅</button>` : '<span class="rt-sp"></span>'}</div>`).join('')}
+        ${n < 6 ? `<button type="button" class="rt-add" id="rt-add">${T('rt_add')}</button>` : ''}</div>
+      ${body}`;
+    rtEl.querySelectorAll('select').forEach(s => s.onchange = () => { rt.stops[+s.dataset.si] = s.value; calcRoute(); });
+    rtEl.querySelectorAll('[data-md]').forEach(b => b.onclick = () => { rt.mode = b.dataset.md; try { localStorage.setItem('gmh-rt-mode', rt.mode); } catch (x) {} calcRoute(); });
+    rtEl.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { rt.stops.splice(+b.dataset.rm, 1); calcRoute(); });
+    const sw = document.getElementById('rt-swap'); if (sw) sw.onclick = () => { rt.stops.reverse(); calcRoute(); };
+    const add = document.getElementById('rt-add'); if (add) add.onclick = () => { rt.stops.splice(rt.stops.length - 1, 0, ''); renderRoute(); rtEl.querySelectorAll('select')[rt.stops.length - 2].focus(); };
+    document.getElementById('rt-close').onclick = closeRoute;
+    const tg = document.getElementById('rt-tgl'); if (tg) tg.onclick = () => { rt.showSteps = !rt.showSteps; renderRoute(); };
+    rtEl.querySelectorAll('.rt-steps li').forEach(li => li.onclick = () => {
+      const s = rt.stepList[+li.dataset.i].st, ll = L.latLng(s.maneuver.location[1], s.maneuver.location[0]);
+      map.flyTo(ll, Math.max(map.getZoom(), 17), { duration: .6 });
+      rtEl.querySelectorAll('.rt-steps li').forEach(x => x.classList.toggle('on', x === li));
+    });
+  }
+
+  function drawStops(pts) {
+    pts.forEach((p, i) => {
+      const last = i === pts.length - 1;
+      L.marker(p.ll, { interactive: false, keyboard: false, zIndexOffset: 1100, icon: L.divIcon({ className: 'rt-stop', iconSize: [24, 24], iconAnchor: [12, 12],
+        html: `<span class="${i === 0 ? 'st' : last ? 'en' : 'vi'}">${String.fromCharCode(65 + i)}</span>` }) }).addTo(rt.layer);
+    });
+  }
+  let waitTimer = null;
+  async function calcRoute() {
+    clearTimeout(waitTimer);
+    rt.layer.clearLayers(); rt.res = null;
+    const res = rt.stops.map(rtResolve);
+    if (res.some(x => !x)) { rt.status = 'need'; renderRoute(); return; }
+    if (res.some(x => x.wait)) {
+      rt.status = 'wait'; renderRoute();
+      if (watchId === null) startLocating();
+      waitTimer = setTimeout(calcRoute, 1500); return;
+    }
+    rt.status = 'loading'; renderRoute();
+    drawStops(res);
+    const my = ++rt.req;
+    const coords = res.map(x => x.ll.lng.toFixed(6) + ',' + x.ll.lat.toFixed(6)).join(';');
+    let data = null;
+    for (const base of ROUTERS[rt.mode]) {
+      try {
+        const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 15000);
+        const r = await fetch(base + coords + '?overview=full&geometries=geojson&steps=true', { signal: ctrl.signal });
+        clearTimeout(tm);
+        const j = await r.json();
+        if (j.code === 'Ok' && j.routes && j.routes.length) { data = j; break; }
+      } catch (e) {}
+    }
+    if (my !== rt.req) return;           // inzwischen neue Anfrage
+    if (!data) { rt.status = 'err'; renderRoute(); return; }
+    rt.status = 'ok'; rt.res = data.routes[0];
+    const line = rt.res.geometry.coordinates.map(c => [c[1], c[0]]);
+    L.polyline(line, { color: '#fff', weight: 10, opacity: .9, interactive: false }).addTo(rt.layer);
+    L.polyline(line, { color: RT_COLORS[rt.mode], weight: rt.mode === 'foot' ? 7 : 6, opacity: .95, interactive: false,
+      dashArray: rt.mode === 'foot' ? '0.1 12' : rt.mode === 'bike' ? '10 8' : null, lineCap: 'round' }).addTo(rt.layer);
+    rt.layer.eachLayer(l => l.bringToFront && l.bringToFront());
+    renderRoute();
+    const ph = rtEl.offsetHeight || 0, wide = innerWidth >= 700;
+    map.fitBounds(L.latLngBounds(line), { paddingTopLeft: [wide ? 40 : 20, 60], paddingBottomRight: [wide ? 40 : 20, ph + 30], maxZoom: 17 });
+  }
+  function openRoute(toKey, fromKey) {
+    rt.open = true;
+    if (toKey) rt.stops = [fromKey || (rt.stops[0] && rt.stops[0] !== toKey ? rt.stops[0] : 'me'), toKey];
+    if (rt.stops.length < 2) rt.stops = ['me', ''];
+    calcRoute();
+  }
+  function closeRoute() { rt.open = false; rt.req++; clearTimeout(waitTimer); rt.layer.clearLayers(); rt.res = null; renderRoute(); }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-rk]'); if (!b) return;
+    e.preventDefault(); map.closePopup(); openRoute(b.dataset.rk);
+  });
+  document.getElementById('rt-open').onclick = () => openRoute();
+  addEventListener('keydown', e => { if (e.key === 'Escape' && rt.open && !document.querySelector('.dlg-ov, #photo-view')) closeRoute(); });
 </script>
 </body>
 </html>
