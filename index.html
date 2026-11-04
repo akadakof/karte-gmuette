@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Karte Georgsmarienhütte</title>
 <link rel="manifest" href="manifest.webmanifest">
+<style>
+@font-face { font-family: 'Onest'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(fonts/onest-cyrillic-wght-normal.woff2) format('woff2-variations'), url(fonts/onest-cyrillic-wght-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+@font-face { font-family: 'Onest'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(fonts/onest-latin-ext-wght-normal.woff2) format('woff2-variations'), url(fonts/onest-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Onest'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(fonts/onest-latin-wght-normal.woff2) format('woff2-variations'), url(fonts/onest-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+</style>
+<link rel="preload" href="fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="theme-color" content="#1f6f54">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -910,6 +916,152 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .mk-panel button, .mk-panel .imp { padding: 3px 8px; cursor: pointer; border: 1px solid #aaa; border-radius: 4px; background: #f4f4f4; font: inherit; }
   #mk-msg { color: #2e7d32; }
   .lbl { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+
+  /* =====================================================================
+     Design: weiche Karten, eine Schrift, einheitliche Knöpfe
+     ===================================================================== */
+  :root {
+    --font: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Consolas, "Roboto Mono", monospace;
+    --ink: #1c2622; --muted: #6b7671; --line: #e5e8e4; --soft: #f3f5f2;
+    --brand: #1f6f54; --brand-soft: #e5f1eb; --blue: #1a73e8; --danger: #c62828;
+    --card: #ffffff; --r: 16px;
+    --shadow: 0 1px 2px rgba(20,35,28,.10), 0 6px 20px rgba(20,35,28,.13);
+  }
+  body, button, input, select, textarea, .leaflet-container { font-family: var(--font) !important; }
+  .leaflet-container { color: var(--ink); font-size: 14px; }
+  code, .coord-box, .mk-pop code { font-family: var(--mono) !important; }
+
+  /* Steuerknöpfe links (Zoom, Standort) */
+  html .leaflet-touch .leaflet-bar, html .leaflet-bar { border: none; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  html .leaflet-bar a, html .leaflet-touch .leaflet-bar a { width: 40px; height: 40px; line-height: 40px; color: var(--ink); border-bottom: 1px solid var(--line); font-weight: 500; }
+  html .leaflet-bar a:last-child { border-bottom: none; }
+  html .leaflet-bar a:hover { background: var(--soft); }
+  #loc-btn svg { width: 20px; height: 20px; }
+  #loc-btn.on { color: var(--blue); background: #eaf2fe; }
+  .leaflet-left .leaflet-control { margin-left: 12px; } .leaflet-top .leaflet-control { margin-top: 12px; }
+  .leaflet-right .leaflet-control { margin-right: 12px; }
+
+  /* Sprache */
+  html .lang-sw { border-radius: 999px; padding: 3px; gap: 2px; background: var(--card); }
+  html .lang-sw button { border: none !important; border-radius: 999px; padding: 6px 11px; font-weight: 700; font-size: 12px; color: var(--muted); background: none; letter-spacing: .03em; }
+  html .lang-sw button:hover { background: var(--soft); color: var(--ink); }
+  html .lang-sw button.on { background: var(--brand); color: #fff; }
+
+  /* Kartenauswahl */
+  html .leaflet-control-layers, html .leaflet-touch .leaflet-control-layers { border: none; border-radius: 14px; box-shadow: var(--shadow); background: var(--card); }
+  html .leaflet-control-layers-expanded { padding: 8px 10px 8px 8px; }
+  html .leaflet-control-layers label { display: flex; align-items: center; gap: 2px; padding: 5px 8px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  html .leaflet-control-layers label:hover { background: var(--soft); }
+  html .leaflet-control-layers input { accent-color: var(--brand); }
+  html .leaflet-control-layers-toggle, html .leaflet-touch .leaflet-control-layers-toggle { width: 42px; height: 42px; border-radius: 14px; }
+
+  /* Linke Leiste */
+  html .mk-panel { border-radius: var(--r); box-shadow: var(--shadow); padding: 12px; width: 280px; max-width: calc(100vw - 90px); box-sizing: border-box; font-size: 14px; }
+  .mk-top { gap: 8px; }
+  #mk-count { font-size: 15px; font-weight: 700; letter-spacing: -.01em; cursor: default; }
+  html #mk-more { width: 34px; height: 34px; border: none; border-radius: 10px; background: var(--soft); color: var(--ink); font-size: 18px; }
+  html #mk-more:hover, html #mk-more.on { background: var(--brand-soft); color: var(--brand); }
+  #mk-tgl { display: none; }
+  html #mk-search { margin-top: 10px; padding: 9px 12px 9px 34px; border: 1px solid transparent; border-radius: 11px; background: var(--soft)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7671' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center / 16px; font-size: 14px; }
+  html #mk-search:focus { outline: none; background-color: #fff; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  html #mk-list { border-top: none; margin-top: 6px; padding-top: 0; }
+  html #mk-list li, html .sh-list li { padding: 7px 8px; border-radius: 10px; gap: 10px; font-size: 14px; }
+  html #mk-list li:hover, html .sh-list li:hover { background: var(--soft); }
+  html #mk-list .dot, html .sh-list .dot { width: 14px; height: 14px; border: 2.5px solid #fff; box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.2); }
+  html #mk-list .mk-empty { color: var(--muted); font-size: 13px; line-height: 1.4; }
+  html #mk-list mark { background: #fde68a; }
+  html #sh-box, html #live-box { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 10px; }
+  html .sh-title b, html .sh-lock b { font-size: 14px; font-weight: 700; }
+  html .sh-title button, html .sh-lock button, html .live-me button { border: none; border-radius: 8px; padding: 5px 10px; background: var(--soft); font-weight: 600; font-size: 12.5px; }
+  html .sh-lock input { border: 1px solid transparent; background: var(--soft); border-radius: 10px; padding: 8px 10px; }
+  html .sh-lock input:focus { outline: none; border-color: var(--brand); background: #fff; }
+  html .sh-lock button[type=submit] { background: var(--brand); color: #fff; }
+  html #live-stop { border-radius: 8px; }
+
+  /* Drei-Punkte-Menü */
+  html #mk-menu { border-radius: 14px; padding: 6px; box-shadow: 0 12px 32px rgba(20,35,28,.22), 0 2px 6px rgba(20,35,28,.1); top: 50px; right: 8px; min-width: 240px; }
+  html #mk-menu button, html #mk-menu .imp { border-radius: 9px; padding: 10px 12px !important; font-size: 14px; font-weight: 500; }
+
+  /* Beschriftungen an Markierungen */
+  html .leaflet-tooltip.name-tip { border: none; border-radius: 999px; padding: 3px 9px; font-size: 12.5px; font-weight: 700; color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.12); }
+  html .leaflet-tooltip-top.name-tip::before { border-top-color: #fff; }
+  html .leaflet-tooltip.shared-tip { background: #eef7f2; } html .leaflet-tooltip-top.shared-tip::before { border-top-color: #eef7f2; }
+  html .leaflet-tooltip.fr-pt-tip { background: #f6f1fd; } html .leaflet-tooltip-top.fr-pt-tip::before { border-top-color: #f6f1fd; }
+
+  /* Fenster an Markierungen */
+  html .leaflet-popup-content-wrapper { border-radius: 18px; box-shadow: 0 10px 34px rgba(20,35,28,.24); padding: 2px; }
+  html .leaflet-popup-content { margin: 14px 16px 14px; font-size: 14px; line-height: 1.45; }
+  html .leaflet-popup-tip { box-shadow: none; }
+  html .leaflet-container a.leaflet-popup-close-button { top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; font: 600 18px/26px var(--font); color: var(--muted); }
+  html .leaflet-container a.leaflet-popup-close-button:hover { background: var(--soft); color: var(--ink); }
+  html .mk-pop .lbl, html .sh-lbl { font-size: 11px; font-weight: 700; letter-spacing: .07em; color: var(--muted); margin-top: 2px; }
+  html .mk-pop input[type=text] { border: 1px solid transparent; background: var(--soft); border-radius: 10px; padding: 8px 10px; font-size: 15px; font-weight: 600; margin: 4px 0 10px; }
+  html .mk-pop input[type=text]:focus { outline: none; background: #fff; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  html .swatches { gap: 7px; margin: 5px 0 10px; }
+  html .sw { width: 26px; height: 26px; border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.14); transition: transform .12s; }
+  html .sw:hover { transform: scale(1.1); }
+  html .sw.on { box-shadow: 0 0 0 2px var(--ink); }
+  html .add-photo { border: 1.5px dashed #c8cec9; border-radius: 10px; padding: 7px 12px; background: none; font-weight: 600; font-size: 13px; }
+  html .add-photo:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+  html .ph { border-radius: 10px; }
+  html .mk-pop code { display: inline-block; font-size: 12.5px; color: var(--muted); background: var(--soft); padding: 3px 7px; border-radius: 6px; margin: 2px 0; }
+  html .rt-go { border-radius: 11px; padding: 10px 12px; font-size: 14px; margin: 12px 0 6px; box-shadow: 0 2px 6px rgba(26,115,232,.3); }
+  html .mk-pop .row { gap: 6px; margin-top: 8px; align-items: center; }
+  html .mk-pop .row button { border: none; border-radius: 9px; padding: 7px 12px; background: var(--soft); font-weight: 600; font-size: 13px; color: var(--ink); }
+  html .mk-pop .row button:hover { background: #e8ebe7; }
+  html .mk-pop .row button[data-a=del] { color: var(--danger); }
+  html .mk-pop .row button[data-a=del]:hover { background: #fdecec; }
+  html .mk-pop .row a { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+  html .sh-name { font-size: 17px; font-weight: 700; }
+  html .fr-reset { border: none; border-radius: 8px; background: var(--soft); padding: 5px 10px; font-weight: 600; }
+
+  /* Kleine Infos unten */
+  html .coord-box { border-radius: 999px; padding: 5px 11px; font-size: 12px; color: var(--muted); box-shadow: var(--shadow); background: rgba(255,255,255,.95); }
+  html .off-box { border-radius: 999px; padding: 5px 11px; font-size: 12px; box-shadow: var(--shadow); }
+  html .leaflet-control-scale-line { border: 2px solid rgba(28,38,34,.55); border-top: none; background: rgba(255,255,255,.7); font-size: 10.5px; color: var(--ink); }
+  html .leaflet-control-attribution { background: rgba(255,255,255,.72); font-size: 10px; color: var(--muted); border-top-left-radius: 8px; }
+  html .leaflet-control-attribution a { color: var(--muted); }
+  html #loc-toast { border-radius: 14px; background: rgba(28,38,34,.94); padding: 11px 16px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+
+  /* Dialoge */
+  html .dlg, html .loc-card { border-radius: 22px; box-shadow: 0 20px 60px rgba(10,20,15,.35); }
+  html .dlg h2, html .loc-card h2 { font-weight: 800; letter-spacing: -.01em; }
+  html .dlg input[type=password], html .dlg input[type=text] { border: 1px solid transparent; background: var(--soft); border-radius: 11px; padding: 10px 12px; }
+  html .dlg input[type=password]:focus, html .dlg input[type=text]:focus { outline: none; background: #fff; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  html .dlg-btns button, html .sh-head button { border: none; border-radius: 11px; padding: 9px 14px; background: var(--soft); font-weight: 600; }
+  html .dlg-btns .primary { background: var(--brand); color: #fff; padding: 9px 16px; }
+  html .sh-pick { border: none; background: var(--soft); border-radius: 12px; }
+  html .loc-btns button { border-radius: 12px; font-weight: 700; border: none; background: var(--soft); }
+  html .loc-btns #loc-yes { background: var(--blue); }
+  html #loc-ask, html .dlg-ov { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+
+  /* Route */
+  html #rt-panel { border-radius: 20px; box-shadow: 0 -2px 6px rgba(20,35,28,.06), 0 12px 36px rgba(20,35,28,.26); padding: 12px 14px 14px; }
+  html .rt-head > b { font-size: 16px; font-weight: 800; }
+  html .rt-modes button { border: none; background: var(--soft); border-radius: 999px; padding: 6px 11px; font-weight: 700; }
+  html .rt-modes button.on { background: #e3edfd; color: #1557b0; box-shadow: inset 0 0 0 1.5px var(--blue); }
+  html .rt-x { background: var(--soft); }
+  html .rt-row select { border: 1px solid transparent; background-color: var(--soft); border-radius: 11px; padding: 9px 10px; font-weight: 600; }
+  html .rt-row select:focus { outline: none; border-color: var(--blue); background-color: #fff; }
+  html .rt-sw, html .rt-rm { border: none; background: var(--soft); }
+  html .rt-sum b { font-size: 22px; font-weight: 800; }
+  html .rt-steps li { border-top: 1px solid var(--line); border-radius: 0; }
+  html .rt-steps li:first-child { border-top: none; }
+
+  /* Handy: Leiste zuklappbar */
+  @media (max-width: 700px) {
+    html .mk-panel { width: auto; min-width: 0; max-width: calc(100vw - 86px); padding: 8px 8px 8px 12px; }
+    #mk-tgl { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 34px; border: none; background: none; color: var(--muted); font-size: 14px; cursor: pointer; transition: transform .15s; }
+    .mk-panel.collapsed #mk-tgl { transform: rotate(-90deg); }
+    #mk-count { cursor: pointer; }
+    .mk-panel.collapsed #mk-search, .mk-panel.collapsed #mk-list, .mk-panel.collapsed #sh-box, .mk-panel.collapsed #live-box { display: none !important; }
+    html .mk-panel:not(.collapsed) { width: 280px; }
+    html .coord-box { display: none; }
+    html .leaflet-control-attribution { max-width: 62vw; font-size: 9px; line-height: 1.3; padding: 2px 6px; }
+  }
 </style>
 </head>
 <body>
@@ -1373,7 +1525,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const panel = L.control({ position: 'topleft' });
   panel.onAdd = () => {
     const d = L.DomUtil.create('div', 'mk-panel');
-    d.innerHTML = `<div class="mk-top"><b id="mk-count">${T('count', 0)}</b>
+    d.innerHTML = `<div class="mk-top"><button type="button" id="mk-tgl" aria-label="${T('count', 0)}" aria-expanded="true">▾</button><b id="mk-count">${T('count', 0)}</b>
       <span id="mk-msg"></span>
       <button id="mk-more" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="mk-menu" title="${T('menu')}" aria-label="${T('menu')}">⋮</button></div>
       <div id="mk-menu" role="menu" hidden>
@@ -1400,6 +1552,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
   document.addEventListener('click', e => { if (!menuEl.hidden && !menuEl.contains(e.target) && e.target !== moreBtn) setMenu(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menuEl.hidden) { setMenu(false); moreBtn.focus(); } });
   map.on('movestart', () => setMenu(false));
+  // ---- Handy: Liste zuklappen ----
+  const panelEl = document.querySelector('.mk-panel');
+  const narrow = () => innerWidth <= 700;
+  const setCollapsed = c => { panelEl.classList.toggle('collapsed', c); document.getElementById('mk-tgl').setAttribute('aria-expanded', !c); try { localStorage.setItem('gmh-panel-collapsed', c ? '1' : '0'); } catch (x) {} };
+  { let s = null; try { s = localStorage.getItem('gmh-panel-collapsed'); } catch (x) {} if (narrow()) panelEl.classList.toggle('collapsed', s !== '0'); }
+  const toggleP = () => { if (narrow()) setCollapsed(!panelEl.classList.contains('collapsed')); };
+  document.getElementById('mk-tgl').onclick = toggleP;
+  document.getElementById('mk-count').onclick = toggleP;
   function updatePanel() {
     const cnt = document.getElementById('mk-count');
     if (!cnt) return;
@@ -1428,6 +1588,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       const np = (m.data.photos || []).length;
       li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${np ? `<span class="np">📷 ${np}</span>` : ''}`;
       li.onclick = () => {
+        if (innerWidth <= 700) document.querySelector('.mk-panel').classList.add('collapsed');
         map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: 0.8 });
         map.once('moveend', () => m.openPopup());
       };
