@@ -717,6 +717,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .mk-panel { position: relative; min-width: 200px; }
+  /* ---- Lieblingspunkte ---- */
+  .fav-btn { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px; padding: 5px 11px; border: 1.5px solid #e0c35a; border-radius: 999px;
+    background: #fffaf0; color: #8a6d00; font: 700 12.5px var(--font, system-ui); cursor: pointer; }
+  .fav-btn:hover { background: #fff3cc; }
+  .fav-btn.on { background: #ffd54f; border-color: #ffc107; color: #5c4600; }
+  .fav-btn.pop { animation: favpop .35s ease-out; }
+  @keyframes favpop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  .srch-row { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
+  html .srch-row #mk-search { margin-top: 0; flex: 1; min-width: 0; }
+  #mk-favf { flex: none; width: 38px; height: 38px; border: none; border-radius: 11px; background: var(--soft, #f3f5f2); color: #8a8f8b; font-size: 18px; cursor: pointer; }
+  #mk-favf:hover { color: #c79a00; }
+  #mk-favf.on { background: #ffd54f; color: #5c4600; }
+  .fav-mark { margin-left: auto; color: #f2b400; font-size: 14px; flex: none; }
+  .fav-mark + .np { margin-left: 6px; }
+  .fav-star { color: #f2b400; }
+  html .leaflet-tooltip.fav-tip { background: #fffbea; } html .leaflet-tooltip-top.fav-tip::before { border-top-color: #fffbea; }
+  @media (max-width: 700px) { .mk-panel.collapsed .srch-row { display: none !important; } }
   /* ---- Route ---- */
   .rt-go { display: block; width: 100%; margin: 8px 0 2px; padding: 7px 10px; border: none; border-radius: 8px; background: #1a73e8; color: #fff;
     font: 600 13.5px system-ui, sans-serif; cursor: pointer; }
@@ -1140,7 +1157,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
-      lang: 'Sprache', menu: 'Mehr',
+      lang: 'Sprache', menu: 'Mehr', fav_add: '☆ Zum Lieblingspunkt machen', fav_on: '★ Lieblingspunkt', fav_filter: 'Nur Lieblingspunkte zeigen', fav_none: 'Noch keine Lieblingspunkte. Tippe im Fenster einer Markierung auf ☆.',
       rt_menu: '🧭 Route planen', rt_title: '🧭 Route', rt_here: '🧭 Route hierher', rt_from: 'Start', rt_to: 'Ziel', rt_via: 'Zwischenstopp',
       rt_add: '+ Zwischenstopp', rt_swap: 'Start und Ziel tauschen', rt_me: '📍 Mein Standort', rt_choose: 'Bitte wählen …',
       rt_mine: 'Meine Markierungen', rt_shared: 'Geteilte Punkte', rt_friends: 'Markierungen von Freunden',
@@ -1199,7 +1216,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
-      lang: 'Язык', menu: 'Ещё',
+      lang: 'Язык', menu: 'Ещё', fav_add: '☆ Сделать избранной', fav_on: '★ Избранная точка', fav_filter: 'Показывать только избранные', fav_none: 'Пока нет избранных точек. Нажми ☆ в окошке метки.',
       rt_menu: '🧭 Проложить маршрут', rt_title: '🧭 Маршрут', rt_here: '🧭 Маршрут сюда', rt_from: 'Откуда', rt_to: 'Куда', rt_via: 'Промежуточная точка',
       rt_add: '+ Промежуточная точка', rt_swap: 'Поменять местами', rt_me: '📍 Моё местоположение', rt_choose: 'Выбери …',
       rt_mine: 'Мои метки', rt_shared: 'Общие точки', rt_friends: 'Метки друзей',
@@ -1258,7 +1275,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
-      lang: 'Language', menu: 'More',
+      lang: 'Language', menu: 'More', fav_add: '☆ Make favourite', fav_on: '★ Favourite', fav_filter: 'Show favourites only', fav_none: 'No favourites yet. Tap ☆ in a marker\u2019s window.',
       rt_menu: '🧭 Plan a route', rt_title: '🧭 Route', rt_here: '🧭 Route here', rt_from: 'Start', rt_to: 'Destination', rt_via: 'Stop',
       rt_add: '+ Add stop', rt_swap: 'Swap start and destination', rt_me: '📍 My location', rt_choose: 'Choose …',
       rt_mine: 'My markers', rt_shared: 'Shared points', rt_friends: 'Friends’ markers',
@@ -1347,10 +1364,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const COLORS = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#1e88e5', '#8e24aa', '#ec407a', '#6d4c41', '#212121'];
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  function pinIcon(color) {
+  function pinIcon(color, fav) {
+    const mid = fav ? '<path d="M15 7.2l2.35 4.76 5.25.77-3.8 3.7.9 5.23L15 19.2l-4.7 2.46.9-5.23-3.8-3.7 5.25-.77z" fill="#ffd54f" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>'
+                    : '<circle cx="15" cy="15" r="5.5" fill="#fff"/>';
     return L.divIcon({
-      className: 'pin', iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36], tooltipAnchor: [0, -38],
-      html: `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 41 15 41s14-15.6 14-26.1C29 7.2 22.7 1 15 1z" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`
+      className: 'pin' + (fav ? ' fav' : ''), iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36], tooltipAnchor: [0, -38],
+      html: `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 41 15 41s14-15.6 14-26.1C29 7.2 22.7 1 15 1z" fill="${color}" stroke="#fff" stroke-width="2"/>${mid}</svg>`
     });
   }
 
@@ -1404,28 +1423,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
   }
 
   function save() {
-    const data = markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos: m.data.photos || [] }));
+    const data = markers.map(m => ({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos: m.data.photos || [], fav: !!m.data.fav }));
     try { localStorage.setItem(KEY, JSON.stringify({ count, items: data })); } catch (e) {}
     updatePanel();
     if (window.__livePts) window.__livePts();   // Markierungen an Freunde schicken (falls live)
   }
   function loadAll(obj) {
-    (obj.items || []).forEach(it => createMarker(L.latLng(it.lat, it.lng), { name: it.name, color: it.color, photos: it.photos || [] }, false));
+    (obj.items || []).forEach(it => createMarker(L.latLng(it.lat, it.lng), { name: it.name, color: it.color, photos: it.photos || [], fav: !!it.fav }, false));
     count = Math.max(count, obj.count || 0, markers.length);
   }
 
   function createMarker(latlng, data, openNow) {
-    const m = L.marker(latlng, { draggable: true, icon: pinIcon(data.color) }).addTo(map);
+    const m = L.marker(latlng, { draggable: true, icon: pinIcon(data.color, data.fav), zIndexOffset: data.fav ? 400 : 0 }).addTo(map);
     m.data = data;
     markers.push(m);
 
     const refreshLabel = () => {
       m.unbindTooltip();
-      m.bindTooltip(esc(m.data.name), { permanent: true, direction: 'top', className: 'name-tip' });
+      m.bindTooltip((m.data.fav ? '<span class="fav-star">★</span> ' : '') + esc(m.data.name), { permanent: true, direction: 'top', className: 'name-tip' + (m.data.fav ? ' fav-tip' : '') });
     };
     const popupHtml = () => {
       const t = fmt(m.getLatLng());
       return `<div class="mk-pop">
+        <button type="button" class="fav-btn${m.data.fav ? ' on' : ''}" data-a="fav" aria-pressed="${!!m.data.fav}">${m.data.fav ? T('fav_on') : T('fav_add')}</button>
         <div class="lbl">${T('name')}</div>
         <input type="text" data-a="name" value="${esc(m.data.name)}" placeholder="${T('name_ph')}">
         <div class="lbl">${T('color')}</div>
@@ -1444,7 +1464,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           <a href="https://www.google.com/maps?q=${t.replace(' ', '')}" target="_blank">Google Maps</a>
         </div></div>`;
     };
-    const setColor = c => { m.data.color = c; m.setIcon(pinIcon(c)); save(); };
+    const setColor = c => { m.data.color = c; m.setIcon(pinIcon(c, m.data.fav)); save(); };
 
     m.data.photos = m.data.photos || [];
     const thumbURLs = [];
@@ -1479,6 +1499,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
       };
       el.onclick = evt => {
         const b = evt.target;
+        if (b.dataset.a === 'fav') {
+          m.data.fav = !m.data.fav;
+          m.setIcon(pinIcon(m.data.color, m.data.fav)); m.setZIndexOffset(m.data.fav ? 400 : 0);
+          b.classList.toggle('on', m.data.fav); b.setAttribute('aria-pressed', m.data.fav); b.textContent = m.data.fav ? T('fav_on') : T('fav_add');
+          if (m.data.fav) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+          refreshLabel(); save(); return;
+        }
         if (b.dataset.c) {
           setColor(b.dataset.c);
           el.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s === b));
@@ -1555,7 +1582,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
         <button id="rt-open" role="menuitem">${T('rt_menu')}</button>
       </div>
-      <input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
+      <div class="srch-row"><input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
+      <button type="button" id="mk-favf" title="${T('fav_filter')}" aria-label="${T('fav_filter')}" aria-pressed="false">☆</button></div>
       <ul id="mk-list"></ul>
       <div id="sh-box" hidden></div>
       <div id="live-box" hidden></div>`;
@@ -1591,10 +1619,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
       return;
     }
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
-    const shown = q ? markers.filter(m => m.data.name.toLowerCase().includes(q)) : markers;
-    if (q) cnt.textContent = T('of', shown.length, markers.length);
+    let favOnly = false; try { favOnly = localStorage.getItem('gmh-fav-only') === '1'; } catch (x) {}
+    const fb = document.getElementById('mk-favf');
+    if (fb) { fb.classList.toggle('on', favOnly); fb.setAttribute('aria-pressed', favOnly); fb.textContent = favOnly ? '★' : '☆'; }
+    const shown = markers.filter(m => (!q || m.data.name.toLowerCase().includes(q)) && (!favOnly || m.data.fav))
+      .sort((a, b) => (b.data.fav ? 1 : 0) - (a.data.fav ? 1 : 0));   // Lieblingspunkte zuerst
+    if (q || favOnly) cnt.textContent = T('of', shown.length, markers.length);
     if (!shown.length) {
-      list.innerHTML = '<li class="mk-empty">' + T('no_match', esc(q)) + '</li>';
+      list.innerHTML = '<li class="mk-empty">' + (q ? T('no_match', esc(q)) : T('fav_none')) + '</li>';
       return;
     }
     shown.forEach(m => {
@@ -1606,7 +1638,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         nm = esc(m.data.name.slice(0, i)) + '<mark>' + esc(m.data.name.slice(i, i + q.length)) + '</mark>' + esc(m.data.name.slice(i + q.length));
       }
       const np = (m.data.photos || []).length;
-      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${np ? `<span class="np">📷 ${np}</span>` : ''}`;
+      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${m.data.fav ? '<span class="fav-mark" aria-hidden="true">★</span>' : ''}${np ? `<span class="np">📷 ${np}</span>` : ''}`;
       li.onclick = () => {
         if (innerWidth <= 700) document.querySelector('.mk-panel').classList.add('collapsed');
         map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: 0.8 });
@@ -1615,6 +1647,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       list.appendChild(li);
     });
   }
+  document.getElementById('mk-favf').onclick = () => {
+    let on = false; try { on = localStorage.getItem('gmh-fav-only') === '1'; localStorage.setItem('gmh-fav-only', on ? '0' : '1'); } catch (x) {}
+    updatePanel();
+  };
   const searchBox = document.getElementById('mk-search');
   searchBox.addEventListener('input', () => { updatePanel(); renderShared(); });
   searchBox.addEventListener('keydown', e => {
@@ -1629,7 +1665,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     for (const m of markers) {
       const photos = [];
       for (const id of (m.data.photos || [])) { const b = await photoGet(id).catch(() => null); if (b) photos.push(await blobToDataURL(b)); }
-      items.push({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos });
+      items.push({ lat: m.getLatLng().lat, lng: m.getLatLng().lng, name: m.data.name, color: m.data.color, photos, fav: !!m.data.fav });
     }
     const data = { count, items };
     const d = new Date(), pad = n => String(n).padStart(2, '0');
