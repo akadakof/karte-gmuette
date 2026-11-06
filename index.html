@@ -1451,7 +1451,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return d;
   };
   langCtl.addTo(map);
-  L.control.layers(layers, null, { collapsed: innerWidth < 700 }).addTo(map);   // am Handy als kleines Symbol
+  L.control.layers(layers, null, { collapsed: true }).addTo(map);   // überall als kleines Symbol, klappt beim Antippen/Darüberfahren auf
   L.control.scale({ imperial: false }).addTo(map);
 
   // --- Live-Koordinaten unter der Maus ---
