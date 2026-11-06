@@ -717,6 +717,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .mk-panel { position: relative; min-width: 200px; }
+  .sh-tabs { display: flex; gap: 4px; padding: 4px; margin: 4px 0 14px; background: var(--soft, #f3f5f2); border-radius: 12px; }
+  .sh-tabs button { flex: 1; border: none; background: none; border-radius: 9px; padding: 8px 10px; font: 700 13.5px var(--font, system-ui); color: var(--muted, #6b7671); cursor: pointer; }
+  .sh-tabs button.on { background: #fff; color: var(--ink, #1c2622); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .sv-form input { width: 100%; box-sizing: border-box; }
+  .sv-form .sh-st { margin-top: 6px; }
+  .sh-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #e53935; margin-left: 8px; vertical-align: middle; }
+  .sh-dot[hidden] { display: none; }
+  #mk-more { position: relative; }
+  #mk-more.has-dot::after { content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; border-radius: 50%; background: #e53935; border: 2px solid #fff; }
   /* ---- Auswahl-Modus ---- */
   #sel-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 10px; padding: 8px; border-radius: 12px; background: #fdf1f1; }
   #sel-bar[hidden] { display: none; }
@@ -1192,7 +1201,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Schick deinen Freunden den Link zur Karte und das Passwort – das Passwort am besten auf einem anderen Weg.',
       done_after: 'Wer die Karte öffnet, sieht ein Passwortfeld. Mit dem richtigen Passwort erscheinen die geteilten Punkte.',
       finish: 'Fertig', enc_fail: 'Verschlüsseln hat nicht geklappt.',
-      shared_lock: '🔒 Geteilte Punkte', pw_enter: 'Passwort eingeben', pw_aria: 'Passwort für geteilte Punkte', open: 'Öffnen', checking: 'Wird geprüft …',
+      shared_lock: '🔒 Geteilte Punkte', sh_tab_view: '🔓 Ansehen', sh_tab_share: '📤 Teilen', sh_view_sub: 'Gib das Passwort ein, das du von deinen Freunden bekommen hast.', sh_none_site: 'Auf dieser Karte sind gerade keine geteilten Punkte. Unter „Teilen“ kannst du selbst welche erstellen.', sh_open_n: n => n + (n === 1 ? ' geteilter Punkt ist' : ' geteilte Punkte sind') + ' geöffnet und auf der Karte zu sehen.', sh_avail: 'Es gibt geteilte Punkte – öffne sie mit dem Passwort.', pw_enter: 'Passwort eingeben', pw_aria: 'Passwort für geteilte Punkte', open: 'Öffnen', checking: 'Wird geprüft …',
       wrong_pw: 'Falsches Passwort.', shared_head: '👥 Geteilt', lock: 'Sperren', lock_t: 'Geteilte Punkte wieder ausblenden', no_hit: 'Kein Treffer',
       point: 'Punkt', shared_point: 'Geteilter Punkt', take: 'In meine Punkte übernehmen', taken: 'Übernommen ✓',
       offline: 'Offline – gespeicherte Karte', off_progress: p => 'Offline-Karte wird gespeichert … ' + p + ' %', off_done: 'Karte ist jetzt offline verfügbar ✓',
@@ -1256,7 +1265,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Отправь друзьям ссылку на карту и пароль — пароль лучше другим способом.',
       done_after: 'Кто открывает карту, видит поле для пароля. С правильным паролем появляются общие точки.',
       finish: 'Готово', enc_fail: 'Не удалось зашифровать.',
-      shared_lock: '🔒 Общие точки', pw_enter: 'Введи пароль', pw_aria: 'Пароль для общих точек', open: 'Открыть', checking: 'Проверка …',
+      shared_lock: '🔒 Общие точки', sh_tab_view: '🔓 Смотреть', sh_tab_share: '📤 Поделиться', sh_view_sub: 'Введи пароль, который тебе дали друзья.', sh_none_site: 'На этой карте сейчас нет общих точек. Во вкладке «Поделиться» можно создать свои.', sh_open_n: n => 'Открыто общих точек: ' + n + '. Они видны на карте.', sh_avail: 'Есть общие точки — открой их паролем.', pw_enter: 'Введи пароль', pw_aria: 'Пароль для общих точек', open: 'Открыть', checking: 'Проверка …',
       wrong_pw: 'Неверный пароль.', shared_head: '👥 Общие', lock: 'Скрыть', lock_t: 'Снова скрыть общие точки', no_hit: 'Ничего не найдено',
       point: 'Точка', shared_point: 'Общая точка', take: 'Добавить в мои точки', taken: 'Добавлено ✓',
       offline: 'Офлайн — сохранённая карта', off_progress: p => 'Карта сохраняется для офлайна … ' + p + ' %', off_done: 'Карта теперь доступна офлайн ✓',
@@ -1320,7 +1329,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Send your friends the map link and the password – ideally the password by a different route.',
       done_after: 'Anyone who opens the map sees a password field. With the right password the shared points appear.',
       finish: 'Done', enc_fail: 'Encryption failed.',
-      shared_lock: '🔒 Shared points', pw_enter: 'Enter password', pw_aria: 'Password for shared points', open: 'Open', checking: 'Checking …',
+      shared_lock: '🔒 Shared points', sh_tab_view: '🔓 View', sh_tab_share: '📤 Share', sh_view_sub: 'Enter the password your friends gave you.', sh_none_site: 'There are no shared points on this map right now. Use “Share” to create some yourself.', sh_open_n: n => n + (n === 1 ? ' shared point is' : ' shared points are') + ' open and shown on the map.', sh_avail: 'There are shared points – open them with the password.', pw_enter: 'Enter password', pw_aria: 'Password for shared points', open: 'Open', checking: 'Checking …',
       wrong_pw: 'Wrong password.', shared_head: '👥 Shared', lock: 'Lock', lock_t: 'Hide shared points again', no_hit: 'No match',
       point: 'Point', shared_point: 'Shared point', take: 'Add to my points', taken: 'Added ✓',
       offline: 'Offline – saved map', off_progress: p => 'Saving map for offline … ' + p + ' %', off_done: 'Map is now available offline ✓',
@@ -1640,7 +1649,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div id="mk-menu" role="menu" hidden>
         <button id="mk-export" role="menuitem" title="${T('export_t')}">${T('export')}</button>
         <label class="imp" role="menuitem" tabindex="0" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
-        <button id="sh-open" role="menuitem" title="${T('share_t')}">${T('share_btn')}</button>
+        <button id="sh-open" role="menuitem">${T('shared_lock')}<span class="sh-dot" hidden></span></button>
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
         <button id="rt-open" role="menuitem">${T('rt_menu')}</button>
         <button id="sel-open" role="menuitem">${T('sel_menu')}</button>
@@ -1881,11 +1890,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   }
 
   // ---- Dialog: Punkte auswählen, Passwort, verschlüsseln ----
-  document.getElementById('sh-open').onclick = () => {
-    if (!markers.length) { msg(T('no_points')); return; }
-    const ov = document.createElement('div'); ov.className = 'dlg-ov';
-    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="sh-title">
-      <h2 id="sh-title">${T('share_btn')}</h2>
+  function renderCreate(ov, head) {
+    if (!markers.length) {
+      ov.querySelector('.dlg').innerHTML = head + `<p class="dlg-sub">${T('no_points')}. ${T('empty', TOUCH)}.</p>
+        <div class="dlg-btns"><button type="button" id="sh-cancel">${T('close')}</button></div>`;
+      ov.querySelector('#sh-cancel').onclick = () => ov.remove(); return;
+    }
+    ov.querySelector('.dlg').innerHTML = head + `
       <p class="dlg-sub">${T('sh_sub')}</p>
       <div class="sh-head"><b>${T('points')}</b><button type="button" id="sh-all">${T('all')}</button><button type="button" id="sh-none">${T('none')}</button></div>
       <ul class="sh-pick">${markers.map((m, i) => `<li><label><input type="checkbox" data-i="${i}" checked>
@@ -1898,15 +1909,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <label class="sh-lbl" for="sh-pw2">${T('pw_repeat')}</label>
       <input type="password" id="sh-pw2" autocomplete="new-password">
       <div id="sh-err" class="sh-err"></div>
-      <div class="dlg-btns"><button type="button" id="sh-cancel">${T('cancel')}</button><button type="button" id="sh-go" class="primary">${esc(T('enc_save'))}</button></div>
-    </div>`;
-    document.body.appendChild(ov);
+      <div class="dlg-btns"><button type="button" id="sh-cancel">${T('cancel')}</button><button type="button" id="sh-go" class="primary">${esc(T('enc_save'))}</button></div>`;
     const $ = s => ov.querySelector(s);
     const boxes = () => [...ov.querySelectorAll('.sh-pick input')];
     $('#sh-all').onclick = () => boxes().forEach(b => b.checked = true);
     $('#sh-none').onclick = () => boxes().forEach(b => b.checked = false);
     $('#sh-cancel').onclick = () => ov.remove();
-    ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
     // grobe Passwortstärke
     const strength = pw => {
       let pool = 0; if (/[a-z]/.test(pw)) pool += 26; if (/[A-Z]/.test(pw)) pool += 26; if (/\d/.test(pw)) pool += 10; if (/[^a-zA-Z0-9]/.test(pw)) pool += 30;
@@ -1949,9 +1957,64 @@ svg.leaflet-image-layer.leaflet-interactive path {
         err.textContent = T('enc_fail'); go.disabled = false; go.textContent = T('enc_save');
       }
     };
-  };
+  }
 
-  // ---- Geteilte Punkte auf der Karte: Passwortfeld ----
+  // ---- Ein Knopf für beides: Ansehen (Passwort) und Teilen (Datei erstellen) ----
+  function openSharedDlg(tab) {
+    const ov = document.createElement('div'); ov.className = 'dlg-ov';
+    ov.innerHTML = '<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="sh-title"></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
+    ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+    const head = t => `<h2 id="sh-title">${T('shared_lock')}</h2>
+      <div class="sh-tabs" role="tablist">${[['view', T('sh_tab_view')], ['share', T('sh_tab_share')]].map(([k, l]) =>
+        `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === t}" class="${k === t ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+    const show = t => {
+      if (t === 'share') renderCreate(ov, head('share')); else renderView(ov, head('view'));
+      ov.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => show(b.dataset.tab));
+    };
+    show(tab || (sharedFile && !shared ? 'view' : sharedFile ? 'view' : 'share'));
+  }
+  function renderView(ov, head) {
+    const dlg = ov.querySelector('.dlg');
+    if (!sharedFile) {
+      dlg.innerHTML = head + `<p class="dlg-sub">${T('sh_none_site')}</p><div class="dlg-btns"><button type="button" id="sv-close">${T('close')}</button></div>`;
+    } else if (shared) {
+      dlg.innerHTML = head + `<p class="dlg-sub">${T('sh_open_n', shared.length)}</p>
+        <div class="dlg-btns"><button type="button" id="sv-lock">${T('lock')}</button><button type="button" id="sv-close" class="primary">${T('close')}</button></div>`;
+      dlg.querySelector('#sv-lock').onclick = () => { lockShared(); ov.remove(); openSharedDlg('view'); };
+    } else {
+      dlg.innerHTML = head + `<p class="dlg-sub">${T('sh_view_sub')}</p>
+        <form id="sh-form" class="sv-form" autocomplete="off"><input type="password" id="sh-in" placeholder="${T('pw_enter')}" aria-label="${T('pw_aria')}">
+        <div id="sh-st" class="sh-st"></div>
+        <div class="dlg-btns"><button type="button" id="sv-close">${T('cancel')}</button><button type="submit" class="primary">${T('open')}</button></div></form>`;
+      setTimeout(() => dlg.querySelector('#sh-in').focus(), 50);
+      dlg.querySelector('#sh-form').onsubmit = async e => {
+        e.preventDefault();
+        const inp = dlg.querySelector('#sh-in'), pw = inp.value, st = dlg.querySelector('#sh-st');
+        if (!pw) return;
+        st.className = 'sh-st'; st.textContent = T('checking');
+        try {
+          const data = await decryptJSON(sharedFile, pw);
+          shared = data.items || [];
+          try { sessionStorage.setItem('gmh-sh-pw', pw); } catch (x) {}
+          ov.remove(); drawShared(true);
+        } catch (err) {
+          st.className = 'sh-st bad'; st.textContent = T('wrong_pw');
+          inp.select(); inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 400);
+        }
+      };
+    }
+    const c = dlg.querySelector('#sv-close'); if (c) c.onclick = () => ov.remove();
+  }
+  function lockShared() {
+    shared = null; sharedLayer.clearLayers();
+    try { sessionStorage.removeItem('gmh-sh-pw'); } catch (x) {}
+    renderShared();
+  }
+  document.getElementById('sh-open').onclick = () => openSharedDlg();
+
+  // ---- Geteilte Punkte auf der Karte ----
   const sharedLayer = L.layerGroup().addTo(map);
   let shared = null, sharedFile = null;
   const shBox = document.getElementById('sh-box');
@@ -1962,29 +2025,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
     });
   }
   function renderShared() {
-    if (!sharedFile) return;
+    const avail = !!sharedFile && !shared;
+    const dot = document.querySelector('#sh-open .sh-dot'); if (dot) dot.hidden = !avail;
+    document.getElementById('mk-more').classList.toggle('has-dot', avail);
+    document.getElementById('mk-more').title = avail ? T('sh_avail') : T('menu');
+    if (!sharedFile || !shared) { shBox.hidden = true; shBox.innerHTML = ''; return; }
     shBox.hidden = false;
-    if (!shared) {
-      shBox.innerHTML = `<div class="sh-lock"><b>${T('shared_lock')}</b>
-        <form id="sh-form" autocomplete="off"><input type="password" id="sh-in" placeholder="${T('pw_enter')}" aria-label="${T('pw_aria')}">
-        <button type="submit">${T('open')}</button></form><div id="sh-st" class="sh-st"></div></div>`;
-      document.getElementById('sh-form').onsubmit = async e => {
-        e.preventDefault();
-        const pw = document.getElementById('sh-in').value, st = document.getElementById('sh-st');
-        if (!pw) return;
-        st.className = 'sh-st'; st.textContent = T('checking');
-        try {
-          const data = await decryptJSON(sharedFile, pw);
-          shared = data.items || [];
-          try { sessionStorage.setItem('gmh-sh-pw', pw); } catch (x) {}
-          drawShared(true);
-        } catch (err) {
-          st.className = 'sh-st bad'; st.textContent = T('wrong_pw');
-          const inp = document.getElementById('sh-in'); inp.select(); inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 400);
-        }
-      };
-      return;
-    }
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
     const items = shared.filter(it => !q || (it.name || '').toLowerCase().includes(q));
     shBox.innerHTML = `<div class="sh-title"><b>${T('shared_head')} (${q ? T('of', items.length, shared.length) : shared.length})</b><button type="button" id="sh-lockbtn" title="${T('lock_t')}">${T('lock')}</button></div>
@@ -1994,11 +2040,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 });
       map.once('moveend', () => mk.openPopup());
     });
-    document.getElementById('sh-lockbtn').onclick = () => {
-      shared = null; sharedLayer.clearLayers();
-      try { sessionStorage.removeItem('gmh-sh-pw'); } catch (x) {}
-      renderShared();
-    };
+    document.getElementById('sh-lockbtn').onclick = lockShared;
   }
   function drawShared(fit) {
     sharedLayer.clearLayers();
