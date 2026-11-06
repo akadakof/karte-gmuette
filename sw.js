@@ -1,5 +1,5 @@
 // Service Worker: Karte offline verfügbar machen
-const APP = 'gmh-app-v22';
+const APP = 'gmh-app-v24';
 const TILES = 'gmh-tiles-v1';
 const MAX_TILES = 4000;
 const APP_FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './fonts/onest-latin-wght-normal.woff2', './fonts/onest-latin-ext-wght-normal.woff2', './fonts/onest-cyrillic-wght-normal.woff2'];
