@@ -1741,7 +1741,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <label class="imp" role="menuitem" tabindex="0" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
         <button id="sh-open" role="menuitem">${T('shared_lock')}<span class="sh-dot" hidden></span></button>
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
-        <button id="rt-open" role="menuitem">${T('rt_menu')}</button>
         <button id="sel-open" role="menuitem">${T('sel_menu')}</button>
       </div>
       <input type="hidden" id="mk-search" value="">
@@ -2952,7 +2951,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const b = e.target.closest && e.target.closest('[data-rk]'); if (!b) return;
     e.preventDefault(); map.closePopup(); openRoute(b.dataset.rk);
   });
-  document.getElementById('rt-open').onclick = () => openRoute();
+  // „Route planen“ steht nicht mehr im Menü – Routen starten über „Route hierher“
   addEventListener('keydown', e => { if (e.key === 'Escape' && rt.open && !document.querySelector('.dlg-ov, #photo-view')) closeRoute(); });
   // =====================================================================
   // Suche oben (wie Google Maps): Photon von Komoot, OpenStreetMap-Daten
@@ -2978,7 +2977,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const street = [pr.street, pr.housenumber].filter(Boolean).join(' ');
     const title = pr.name || street || pr.city || '?';
     const sub = [pr.name ? street : '', [pr.postcode, pr.city || pr.town || pr.village].filter(Boolean).join(' '), pr.district && pr.district !== pr.city ? pr.district : '', pr.osm_key === 'place' && pr.state && pr.state !== pr.name ? pr.state : '', pr.country && pr.countrycode !== 'DE' ? pr.country : '']
-      .filter(Boolean).filter((x, i, a) => a.indexOf(x) === i && x !== title).join(', ');
+      .filter(Boolean).filter((x, i, a) => a.indexOf(x) === i && x !== title).join(', ') || pr.state || pr.country || '';
     return { kind: 'place', title, sub, icon: gsIcon(pr), ll: L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0]), extent: pr.extent, pr };
   }
   function gsRender(state) {
@@ -3047,26 +3046,38 @@ svg.leaflet-image-layer.leaflet-interactive path {
       try { const r = await fetch('https://photon.komoot.io/api/?' + qs, { signal: ctrl.signal }); return (await r.json()).features || []; }
       finally { clearTimeout(tm); }
     };
-    try {
-      const [nr, wr] = await Promise.allSettled([get(near), get(wide)]);
-      if (my !== gsReq) return;
-      if (nr.status === 'rejected' && wr.status === 'rejected') throw new Error('offline');
-      const nearItems = (nr.value || []).map(gsFormat), wideItems = (wr.value || []).map(gsFormat);
-      const qn = q.trim().toLowerCase();
-      const isPlace = it => it.pr.osm_key === 'place' || ['city', 'district', 'locality', 'county', 'state', 'country'].includes(it.pr.type);
-      const exact = it => (it.pr.name || '').toLowerCase() === qn;
-      const de = it => (it.pr.countrycode || 'DE') === 'DE';
+    const qn = q.trim().toLowerCase();
+    const isPlace = it => it.pr.osm_key === 'place' || ['city', 'district', 'locality', 'county', 'state', 'country'].includes(it.pr.type);
+    const exact = it => (it.pr.name || '').toLowerCase() === qn;
+    const de = it => (it.pr.countrycode || 'DE') === 'DE';
+    let nearItems = null, wideItems = null;
+    const merge = () => {
+      const wi = wideItems || [], ni = nearItems || [];
       // 1. Orte/Städte mit genau diesem Namen (deutsche zuerst, dazu der bekannteste weltweit)
-      const top = wideItems.filter((it, i) => isPlace(it) && exact(it) && (de(it) || i === 0)).sort((a, b) => de(b) - de(a));
+      const top = wi.filter((it, i) => isPlace(it) && exact(it) && (de(it) || i === 0)).sort((a, b) => de(b) - de(a));
       // 2. Treffer in der Nähe, 3. übrige Treffer (deutsche zuerst)
-      const rest = wideItems.filter(it => !top.includes(it)).sort((a, b) => de(b) - de(a));
+      const rest = wi.filter(it => !top.includes(it)).sort((a, b) => de(b) - de(a));
       const seen = new Set();
-      const places = top.concat(nearItems, rest).filter(it => {
+      const places = top.concat(ni, rest).filter(it => {
         const k = it.title + '|' + it.sub + '|' + it.ll.lat.toFixed(3) + ',' + it.ll.lng.toFixed(3);
         if (seen.has(k)) return false; seen.add(k); return true;
       }).slice(0, 9);
+      const keep = gsAct >= 0 && gsItems[gsAct];
       gsItems = mine.concat(places);
-      gsRender(gsItems.length ? '' : T('gs_none'));
+      gsAct = keep ? gsItems.indexOf(keep) : -1;
+      const done = nearItems !== null && wideItems !== null;
+      gsRender(gsItems.length ? '' : done ? T('gs_none') : T('gs_searching'));
+    };
+    // Ergebnisse anzeigen, sobald die erste Antwort da ist; die zweite wird danach einsortiert
+    let nearErr = false, wideErr = false;
+    const pNear = get(near).then(f => { if (my !== gsReq) return; nearItems = f.map(gsFormat); merge(); }, () => { nearErr = true; });
+    const pWide = get(wide).then(f => { if (my !== gsReq) return; wideItems = f.map(gsFormat); merge(); }, () => { wideErr = true; });
+    try {
+      await Promise.allSettled([pNear, pWide]);
+      if (my !== gsReq) return;
+      if (nearErr && wideErr) { if (mine.length) gsRender(); else gsRender(T('gs_err')); return; }
+      if (nearItems === null) nearItems = []; if (wideItems === null) wideItems = [];
+      merge();
     } catch (e) {
       if (my !== gsReq) return;
       if (mine.length) gsRender(); else gsRender(T('gs_err'));
