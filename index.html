@@ -717,6 +717,25 @@ svg.leaflet-image-layer.leaflet-interactive path {
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .mk-panel { position: relative; min-width: 200px; }
+  /* ---- Auswahl-Modus ---- */
+  #sel-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 10px; padding: 8px; border-radius: 12px; background: #fdf1f1; }
+  #sel-bar[hidden] { display: none; }
+  .sel-all { display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .sel-all input, .sel-cb { width: 17px; height: 17px; accent-color: #c62828; margin: 0; flex: none; }
+  .sel-cb { pointer-events: none; }
+  .sel-n { font-size: 12.5px; color: var(--muted, #6b7671); }
+  html .mk-panel .sel-del, html .mk-panel .sel-done { border: none; border-radius: 9px; padding: 7px 12px; font: 700 13px var(--font, system-ui); cursor: pointer; }
+  html .mk-panel .sel-del { background: #c62828; color: #fff; margin-left: auto; }
+  html .mk-panel .sel-del:hover { background: #a91f1f; }
+  html .mk-panel .sel-del:disabled { background: #eec5c5; color: #fff; cursor: default; }
+  html .mk-panel .sel-done { background: #fff; color: #222; box-shadow: 0 0 0 1px #e3d3d3; }
+  html #mk-list li.sel-item.picked { background: #fdecec; }
+  .dlg.dlg-small { max-width: 360px; }
+  .dlg-btns .danger { background: #c62828 !important; color: #fff; }
+  .undo-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 2600;
+    display: flex; align-items: center; gap: 14px; background: rgba(28,38,34,.95); color: #fff; padding: 10px 10px 10px 16px; border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3); font: 500 14px var(--font, system-ui); max-width: calc(100% - 24px); box-sizing: border-box; }
+  .undo-bar button { border: none; background: #ffd54f; color: #3d2f00; border-radius: 9px; padding: 7px 12px; font: 800 13px var(--font, system-ui); cursor: pointer; }
   /* ---- Bus & Bahn ---- */
   .tr-time { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
   .tr-time label { font-size: 12px; font-weight: 700; color: var(--muted, #6b7671); text-transform: uppercase; letter-spacing: .06em; }
@@ -1185,7 +1204,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
-      lang: 'Sprache', menu: 'Mehr', fav_add: '☆ Zum Lieblingspunkt machen', fav_on: '★ Lieblingspunkt', fav_filter: 'Nur Lieblingspunkte zeigen', fav_none: 'Noch keine Lieblingspunkte. Tippe im Fenster einer Markierung auf ☆.',
+      lang: 'Sprache', menu: 'Mehr', sel_menu: '☑ Markierungen auswählen', sel_all: 'Alle', sel_n: n => n + ' ausgewählt', sel_del: '🗑 Löschen', sel_done: 'Fertig', sel_q: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' löschen?', sel_q_sub: 'Fotos dieser Markierungen werden auch gelöscht.', sel_gone: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' gelöscht', undo: 'Rückgängig', fav_add: '☆ Zum Lieblingspunkt machen', fav_on: '★ Lieblingspunkt', fav_filter: 'Nur Lieblingspunkte zeigen', fav_none: 'Noch keine Lieblingspunkte. Tippe im Fenster einer Markierung auf ☆.',
       rt_menu: '🧭 Route planen', rt_title: '🧭 Route', rt_here: '🧭 Route hierher', rt_from: 'Start', rt_to: 'Ziel', rt_via: 'Zwischenstopp',
       rt_add: '+ Zwischenstopp', rt_swap: 'Start und Ziel tauschen', rt_me: '📍 Mein Standort', rt_choose: 'Bitte wählen …',
       rt_mine: 'Meine Markierungen', rt_shared: 'Geteilte Punkte', rt_friends: 'Markierungen von Freunden',
@@ -1249,7 +1268,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
-      lang: 'Язык', menu: 'Ещё', fav_add: '☆ Сделать избранной', fav_on: '★ Избранная точка', fav_filter: 'Показывать только избранные', fav_none: 'Пока нет избранных точек. Нажми ☆ в окошке метки.',
+      lang: 'Язык', menu: 'Ещё', sel_menu: '☑ Выбрать метки', sel_all: 'Все', sel_n: n => 'Выбрано: ' + n, sel_del: '🗑 Удалить', sel_done: 'Готово', sel_q: n => 'Удалить ' + n + ' ' + ruN(n, 'метку', 'метки', 'меток') + '?', sel_q_sub: 'Фото этих меток тоже удалятся.', sel_gone: n => 'Удалено меток: ' + n, undo: 'Отменить', fav_add: '☆ Сделать избранной', fav_on: '★ Избранная точка', fav_filter: 'Показывать только избранные', fav_none: 'Пока нет избранных точек. Нажми ☆ в окошке метки.',
       rt_menu: '🧭 Проложить маршрут', rt_title: '🧭 Маршрут', rt_here: '🧭 Маршрут сюда', rt_from: 'Откуда', rt_to: 'Куда', rt_via: 'Промежуточная точка',
       rt_add: '+ Промежуточная точка', rt_swap: 'Поменять местами', rt_me: '📍 Моё местоположение', rt_choose: 'Выбери …',
       rt_mine: 'Мои метки', rt_shared: 'Общие точки', rt_friends: 'Метки друзей',
@@ -1313,7 +1332,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
-      lang: 'Language', menu: 'More', fav_add: '☆ Make favourite', fav_on: '★ Favourite', fav_filter: 'Show favourites only', fav_none: 'No favourites yet. Tap ☆ in a marker\u2019s window.',
+      lang: 'Language', menu: 'More', sel_menu: '☑ Select markers', sel_all: 'All', sel_n: n => n + ' selected', sel_del: '🗑 Delete', sel_done: 'Done', sel_q: n => 'Delete ' + n + (n === 1 ? ' marker' : ' markers') + '?', sel_q_sub: 'Photos of these markers will be deleted too.', sel_gone: n => n + (n === 1 ? ' marker' : ' markers') + ' deleted', undo: 'Undo', fav_add: '☆ Make favourite', fav_on: '★ Favourite', fav_filter: 'Show favourites only', fav_none: 'No favourites yet. Tap ☆ in a marker\u2019s window.',
       rt_menu: '🧭 Plan a route', rt_title: '🧭 Route', rt_here: '🧭 Route here', rt_from: 'Start', rt_to: 'Destination', rt_via: 'Stop',
       rt_add: '+ Add stop', rt_swap: 'Swap start and destination', rt_me: '📍 My location', rt_choose: 'Choose …',
       rt_mine: 'My markers', rt_shared: 'Shared points', rt_friends: 'Friends’ markers',
@@ -1624,9 +1643,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <button id="sh-open" role="menuitem" title="${T('share_t')}">${T('share_btn')}</button>
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
         <button id="rt-open" role="menuitem">${T('rt_menu')}</button>
+        <button id="sel-open" role="menuitem">${T('sel_menu')}</button>
       </div>
       <div class="srch-row"><input type="search" id="mk-search" placeholder="${T('search_ph')}" autocomplete="off">
       <button type="button" id="mk-favf" title="${T('fav_filter')}" aria-label="${T('fav_filter')}" aria-pressed="false">☆</button></div>
+      <div id="sel-bar" hidden></div>
       <ul id="mk-list"></ul>
       <div id="sh-box" hidden></div>
       <div id="live-box" hidden></div>`;
@@ -1651,6 +1672,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const toggleP = () => { if (narrow()) setCollapsed(!panelEl.classList.contains('collapsed')); };
   document.getElementById('mk-tgl').onclick = toggleP;
   document.getElementById('mk-count').onclick = toggleP;
+  var sel = { on: false, set: new Set(), shown: [] };   // Auswahl-Modus
   function updatePanel() {
     const cnt = document.getElementById('mk-count');
     if (!cnt) return;
@@ -1672,6 +1694,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
       list.innerHTML = '<li class="mk-empty">' + (q ? T('no_match', esc(q)) : T('fav_none')) + '</li>';
       return;
     }
+    sel.shown = shown;
+    if (sel.on) renderSelBar();
     shown.forEach(m => {
       const li = document.createElement('li');
       li.title = fmt(m.getLatLng());
@@ -1681,7 +1705,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
         nm = esc(m.data.name.slice(0, i)) + '<mark>' + esc(m.data.name.slice(i, i + q.length)) + '</mark>' + esc(m.data.name.slice(i + q.length));
       }
       const np = (m.data.photos || []).length;
-      li.innerHTML = `<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${m.data.fav ? '<span class="fav-mark" aria-hidden="true">★</span>' : ''}${np ? `<span class="np">📷 ${np}</span>` : ''}`;
+      li.innerHTML = `${sel.on ? `<input type="checkbox" class="sel-cb" tabindex="-1" aria-hidden="true"${sel.set.has(m) ? ' checked' : ''}>` : ''}<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${m.data.fav ? '<span class="fav-mark" aria-hidden="true">★</span>' : ''}${np ? `<span class="np">📷 ${np}</span>` : ''}`;
+      if (sel.on) {
+        li.classList.add('sel-item'); li.classList.toggle('picked', sel.set.has(m));
+        li.setAttribute('role', 'checkbox'); li.setAttribute('aria-checked', sel.set.has(m)); li.tabIndex = 0;
+        li.onclick = () => { sel.set.has(m) ? sel.set.delete(m) : sel.set.add(m); updatePanel(); };
+        li.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); li.click(); } };
+        list.appendChild(li); return;
+      }
       li.onclick = () => {
         if (innerWidth <= 700) document.querySelector('.mk-panel').classList.add('collapsed');
         map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: 0.8 });
@@ -1690,6 +1721,60 @@ svg.leaflet-image-layer.leaflet-interactive path {
       list.appendChild(li);
     });
   }
+  // ---------- Auswahl-Modus: mehrere Markierungen löschen ----------
+  function renderSelBar() {
+    const bar = document.getElementById('sel-bar');
+    if (!sel.on) { bar.hidden = true; bar.innerHTML = ''; document.querySelector('.mk-panel').classList.remove('selecting'); return; }
+    bar.hidden = false; document.querySelector('.mk-panel').classList.add('selecting');
+    [...sel.set].forEach(m => { if (!markers.includes(m)) sel.set.delete(m); });
+    const n = sel.set.size, allOn = sel.shown.length > 0 && sel.shown.every(m => sel.set.has(m));
+    bar.innerHTML = `<label class="sel-all"><input type="checkbox" id="sel-all"${allOn ? ' checked' : ''}> ${T('sel_all')}</label>
+      <span class="sel-n">${T('sel_n', n)}</span>
+      <button type="button" id="sel-del" class="sel-del"${n ? '' : ' disabled'}>${T('sel_del')}${n ? ' (' + n + ')' : ''}</button>
+      <button type="button" id="sel-done" class="sel-done">${T('sel_done')}</button>`;
+    document.getElementById('sel-all').onchange = e => { sel.shown.forEach(m => e.target.checked ? sel.set.add(m) : sel.set.delete(m)); updatePanel(); };
+    document.getElementById('sel-done').onclick = () => { sel.on = false; sel.set.clear(); renderSelBar(); updatePanel(); };
+    document.getElementById('sel-del').onclick = askDeleteSel;
+  }
+  function askDeleteSel() {
+    const n = sel.set.size; if (!n) return;
+    const ov = document.createElement('div'); ov.className = 'dlg-ov';
+    ov.innerHTML = `<div class="dlg dlg-small" role="alertdialog" aria-modal="true" aria-labelledby="del-t">
+      <h2 id="del-t">${T('sel_q', n)}</h2><p class="dlg-sub">${[...sel.set].slice(0, 6).map(m => esc(m.data.name)).join(', ')}${n > 6 ? ', …' : ''}</p>
+      ${[...sel.set].some(m => (m.data.photos || []).length) ? `<p class="dlg-sub">${T('sel_q_sub')}</p>` : ''}
+      <div class="dlg-btns"><button type="button" id="del-no">${T('cancel')}</button><button type="button" id="del-yes" class="danger">${T('sel_del')}</button></div></div>`;
+    document.body.appendChild(ov);
+    ov.querySelector('#del-no').onclick = () => ov.remove();
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
+    ov.querySelector('#del-yes').onclick = () => { ov.remove(); deleteSel(); };
+    setTimeout(() => ov.querySelector('#del-no').focus(), 30);
+  }
+  let undoTimer = null, undoBox = null;
+  function deleteSel() {
+    const gone = [...sel.set].map(m => ({ m, i: markers.indexOf(m) })).filter(x => x.i >= 0).sort((a, b) => a.i - b.i);
+    gone.forEach(({ m }) => { m.closePopup(); map.removeLayer(m); markers.splice(markers.indexOf(m), 1); });
+    sel.set.clear(); save();
+    if (!markers.length) { sel.on = false; renderSelBar(); updatePanel(); }
+    // Rückgängig: ein paar Sekunden lang; erst danach werden die Fotos endgültig gelöscht
+    if (undoBox) { undoBox.finish(); }
+    const box = document.createElement('div'); box.className = 'undo-bar'; box.setAttribute('role', 'status');
+    box.innerHTML = `<span>${T('sel_gone', gone.length)}</span><button type="button">${T('undo')}</button>`;
+    document.body.appendChild(box);
+    const finish = () => { clearTimeout(undoTimer); box.remove(); undoBox = null; gone.forEach(({ m }) => (m.data.photos || []).forEach(id => photoDel(id).catch(() => {}))); };
+    box.querySelector('button').onclick = () => {
+      clearTimeout(undoTimer); box.remove(); undoBox = null;
+      gone.forEach(({ m, i }) => { m.addTo(map); markers.splice(Math.min(i, markers.length), 0, m); });
+      save();
+    };
+    undoBox = { finish };
+    undoTimer = setTimeout(finish, 8000);
+  }
+  document.getElementById('sel-open').onclick = () => {
+    if (!markers.length) { msg(T('no_points')); return; }
+    sel.on = true; sel.set.clear();
+    document.querySelector('.mk-panel').classList.remove('collapsed');
+    map.closePopup(); updatePanel();
+  };
   document.getElementById('mk-favf').onclick = () => {
     let on = false; try { on = localStorage.getItem('gmh-fav-only') === '1'; localStorage.setItem('gmh-fav-only', on ? '0' : '1'); } catch (x) {}
     updatePanel();
