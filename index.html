@@ -1155,6 +1155,36 @@ svg.leaflet-image-layer.leaflet-interactive path {
     html .coord-box { display: none; }
     html .leaflet-control-attribution { max-width: 62vw; font-size: 9px; line-height: 1.3; padding: 2px 6px; }
   }
+
+  /* ---- Suche oben ---- */
+  #gsearch { position: fixed; z-index: 1100; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(440px, calc(100% - 640px)); min-width: 300px; }
+  .gs-box { display: flex; align-items: center; height: 46px; background: #fff; border-radius: 999px; box-shadow: var(--shadow, 0 2px 10px rgba(0,0,0,.2)); padding: 0 6px 0 16px; box-sizing: border-box; }
+  .gs-box:focus-within { box-shadow: 0 0 0 2px var(--brand, #1f6f54), var(--shadow, 0 2px 10px rgba(0,0,0,.2)); }
+  .gs-ic { width: 18px; height: 18px; flex: none; margin-right: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f6f54' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") center / contain no-repeat; }
+  #gs-in { flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: none; font: 500 15px var(--font, system-ui); color: var(--ink, #1c2622); }
+  #gs-in::-webkit-search-cancel-button { display: none; }
+  #gs-x { width: 34px; height: 34px; border: none; border-radius: 50%; background: none; color: var(--muted, #6b7671); font-size: 15px; cursor: pointer; flex: none; }
+  #gs-x:hover { background: var(--soft, #f3f5f2); }
+  #gs-list { list-style: none; margin: 6px 0 0; padding: 6px; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(20,35,28,.22); max-height: min(60vh, 420px); overflow-y: auto; }
+  #gs-list[hidden] { display: none; }
+  .gs-hd { padding: 8px 10px 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted, #6b7671); }
+  .gs-it { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+  .gs-it:hover, .gs-it.on { background: var(--soft, #f3f5f2); }
+  .gs-i { width: 26px; text-align: center; font-size: 18px; flex: none; }
+  .gs-i .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.18); vertical-align: middle; }
+  .gs-t { display: flex; flex-direction: column; min-width: 0; }
+  .gs-t b { font-weight: 600; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gs-t small { color: var(--muted, #6b7671); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gs-msg { padding: 10px 12px; color: var(--muted, #6b7671); font-size: 13.5px; }
+  .gs-pin { background: none; border: none; }
+  .gs-pin svg { filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+  .gs-sub { color: var(--muted, #6b7671); font-size: 13px; margin: -4px 0 4px; }
+  /* schmale Bildschirme: Suche als eigene Zeile oben, Knöpfe rutschen darunter */
+  @media (max-width: 1000px) {
+    #gsearch { left: 12px; right: 12px; transform: none; width: auto; min-width: 0; }
+    .leaflet-top { top: 58px; }
+    #mk-menu { max-height: calc(100vh - 140px); overflow-y: auto; }
+  }
 </style>
 </head>
 <body>
@@ -1213,7 +1243,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Dein Browser kann den Standort nicht ermitteln.', loc_searching: 'Standort wird gesucht …',
       ask_title: 'Standort teilen?', ask_body: 'Möchtest du deinen Standort auf der Karte sehen? Er wird nur hier in deinem Browser angezeigt und nirgendwo gespeichert oder verschickt.',
       ask_no: 'Nein, danke', ask_yes: 'Ja, Standort zeigen', ask_later: 'Du kannst den Standort jederzeit über den Knopf unter + und − einschalten.',
-      lang: 'Sprache', menu: 'Mehr', sel_menu: '☑ Markierungen auswählen', sel_all: 'Alle', sel_n: n => n + ' ausgewählt', sel_del: '🗑 Löschen', sel_done: 'Fertig', sel_q: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' löschen?', sel_q_sub: 'Fotos dieser Markierungen werden auch gelöscht.', sel_gone: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' gelöscht', undo: 'Rückgängig', fav_add: '☆ Zum Lieblingspunkt machen', fav_on: '★ Lieblingspunkt', fav_filter: 'Nur Lieblingspunkte zeigen', fav_none: 'Noch keine Lieblingspunkte. Tippe im Fenster einer Markierung auf ☆.',
+      lang: 'Sprache', menu: 'Mehr', gs_ph: 'Straße oder Ort suchen', gs_none: 'Nichts gefunden', gs_err: 'Suche gerade nicht möglich. Bist du online?', gs_save: '📍 Als Markierung speichern', gs_saved: 'Gespeichert ✓', gs_mine: 'Meine Markierungen', gs_places: 'Orte und Adressen', gs_clear: 'Suche löschen', gs_searching: 'Suche …', sel_menu: '☑ Markierungen auswählen', sel_all: 'Alle', sel_n: n => n + ' ausgewählt', sel_del: '🗑 Löschen', sel_done: 'Fertig', sel_q: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' löschen?', sel_q_sub: 'Fotos dieser Markierungen werden auch gelöscht.', sel_gone: n => n + (n === 1 ? ' Markierung' : ' Markierungen') + ' gelöscht', undo: 'Rückgängig', fav_add: '☆ Zum Lieblingspunkt machen', fav_on: '★ Lieblingspunkt', fav_filter: 'Nur Lieblingspunkte zeigen', fav_none: 'Noch keine Lieblingspunkte. Tippe im Fenster einer Markierung auf ☆.',
       rt_menu: '🧭 Route planen', rt_title: '🧭 Route', rt_here: '🧭 Route hierher', rt_from: 'Start', rt_to: 'Ziel', rt_via: 'Zwischenstopp',
       rt_add: '+ Zwischenstopp', rt_swap: 'Start und Ziel tauschen', rt_me: '📍 Mein Standort', rt_choose: 'Bitte wählen …',
       rt_mine: 'Meine Markierungen', rt_shared: 'Geteilte Punkte', rt_friends: 'Markierungen von Freunden',
@@ -1277,7 +1307,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Твой браузер не умеет определять местоположение.', loc_searching: 'Ищу местоположение …',
       ask_title: 'Поделиться местоположением?', ask_body: 'Показать твоё местоположение на карте? Оно видно только здесь, в твоём браузере, и никуда не сохраняется и не отправляется.',
       ask_no: 'Нет, спасибо', ask_yes: 'Да, показать', ask_later: 'Местоположение можно включить в любой момент кнопкой под + и −.',
-      lang: 'Язык', menu: 'Ещё', sel_menu: '☑ Выбрать метки', sel_all: 'Все', sel_n: n => 'Выбрано: ' + n, sel_del: '🗑 Удалить', sel_done: 'Готово', sel_q: n => 'Удалить ' + n + ' ' + ruN(n, 'метку', 'метки', 'меток') + '?', sel_q_sub: 'Фото этих меток тоже удалятся.', sel_gone: n => 'Удалено меток: ' + n, undo: 'Отменить', fav_add: '☆ Сделать избранной', fav_on: '★ Избранная точка', fav_filter: 'Показывать только избранные', fav_none: 'Пока нет избранных точек. Нажми ☆ в окошке метки.',
+      lang: 'Язык', menu: 'Ещё', gs_ph: 'Поиск улицы или места', gs_none: 'Ничего не найдено', gs_err: 'Поиск сейчас недоступен. Есть интернет?', gs_save: '📍 Сохранить как метку', gs_saved: 'Сохранено ✓', gs_mine: 'Мои метки', gs_places: 'Места и адреса', gs_clear: 'Очистить поиск', gs_searching: 'Поиск …', sel_menu: '☑ Выбрать метки', sel_all: 'Все', sel_n: n => 'Выбрано: ' + n, sel_del: '🗑 Удалить', sel_done: 'Готово', sel_q: n => 'Удалить ' + n + ' ' + ruN(n, 'метку', 'метки', 'меток') + '?', sel_q_sub: 'Фото этих меток тоже удалятся.', sel_gone: n => 'Удалено меток: ' + n, undo: 'Отменить', fav_add: '☆ Сделать избранной', fav_on: '★ Избранная точка', fav_filter: 'Показывать только избранные', fav_none: 'Пока нет избранных точек. Нажми ☆ в окошке метки.',
       rt_menu: '🧭 Проложить маршрут', rt_title: '🧭 Маршрут', rt_here: '🧭 Маршрут сюда', rt_from: 'Откуда', rt_to: 'Куда', rt_via: 'Промежуточная точка',
       rt_add: '+ Промежуточная точка', rt_swap: 'Поменять местами', rt_me: '📍 Моё местоположение', rt_choose: 'Выбери …',
       rt_mine: 'Мои метки', rt_shared: 'Общие точки', rt_friends: 'Метки друзей',
@@ -1341,7 +1371,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       loc_nobrowser: 'Your browser can’t determine your location.', loc_searching: 'Finding your location …',
       ask_title: 'Share your location?', ask_body: 'Do you want to see your location on the map? It is only shown here in your browser and is never stored or sent anywhere.',
       ask_no: 'No, thanks', ask_yes: 'Yes, show location', ask_later: 'You can turn on your location any time with the button below + and −.',
-      lang: 'Language', menu: 'More', sel_menu: '☑ Select markers', sel_all: 'All', sel_n: n => n + ' selected', sel_del: '🗑 Delete', sel_done: 'Done', sel_q: n => 'Delete ' + n + (n === 1 ? ' marker' : ' markers') + '?', sel_q_sub: 'Photos of these markers will be deleted too.', sel_gone: n => n + (n === 1 ? ' marker' : ' markers') + ' deleted', undo: 'Undo', fav_add: '☆ Make favourite', fav_on: '★ Favourite', fav_filter: 'Show favourites only', fav_none: 'No favourites yet. Tap ☆ in a marker\u2019s window.',
+      lang: 'Language', menu: 'More', gs_ph: 'Search for a street or place', gs_none: 'Nothing found', gs_err: 'Search isn\u2019t available right now. Are you online?', gs_save: '📍 Save as marker', gs_saved: 'Saved ✓', gs_mine: 'My markers', gs_places: 'Places and addresses', gs_clear: 'Clear search', gs_searching: 'Searching …', sel_menu: '☑ Select markers', sel_all: 'All', sel_n: n => n + ' selected', sel_del: '🗑 Delete', sel_done: 'Done', sel_q: n => 'Delete ' + n + (n === 1 ? ' marker' : ' markers') + '?', sel_q_sub: 'Photos of these markers will be deleted too.', sel_gone: n => n + (n === 1 ? ' marker' : ' markers') + ' deleted', undo: 'Undo', fav_add: '☆ Make favourite', fav_on: '★ Favourite', fav_filter: 'Show favourites only', fav_none: 'No favourites yet. Tap ☆ in a marker\u2019s window.',
       rt_menu: '🧭 Plan a route', rt_title: '🧭 Route', rt_here: '🧭 Route here', rt_from: 'Start', rt_to: 'Destination', rt_via: 'Stop',
       rt_add: '+ Add stop', rt_swap: 'Swap start and destination', rt_me: '📍 My location', rt_choose: 'Choose …',
       rt_mine: 'My markers', rt_shared: 'Shared points', rt_friends: 'Friends’ markers',
@@ -2612,6 +2642,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (key === 'me') return meMarker ? { ll: meMarker.getLatLng(), label: T('rt_me') } : { wait: true, label: T('rt_me') };
     const [kind, a, b] = key.split(':');
     if (kind === 'm') { const m = markers.find(x => rid(x) === a); return m && { ll: m.getLatLng(), label: m.data.name }; }
+    if (kind === 'g') { const [la, lo] = a.split(',').map(Number); return isFinite(la) && isFinite(lo) ? { ll: L.latLng(la, lo), label: gsNames[key] || a } : null; }
     if (kind === 's' && shared && shared[+a]) { const it = shared[+a]; return { ll: L.latLng(it.lat, it.lng), label: it.name || T('point') }; }
     if (kind === 'f' && friendPts.get(a)) { const fp = friendPts.get(a), it = fp.items[+b]; return it && { ll: L.latLng(it.lat, it.lng), label: (it.name || T('point')) + ' (' + fp.name + ')' }; }
     return null;
@@ -2622,6 +2653,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (markers.length) s += `<optgroup label="${esc(T('rt_mine'))}">` + markers.map(m => o('m:' + rid(m), m.data.name)).join('') + '</optgroup>';
     if (shared && shared.length) s += `<optgroup label="${esc(T('rt_shared'))}">` + shared.map((it, k) => o('s:' + k, it.name || T('point'))).join('') + '</optgroup>';
     friendPts.forEach((fp, id) => { s += `<optgroup label="${esc(T('rt_friends') + ' – ' + fp.name)}">` + fp.items.map((it, ix) => o('f:' + id + ':' + ix, it.name || T('point'))).join('') + '</optgroup>'; });
+    if (sel && sel.startsWith('g:') && rtResolve(sel)) s += o(sel, '🔍 ' + rtResolve(sel).label);
     if (sel && !rtResolve(sel)) s += o(sel, '?');
     return s;
   }
@@ -2872,6 +2904,138 @@ svg.leaflet-image-layer.leaflet-interactive path {
   });
   document.getElementById('rt-open').onclick = () => openRoute();
   addEventListener('keydown', e => { if (e.key === 'Escape' && rt.open && !document.querySelector('.dlg-ov, #photo-view')) closeRoute(); });
+  // =====================================================================
+  // Suche oben (wie Google Maps): Photon von Komoot, OpenStreetMap-Daten
+  // =====================================================================
+  const gsNames = {};
+  const gsEl = document.createElement('div'); gsEl.id = 'gsearch';
+  gsEl.innerHTML = `<div class="gs-box" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-owns="gs-list">
+      <span class="gs-ic" aria-hidden="true"></span>
+      <input type="search" id="gs-in" placeholder="${T('gs_ph')}" aria-label="${T('gs_ph')}" autocomplete="off" spellcheck="false" enterkeyhint="search">
+      <button type="button" id="gs-x" aria-label="${T('gs_clear')}" title="${T('gs_clear')}" hidden>✕</button></div>
+    <ul id="gs-list" role="listbox" hidden></ul>`;
+  document.body.appendChild(gsEl);
+  L.DomEvent.disableClickPropagation(gsEl); L.DomEvent.disableScrollPropagation(gsEl);
+  const gsIn = document.getElementById('gs-in'), gsList = document.getElementById('gs-list'), gsX = document.getElementById('gs-x');
+  let gsItems = [], gsAct = -1, gsTimer = null, gsReq = 0, gsMarker = null;
+  const gsIcon = pr => {
+    const k = pr.osm_key, v = pr.osm_value, t = pr.type;
+    if (k === 'highway' || t === 'street') return '🛣️';
+    if (k === 'railway' || k === 'public_transport' || v === 'bus_stop') return '🚏';
+    if (k === 'place' || t === 'city' || t === 'district' || t === 'locality') return '🏘️';
+    if (k === 'shop') return '🛍️';
+    if (k === 'amenity' && /school|college|university|kindergarten/.test(v)) return '🏫';
+    if (k === 'amenity' && /restaurant|cafe|fast_food|ice_cream|bar|pub/.test(v)) return '🍽️';
+    if (k === 'leisure') return '⚽';
+    if (k === 'building' || t === 'house') return '🏠';
+    return '📍';
+  };
+  function gsFormat(f) {
+    const pr = f.properties || {};
+    const street = [pr.street, pr.housenumber].filter(Boolean).join(' ');
+    const title = pr.name || street || pr.city || '?';
+    const sub = [pr.name ? street : '', [pr.postcode, pr.city || pr.town || pr.village].filter(Boolean).join(' '), pr.district && pr.district !== pr.city ? pr.district : '', pr.country && pr.countrycode !== 'DE' ? pr.country : '']
+      .filter(Boolean).filter((x, i, a) => a.indexOf(x) === i && x !== title).join(', ');
+    return { kind: 'place', title, sub, icon: gsIcon(pr), ll: L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0]), extent: pr.extent };
+  }
+  function gsRender(state) {
+    gsList.innerHTML = '';
+    const box = gsEl.querySelector('.gs-box');
+    if (state) { gsList.innerHTML = `<li class="gs-msg">${esc(state)}</li>`; gsList.hidden = false; box.setAttribute('aria-expanded', 'true'); return; }
+    if (!gsItems.length) { gsList.hidden = true; box.setAttribute('aria-expanded', 'false'); return; }
+    let lastKind = null;
+    gsItems.forEach((it, i) => {
+      if (it.kind !== lastKind) { const hd = document.createElement('li'); hd.className = 'gs-hd'; hd.textContent = it.kind === 'mine' ? T('gs_mine') : T('gs_places'); gsList.appendChild(hd); lastKind = it.kind; }
+      const li = document.createElement('li'); li.className = 'gs-it' + (i === gsAct ? ' on' : ''); li.setAttribute('role', 'option'); li.id = 'gs-o' + i;
+      li.innerHTML = `<span class="gs-i">${it.icon}</span><span class="gs-t"><b>${esc(it.title)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span>`;
+      li.onmousedown = e => e.preventDefault();
+      li.onclick = () => gsPick(it);
+      gsList.appendChild(li);
+    });
+    gsList.hidden = false; box.setAttribute('aria-expanded', 'true');
+  }
+  function gsMine(q) {
+    const ql = q.toLowerCase();
+    return markers.filter(m => (m.data.name || '').toLowerCase().includes(ql)).slice(0, 3)
+      .map(m => ({ kind: 'mine', title: m.data.name, sub: m.data.fav ? '★' : '', icon: `<span class="dot" style="background:${m.data.color}"></span>`, m }));
+  }
+  async function gsQuery(q) {
+    const my = ++gsReq, mine = gsMine(q);
+    gsItems = mine; gsAct = -1;
+    if (q.length < 3) { gsRender(); return; }
+    if (!mine.length) gsRender(T('gs_searching')); else gsRender();
+    const c = map.getCenter();
+    const qs = new URLSearchParams({ q, limit: '7', lat: c.lat.toFixed(4), lon: c.lng.toFixed(4) });
+    if (LANG === 'de' || LANG === 'en') qs.set('lang', LANG);
+    try {
+      const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 10000);
+      const r = await fetch('https://photon.komoot.io/api/?' + qs, { signal: ctrl.signal });
+      clearTimeout(tm);
+      const j = await r.json();
+      if (my !== gsReq) return;
+      const seen = new Set();
+      const places = (j.features || []).map(gsFormat).filter(it => { const k = it.title + '|' + it.sub; if (seen.has(k)) return false; seen.add(k); return true; });
+      gsItems = mine.concat(places);
+      gsRender(gsItems.length ? '' : T('gs_none'));
+    } catch (e) {
+      if (my !== gsReq) return;
+      if (mine.length) gsRender(); else gsRender(T('gs_err'));
+    }
+  }
+  function gsClose() { gsList.hidden = true; gsEl.querySelector('.gs-box').setAttribute('aria-expanded', 'false'); }
+  function gsPick(it) {
+    gsClose(); gsIn.blur();
+    if (it.kind === 'mine') {
+      const m = it.m; map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); map.once('moveend', () => m.openPopup()); return;
+    }
+    gsIn.value = it.title; gsX.hidden = false;
+    if (gsMarker) map.removeLayer(gsMarker);
+    const key = 'g:' + it.ll.lat.toFixed(6) + ',' + it.ll.lng.toFixed(6);
+    gsNames[key] = it.title;
+    gsMarker = L.marker(it.ll, { zIndexOffset: 1200, icon: L.divIcon({ className: 'gs-pin', iconSize: [32, 44], iconAnchor: [16, 43], popupAnchor: [0, -38],
+      html: '<svg width="32" height="44" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 41 15 41s14-15.6 14-26.1C29 7.2 22.7 1 15 1z" fill="#d93025" stroke="#a50e0e" stroke-width="1.2"/><circle cx="15" cy="15" r="5" fill="#7c0a0a"/></svg>' }) }).addTo(map);
+    gsMarker.bindPopup(() => `<div class="mk-pop gs-pop"><b class="sh-name">${it.icon} ${esc(it.title)}</b>${it.sub ? `<div class="gs-sub">${esc(it.sub)}</div>` : ''}
+      <button type="button" class="rt-go" data-rk="${key}">${T('rt_here')}</button>
+      <div class="row"><button type="button" data-a="gsave">${T('gs_save')}</button></div></div>`, { minWidth: 220, maxWidth: 300 });
+    gsMarker.on('popupopen', ev => {
+      const b = ev.popup.getElement().querySelector('[data-a=gsave]');
+      b.onclick = () => {
+        count++;
+        createMarker(L.latLng(it.ll.lat, it.ll.lng), { name: it.title, color: COLORS[0], photos: [] }, false);
+        save(); b.disabled = true; b.textContent = T('gs_saved');
+        setTimeout(() => { map.removeLayer(gsMarker); gsMarker = null; }, 700);
+      };
+    });
+    const ex = it.extent;
+    if (ex && ex.length === 4 && Math.abs(ex[2] - ex[0]) > 0.002) map.flyToBounds([[ex[3], ex[0]], [ex[1], ex[2]]], { duration: .8, maxZoom: 17, padding: [40, 40] });
+    else map.flyTo(it.ll, 17, { duration: .8 });
+    map.once('moveend', () => gsMarker && gsMarker.openPopup());
+  }
+  gsIn.addEventListener('input', () => {
+    const q = gsIn.value.trim(); gsX.hidden = !gsIn.value;
+    clearTimeout(gsTimer);
+    if (!q) { gsItems = []; gsReq++; gsRender(); return; }
+    gsTimer = setTimeout(() => gsQuery(q), 280);
+  });
+  gsIn.addEventListener('focus', () => { if (gsItems.length) gsRender(); });
+  gsIn.addEventListener('blur', () => setTimeout(gsClose, 150));
+  gsIn.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!gsItems.length) return; e.preventDefault();
+      gsAct = (gsAct + (e.key === 'ArrowDown' ? 1 : -1) + gsItems.length) % gsItems.length; gsRender();
+      gsIn.setAttribute('aria-activedescendant', 'gs-o' + gsAct);
+    } else if (e.key === 'Enter') {
+      e.preventDefault(); clearTimeout(gsTimer);
+      if (gsItems.length) gsPick(gsItems[Math.max(0, gsAct)]); else if (gsIn.value.trim()) gsQuery(gsIn.value.trim());
+    } else if (e.key === 'Escape') { gsClose(); gsIn.blur(); }
+  });
+  gsX.onclick = () => {
+    gsIn.value = ''; gsX.hidden = true; gsItems = []; gsReq++; gsRender();
+    if (gsMarker) { map.removeLayer(gsMarker); gsMarker = null; }
+    gsIn.focus();
+  };
+  // Suche mit "/" am PC
+  addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); gsIn.focus(); } });
 </script>
 </body>
 </html>
