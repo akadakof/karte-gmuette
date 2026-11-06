@@ -2977,9 +2977,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const pr = f.properties || {};
     const street = [pr.street, pr.housenumber].filter(Boolean).join(' ');
     const title = pr.name || street || pr.city || '?';
-    const sub = [pr.name ? street : '', [pr.postcode, pr.city || pr.town || pr.village].filter(Boolean).join(' '), pr.district && pr.district !== pr.city ? pr.district : '', pr.country && pr.countrycode !== 'DE' ? pr.country : '']
+    const sub = [pr.name ? street : '', [pr.postcode, pr.city || pr.town || pr.village].filter(Boolean).join(' '), pr.district && pr.district !== pr.city ? pr.district : '', pr.osm_key === 'place' && pr.state && pr.state !== pr.name ? pr.state : '', pr.country && pr.countrycode !== 'DE' ? pr.country : '']
       .filter(Boolean).filter((x, i, a) => a.indexOf(x) === i && x !== title).join(', ');
-    return { kind: 'place', title, sub, icon: gsIcon(pr), ll: L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0]), extent: pr.extent };
+    return { kind: 'place', title, sub, icon: gsIcon(pr), ll: L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0]), extent: pr.extent, pr };
   }
   function gsRender(state) {
     gsList.innerHTML = '';
@@ -3035,17 +3035,36 @@ svg.leaflet-image-layer.leaflet-interactive path {
     gsItems = mine; gsAct = -1;
     if (q.length < 3) { gsShowMine(q); return; }
     if (!mine.length) gsRender(T('gs_searching')); else gsRender();
+    // Zwei Suchen gleichzeitig: in der Nähe (Straßen, Läden) und bundesweit (bekannte Städte und Orte).
+    // Sonst gewinnt z. B. bei „Berlin“ ein Laden namens „Berlin“ in der Nähe gegen die Stadt Berlin.
     const c = map.getCenter();
-    const qs = new URLSearchParams({ q, limit: '7', lat: c.lat.toFixed(4), lon: c.lng.toFixed(4) });
-    if (LANG === 'de' || LANG === 'en') qs.set('lang', LANG);
-    try {
+    const base = { q, limit: '8' };
+    if (LANG === 'de' || LANG === 'en') base.lang = LANG;
+    const near = new URLSearchParams({ ...base, lat: c.lat.toFixed(4), lon: c.lng.toFixed(4) });
+    const wide = new URLSearchParams(base);
+    const get = async qs => {
       const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 10000);
-      const r = await fetch('https://photon.komoot.io/api/?' + qs, { signal: ctrl.signal });
-      clearTimeout(tm);
-      const j = await r.json();
+      try { const r = await fetch('https://photon.komoot.io/api/?' + qs, { signal: ctrl.signal }); return (await r.json()).features || []; }
+      finally { clearTimeout(tm); }
+    };
+    try {
+      const [nr, wr] = await Promise.allSettled([get(near), get(wide)]);
       if (my !== gsReq) return;
+      if (nr.status === 'rejected' && wr.status === 'rejected') throw new Error('offline');
+      const nearItems = (nr.value || []).map(gsFormat), wideItems = (wr.value || []).map(gsFormat);
+      const qn = q.trim().toLowerCase();
+      const isPlace = it => it.pr.osm_key === 'place' || ['city', 'district', 'locality', 'county', 'state', 'country'].includes(it.pr.type);
+      const exact = it => (it.pr.name || '').toLowerCase() === qn;
+      const de = it => (it.pr.countrycode || 'DE') === 'DE';
+      // 1. Orte/Städte mit genau diesem Namen (deutsche zuerst, dazu der bekannteste weltweit)
+      const top = wideItems.filter((it, i) => isPlace(it) && exact(it) && (de(it) || i === 0)).sort((a, b) => de(b) - de(a));
+      // 2. Treffer in der Nähe, 3. übrige Treffer (deutsche zuerst)
+      const rest = wideItems.filter(it => !top.includes(it)).sort((a, b) => de(b) - de(a));
       const seen = new Set();
-      const places = (j.features || []).map(gsFormat).filter(it => { const k = it.title + '|' + it.sub; if (seen.has(k)) return false; seen.add(k); return true; });
+      const places = top.concat(nearItems, rest).filter(it => {
+        const k = it.title + '|' + it.sub + '|' + it.ll.lat.toFixed(3) + ',' + it.ll.lng.toFixed(3);
+        if (seen.has(k)) return false; seen.add(k); return true;
+      }).slice(0, 9);
       gsItems = mine.concat(places);
       gsRender(gsItems.length ? '' : T('gs_none'));
     } catch (e) {
