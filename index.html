@@ -717,6 +717,34 @@ svg.leaflet-image-layer.leaflet-interactive path {
     font: 13px system-ui, sans-serif; max-width: 290px; }
   .mk-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .mk-panel { position: relative; min-width: 200px; }
+  /* ---- Bus & Bahn ---- */
+  .tr-time { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .tr-time label { font-size: 12px; font-weight: 700; color: var(--muted, #6b7671); text-transform: uppercase; letter-spacing: .06em; }
+  .tr-time input { flex: 1; min-width: 0; padding: 7px 9px; border: 1px solid transparent; border-radius: 10px; background: var(--soft, #f3f5f2); font: 600 13.5px var(--font, system-ui); color: #222; }
+  .tr-time button { border: none; border-radius: 999px; padding: 6px 12px; background: var(--soft, #f3f5f2); font: 700 12.5px var(--font, system-ui); cursor: pointer; }
+  .tr-time button.on { background: #e3edfd; color: #1557b0; box-shadow: inset 0 0 0 1.5px #1a73e8; }
+  .tr-cards { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .tr-card { text-align: left; width: 100%; border: none; border-radius: 12px; padding: 9px 11px; background: var(--soft, #f3f5f2); cursor: pointer; font: inherit; color: inherit; }
+  .tr-card.on { background: #fff; box-shadow: inset 0 0 0 2px #1a73e8; }
+  .tr-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .tr-top b { font-size: 15px; font-variant-numeric: tabular-nums; }
+  .tr-top .dur { color: #188038; font-weight: 700; font-size: 13.5px; }
+  .tr-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 5px 0 3px; }
+  .ch { display: inline-flex; align-items: center; gap: 3px; border-radius: 6px; padding: 1px 6px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+  .ch.walk { background: #e8eaed; color: #3c4043; }
+  .tr-chips .sep { color: #9aa0a6; font-size: 12px; }
+  .tr-sub { font-size: 12px; color: var(--muted, #6b7671); }
+  .late { color: #c62828; font-weight: 700; }
+  .tr-legs { list-style: none; margin: 8px 0 0; padding: 0; }
+  .tr-legs li { display: flex; gap: 10px; padding: 8px 2px; border-top: 1px solid var(--line, #e5e8e4); font-size: 13.5px; }
+  .tr-legs .ic { width: 22px; text-align: center; flex: none; font-size: 16px; }
+  .tr-legs .ride > div { border-left: 4px solid var(--lc); padding-left: 10px; margin-left: -4px; display: flex; flex-direction: column; gap: 3px; }
+  .tr-legs .st b { font-variant-numeric: tabular-nums; }
+  .tr-legs .mid { color: var(--muted, #6b7671); font-size: 12px; }
+  .tr-legs .walk { color: #3c4043; }
+  .tr-attr { margin-top: 10px; font-size: 11.5px; color: var(--muted, #6b7671); }
+  .tr-attr a { color: var(--muted, #6b7671); }
+  @media (max-width: 460px) { .rt-modes button { padding: 5px 8px; } }
   /* ---- Lieblingspunkte ---- */
   .fav-btn { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px; padding: 5px 11px; border: 1.5px solid #e0c35a; border-radius: 999px;
     background: #fffaf0; color: #8a6d00; font: 700 12.5px var(--font, system-ui); cursor: pointer; }
@@ -754,8 +782,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .rt-stops { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
   .rt-row { display: flex; align-items: center; gap: 8px; }
   .rt-l { width: 22px; height: 22px; border-radius: 50%; background: #5f6368; color: #fff; font: 700 12px/22px system-ui, sans-serif; text-align: center; flex: none; }
-  .rt-row:first-child .rt-l { background: #1a73e8; }
-  .rt-row:nth-last-child(2) .rt-l { background: #d93025; }
+  .rt-l.st { background: #1a73e8; }
+  .rt-l.en { background: #d93025; }
   .rt-row select { flex: 1; min-width: 0; padding: 7px 8px; border: 1px solid #ccc; border-radius: 8px; font: 14px system-ui, sans-serif; background: #fff; color: #222; }
   .rt-sw, .rt-rm { width: 30px; height: 30px; border: 1px solid #d0d5da; border-radius: 50%; background: #fff; cursor: pointer; font-size: 15px; flex: none; }
   .rt-sp { width: 30px; flex: none; }
@@ -1161,7 +1189,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_menu: '🧭 Route planen', rt_title: '🧭 Route', rt_here: '🧭 Route hierher', rt_from: 'Start', rt_to: 'Ziel', rt_via: 'Zwischenstopp',
       rt_add: '+ Zwischenstopp', rt_swap: 'Start und Ziel tauschen', rt_me: '📍 Mein Standort', rt_choose: 'Bitte wählen …',
       rt_mine: 'Meine Markierungen', rt_shared: 'Geteilte Punkte', rt_friends: 'Markierungen von Freunden',
-      rt_foot: 'Zu Fuß', rt_bike: 'Fahrrad', rt_car: 'Auto', rt_loading: 'Route wird berechnet …', rt_wait_loc: 'Warte auf deinen Standort …',
+      rt_foot: 'Zu Fuß', rt_bike: 'Fahrrad', rt_car: 'Auto', rt_bus: 'Bus & Bahn',
+      tr_dep: 'Abfahrt', tr_now: 'Jetzt', tr_transfers: n => n === 0 ? 'ohne Umstieg' : n === 1 ? '1 Umstieg' : n + ' Umstiege',
+      tr_walk: (min, d) => min + ' Min. zu Fuß (' + d + ')', tr_walk_to: s => 'zu ' + s, tr_dir: s => 'Richtung ' + s, tr_stops: n => n + (n === 1 ? ' Haltestelle' : ' Haltestellen'),
+      tr_none: 'Keine Verbindung mit Bus oder Bahn gefunden. Probier eine andere Uhrzeit.', tr_err: 'Der Fahrplan-Dienst ist gerade nicht erreichbar. Bist du online?',
+      tr_src: 'Fahrplandaten:', tr_contact: 'Kontakt', tr_details: 'Details', tr_via_note: 'Zwischenstopps werden bei Bus & Bahn nicht berücksichtigt.',
+      tr_delay: m => '+' + m + ' Min.', tr_min: m => m + ' Min.', tr_arrive: 'Ankunft', rt_loading: 'Route wird berechnet …', rt_wait_loc: 'Warte auf deinen Standort …',
       rt_err: 'Keine Route gefunden. Bist du online?', rt_need2: 'Wähle Start und Ziel.', rt_steps: 'Wegbeschreibung', rt_close: 'Route schließen', rt_remove: 'Entfernen',
       rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace('.', ',') + ' km',
       rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' Min.' : Math.floor(s / 3600) + ' Std. ' + Math.round(s % 3600 / 60) + ' Min.',
@@ -1220,7 +1253,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_menu: '🧭 Проложить маршрут', rt_title: '🧭 Маршрут', rt_here: '🧭 Маршрут сюда', rt_from: 'Откуда', rt_to: 'Куда', rt_via: 'Промежуточная точка',
       rt_add: '+ Промежуточная точка', rt_swap: 'Поменять местами', rt_me: '📍 Моё местоположение', rt_choose: 'Выбери …',
       rt_mine: 'Мои метки', rt_shared: 'Общие точки', rt_friends: 'Метки друзей',
-      rt_foot: 'Пешком', rt_bike: 'Велосипед', rt_car: 'Машина', rt_loading: 'Маршрут строится …', rt_wait_loc: 'Жду твоё местоположение …',
+      rt_foot: 'Пешком', rt_bike: 'Велосипед', rt_car: 'Машина', rt_bus: 'Автобус',
+      tr_dep: 'Отправление', tr_now: 'Сейчас', tr_transfers: n => n === 0 ? 'без пересадок' : n + ' ' + ruN(n, 'пересадка', 'пересадки', 'пересадок'),
+      tr_walk: (min, d) => min + ' мин пешком (' + d + ')', tr_walk_to: s => 'до ' + s, tr_dir: s => 'в сторону ' + s, tr_stops: n => n + ' ' + ruN(n, 'остановка', 'остановки', 'остановок'),
+      tr_none: 'Не найдено ни автобуса, ни поезда. Попробуй другое время.', tr_err: 'Сервис расписаний сейчас недоступен. Есть интернет?',
+      tr_src: 'Расписание:', tr_contact: 'Контакт', tr_details: 'Подробно', tr_via_note: 'Промежуточные точки для автобуса не учитываются.',
+      tr_delay: m => '+' + m + ' мин', tr_min: m => m + ' мин', tr_arrive: 'Прибытие', rt_loading: 'Маршрут строится …', rt_wait_loc: 'Жду твоё местоположение …',
       rt_err: 'Маршрут не найден. Есть интернет?', rt_need2: 'Выбери начало и конец маршрута.', rt_steps: 'Пошаговый маршрут', rt_close: 'Закрыть маршрут', rt_remove: 'Убрать',
       rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' м' : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace('.', ',') + ' км',
       rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' мин' : Math.floor(s / 3600) + ' ч ' + Math.round(s % 3600 / 60) + ' мин',
@@ -1279,7 +1317,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt_menu: '🧭 Plan a route', rt_title: '🧭 Route', rt_here: '🧭 Route here', rt_from: 'Start', rt_to: 'Destination', rt_via: 'Stop',
       rt_add: '+ Add stop', rt_swap: 'Swap start and destination', rt_me: '📍 My location', rt_choose: 'Choose …',
       rt_mine: 'My markers', rt_shared: 'Shared points', rt_friends: 'Friends’ markers',
-      rt_foot: 'Walk', rt_bike: 'Bike', rt_car: 'Car', rt_loading: 'Calculating route …', rt_wait_loc: 'Waiting for your location …',
+      rt_foot: 'Walk', rt_bike: 'Bike', rt_car: 'Car', rt_bus: 'Bus & train',
+      tr_dep: 'Departure', tr_now: 'Now', tr_transfers: n => n === 0 ? 'no transfers' : n === 1 ? '1 transfer' : n + ' transfers',
+      tr_walk: (min, d) => 'Walk ' + min + ' min (' + d + ')', tr_walk_to: s => 'to ' + s, tr_dir: s => 'towards ' + s, tr_stops: n => n + (n === 1 ? ' stop' : ' stops'),
+      tr_none: 'No bus or train connection found. Try a different time.', tr_err: 'The timetable service can\u2019t be reached right now. Are you online?',
+      tr_src: 'Timetable data:', tr_contact: 'Contact', tr_details: 'Details', tr_via_note: 'Stops in between are ignored for bus & train.',
+      tr_delay: m => '+' + m + ' min', tr_min: m => m + ' min', tr_arrive: 'Arrival', rt_loading: 'Calculating route …', rt_wait_loc: 'Waiting for your location …',
       rt_err: 'No route found. Are you online?', rt_need2: 'Choose a start and a destination.', rt_steps: 'Directions', rt_close: 'Close route', rt_remove: 'Remove',
       rt_dist: m => m < 1000 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(m < 10000 ? 1 : 0) + ' km',
       rt_dur: s => s < 3600 ? Math.max(1, Math.round(s / 60)) + ' min' : Math.floor(s / 3600) + ' h ' + Math.round(s % 3600 / 60) + ' min',
@@ -2424,6 +2467,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   // Route planen (wie Google Maps): OSRM-Router von FOSSGIS (routing.openstreetmap.de)
   // =====================================================================
   const ROUTERS = {
+    bus: [],   // Bus & Bahn: eigener Weg über Transitous (siehe calcTransit)
     foot: ['https://routing.openstreetmap.de/routed-foot/route/v1/driving/'],
     bike: ['https://routing.openstreetmap.de/routed-bike/route/v1/driving/'],
     car: ['https://routing.openstreetmap.de/routed-car/route/v1/driving/', 'https://router.project-osrm.org/route/v1/driving/']
@@ -2476,6 +2520,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     else if (rt.status === 'wait') body = `<div class="rt-msg">${T('rt_wait_loc')}</div>`;
     else if (rt.status === 'err') body = `<div class="rt-msg bad">${T('rt_err')}</div>`;
     else if (rt.status === 'need') body = `<div class="rt-msg">${T('rt_need2')}</div>`;
+    else if (rt.status === 'tr_none') body = `<div class="rt-msg">${T('tr_none')}</div>${trAttr()}`;
+    else if (rt.status === 'tr_err') body = `<div class="rt-msg bad">${T('tr_err')}</div>`;
+    else if (rt.mode === 'bus' && rt.tr) body = transitBody();
     else if (r) {
       const steps = [];
       r.legs.forEach((leg, li) => leg.steps.forEach(st => {
@@ -2490,13 +2537,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       rt.stepList = steps;
     }
     rtEl.innerHTML = `<div class="rt-head"><b>${T('rt_title')}</b>
-        <div class="rt-modes" role="radiogroup">${['foot', 'bike', 'car'].map(md => `<button type="button" role="radio" aria-checked="${md === rt.mode}" data-md="${md}" class="${md === rt.mode ? 'on' : ''}" title="${T('rt_' + md)}">${{ foot: '🚶', bike: '🚲', car: '🚗' }[md]}<span>${T('rt_' + md)}</span></button>`).join('')}</div>
+        <div class="rt-modes" role="radiogroup">${['foot', 'bike', 'car', 'bus'].map(md => `<button type="button" role="radio" aria-checked="${md === rt.mode}" data-md="${md}" class="${md === rt.mode ? 'on' : ''}" title="${T('rt_' + md)}">${{ foot: '🚶', bike: '🚲', car: '🚗', bus: '🚌' }[md]}<span>${T('rt_' + md)}</span></button>`).join('')}</div>
         <button type="button" class="rt-x" id="rt-close" aria-label="${T('rt_close')}" title="${T('rt_close')}">✕</button></div>
-      <div class="rt-stops">${rt.stops.map((k, i) => `<div class="rt-row"><span class="rt-l">${letter(i)}</span>
+      <div class="rt-stops">${rt.stops.map((k, i) => `<div class="rt-row"><span class="rt-l${i === 0 ? ' st' : i === n - 1 ? ' en' : ''}">${letter(i)}</span>
           <select data-si="${i}" aria-label="${i === 0 ? T('rt_from') : i === n - 1 ? T('rt_to') : T('rt_via')}">${rtOptions(k)}</select>
           ${n > 2 && i > 0 && i < n - 1 ? `<button type="button" class="rt-rm" data-rm="${i}" title="${T('rt_remove')}" aria-label="${T('rt_remove')}">✕</button>` : i === 0 && n === 2 ? `<button type="button" class="rt-sw" id="rt-swap" title="${T('rt_swap')}" aria-label="${T('rt_swap')}">⇅</button>` : '<span class="rt-sp"></span>'}</div>`).join('')}
-        ${n < 6 ? `<button type="button" class="rt-add" id="rt-add">${T('rt_add')}</button>` : ''}</div>
+        ${n < 6 && rt.mode !== 'bus' ? `<button type="button" class="rt-add" id="rt-add">${T('rt_add')}</button>` : ''}</div>
+      ${rt.mode === 'bus' ? `<div class="tr-time"><label for="tr-when">${T('tr_dep')}</label><input type="datetime-local" id="tr-when" value="${esc(rt.trTime || '')}">
+        <button type="button" id="tr-now" class="${rt.trTime ? '' : 'on'}">${T('tr_now')}</button></div>${n > 2 ? `<div class="rt-msg">${T('tr_via_note')}</div>` : ''}` : ''}
       ${body}`;
+    bindTransit();
     rtEl.querySelectorAll('select').forEach(s => s.onchange = () => { rt.stops[+s.dataset.si] = s.value; calcRoute(); });
     rtEl.querySelectorAll('[data-md]').forEach(b => b.onclick = () => { rt.mode = b.dataset.md; try { localStorage.setItem('gmh-rt-mode', rt.mode); } catch (x) {} calcRoute(); });
     rtEl.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { rt.stops.splice(+b.dataset.rm, 1); calcRoute(); });
@@ -2529,9 +2579,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       if (watchId === null) startLocating();
       waitTimer = setTimeout(calcRoute, 1500); return;
     }
-    rt.status = 'loading'; renderRoute();
-    drawStops(res);
+    rt.status = 'loading'; rt.tr = null; rt.trLayer.clearLayers(); renderRoute();
+    drawStops(rt.mode === 'bus' ? [res[0], res[res.length - 1]] : res);
     const my = ++rt.req;
+    if (rt.mode === 'bus') return calcTransit(res, my);
     const coords = res.map(x => x.ll.lng.toFixed(6) + ',' + x.ll.lat.toFixed(6)).join(';');
     let data = null;
     for (const base of ROUTERS[rt.mode]) {
@@ -2561,7 +2612,133 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (rt.stops.length < 2) rt.stops = ['me', ''];
     calcRoute();
   }
-  function closeRoute() { rt.open = false; rt.req++; clearTimeout(waitTimer); rt.layer.clearLayers(); rt.res = null; renderRoute(); }
+  function closeRoute() { rt.open = false; rt.req++; clearTimeout(waitTimer); rt.layer.clearLayers(); rt.trLayer.clearLayers(); rt.res = null; rt.tr = null; renderRoute(); }
+
+  // ---------------------------------------------------------------------
+  // Bus & Bahn über Transitous (https://transitous.org, MOTIS-API)
+  // ---------------------------------------------------------------------
+  rt.trLayer = L.layerGroup().addTo(map);
+  const TR_BASE = 'https://api.transitous.org/api/';
+  let trVersions = ['v5', 'v6', 'v4', 'v3', 'v2', 'v1'];
+  try { const v = localStorage.getItem('gmh-tr-ver'); if (v) trVersions = [v, ...trVersions.filter(x => x !== v)]; } catch (x) {}
+  function decodePoly(str, prec) {
+    const f = Math.pow(10, prec || 6), out = []; let i = 0, lat = 0, lng = 0;
+    while (i < str.length) {
+      for (const k of [0, 1]) {
+        let b, s = 0, r = 0;
+        do { b = str.charCodeAt(i++) - 63; r |= (b & 0x1f) << s; s += 5; } while (b >= 0x20);
+        const d = (r & 1) ? ~(r >> 1) : (r >> 1);
+        if (k === 0) lat += d; else lng += d;
+      }
+      out.push([lat / f, lng / f]);
+    }
+    return out;
+  }
+  const isWalk = l => ['WALK', 'BIKE', 'CAR', 'RENTAL', 'CAR_PARKING', 'CAR_DROPOFF'].includes(l.mode);
+  const trIcon = m => ({ BUS: '🚌', COACH: '🚌', TRAM: '🚊', SUBWAY: '🚇', METRO: '🚇', FERRY: '⛴️', AIRPLANE: '✈️' }[m] || (/RAIL|TRAIN/.test(m || '') ? '🚆' : '🚍'));
+  const hexOk = c => typeof c === 'string' && /^[0-9a-f]{6}$/i.test(c);
+  const lineCol = l => hexOk(l.routeColor) ? '#' + l.routeColor : '#1a73e8';
+  const lineTxt = l => hexOk(l.routeTextColor) ? '#' + l.routeTextColor : '#fff';
+  const lineName = l => l.displayName || l.routeShortName || l.tripShortName || l.routeLongName || '';
+  const hm = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString({ de: 'de-DE', ru: 'ru-RU', en: 'en-GB' }[LANG] || 'de-DE', { hour: '2-digit', minute: '2-digit' }); };
+  const delayMin = (a, b) => { const d = Math.round((new Date(a) - new Date(b)) / 60000); return d > 0 ? d : 0; };
+  const trAttr = () => `<div class="tr-attr">${T('tr_src')} <a href="https://transitous.org/sources/" target="_blank" rel="noopener">Transitous</a> · <a href="https://github.com/akadakof/karte-gmuette" target="_blank" rel="noopener">${T('tr_contact')}</a></div>`;
+  function legChips(it) {
+    const parts = [];
+    it.legs.forEach(l => {
+      if (isWalk(l)) { const m = Math.round(l.duration / 60); if (m >= 1) parts.push(`<span class="ch walk">🚶 ${m}</span>`); }
+      else parts.push(`<span class="ch line" style="background:${lineCol(l)};color:${lineTxt(l)}">${trIcon(l.mode)} ${esc(lineName(l))}</span>`);
+    });
+    return parts.join('<span class="sep">›</span>');
+  }
+  function transitBody() {
+    const it = rt.tr[rt.trSel] || rt.tr[0];
+    const cards = rt.tr.map((x, i) => {
+      const d0 = x.legs.find(l => !isWalk(l));
+      const late = d0 && d0.realTime ? delayMin(d0.startTime, d0.scheduledStartTime) : 0;
+      return `<button type="button" class="tr-card${i === rt.trSel ? ' on' : ''}" data-ti="${i}">
+        <div class="tr-top"><b>${hm(x.startTime)} – ${hm(x.endTime)}</b><span class="dur">${T('rt_dur', x.duration)}</span></div>
+        <div class="tr-chips">${legChips(x)}</div>
+        <div class="tr-sub">${T('tr_transfers', x.transfers || 0)}${d0 ? ' · ' + T('tr_dep') + ' ' + hm(d0.startTime) + ' ' + esc(d0.from.name || '') : ''}${late ? ` <span class="late">${T('tr_delay', late)}</span>` : ''}</div></button>`;
+    }).join('');
+    let det = '';
+    if (rt.showSteps) {
+      det = '<ol class="tr-legs">' + it.legs.map((l, i) => {
+        if (isWalk(l)) {
+          const m = Math.max(1, Math.round(l.duration / 60));
+          if (l.duration < 30) return '';
+          const last = i === it.legs.length - 1;
+          return `<li class="walk"><span class="ic">🚶</span><div>${T('tr_walk', m, T('rt_dist', l.distance || 0))}${!last && l.to && l.to.name ? ' ' + esc(T('tr_walk_to', l.to.name)) : ''}</div></li>`;
+        }
+        const late1 = l.realTime ? delayMin(l.startTime, l.scheduledStartTime) : 0, late2 = l.realTime ? delayMin(l.endTime, l.scheduledEndTime) : 0;
+        const nst = (l.intermediateStops || []).length + 1;
+        return `<li class="ride" style="--lc:${lineCol(l)}"><span class="ic">${trIcon(l.mode)}</span><div>
+          <div class="ln"><span class="ch line" style="background:${lineCol(l)};color:${lineTxt(l)}">${esc(lineName(l))}</span> ${l.headsign ? esc(T('tr_dir', l.headsign)) : ''}</div>
+          <div class="st"><b>${hm(l.startTime)}</b>${late1 ? ` <span class="late">${T('tr_delay', late1)}</span>` : ''} ${esc(l.from.name || '')}</div>
+          <div class="mid">${T('tr_stops', nst)} · ${T('tr_min', Math.round(l.duration / 60))}</div>
+          <div class="st"><b>${hm(l.endTime)}</b>${late2 ? ` <span class="late">${T('tr_delay', late2)}</span>` : ''} ${esc(l.to.name || '')}</div></div></li>`;
+      }).join('') + '</ol>';
+    }
+    return `<div class="tr-cards">${cards}</div>
+      <div class="rt-sum"><b>${T('rt_dur', it.duration)}</b><span>${T('tr_arrive')} ${hm(it.endTime)}</span>
+        <button type="button" id="rt-tgl" aria-expanded="${rt.showSteps}">${T('tr_details')} ${rt.showSteps ? '▴' : '▾'}</button></div>${det}${trAttr()}`;
+  }
+  function bindTransit() {
+    if (rt.mode !== 'bus') return;
+    rtEl.querySelectorAll('[data-ti]').forEach(b => b.onclick = () => { rt.trSel = +b.dataset.ti; drawTransit(true); renderRoute(); });
+    const w = document.getElementById('tr-when');
+    if (w) w.onchange = () => { rt.trTime = w.value; calcRoute(); };
+    const nw = document.getElementById('tr-now');
+    if (nw) nw.onclick = () => { rt.trTime = ''; calcRoute(); };
+  }
+  function drawTransit(fit) {
+    rt.trLayer.clearLayers();
+    const it = rt.tr && rt.tr[rt.trSel]; if (!it) return;
+    const all = [];
+    it.legs.forEach(l => {
+      const g = l.legGeometry; if (!g || !g.points) return;
+      const pts = decodePoly(g.points, g.precision); all.push(...pts);
+      if (isWalk(l)) {
+        L.polyline(pts, { color: '#fff', weight: 9, opacity: .9, interactive: false }).addTo(rt.trLayer);
+        L.polyline(pts, { color: '#5f6368', weight: 6, dashArray: '0.1 11', lineCap: 'round', interactive: false }).addTo(rt.trLayer);
+      } else {
+        L.polyline(pts, { color: '#fff', weight: 11, opacity: .95, interactive: false }).addTo(rt.trLayer);
+        L.polyline(pts, { color: lineCol(l), weight: 7, interactive: false }).addTo(rt.trLayer);
+        [[l.from, l.startTime], [l.to, l.endTime]].forEach(([s, t]) => {
+          L.circleMarker([s.lat, s.lon], { radius: 6, color: lineCol(l), weight: 3, fillColor: '#fff', fillOpacity: 1 })
+            .bindTooltip(esc(s.name || '') + ' · ' + hm(t), { direction: 'top', className: 'name-tip' }).addTo(rt.trLayer);
+        });
+      }
+    });
+    rt.layer.eachLayer(l => l.bringToFront && l.bringToFront());
+    if (fit && all.length) {
+      const ph = rtEl.offsetHeight || 0, wide = innerWidth >= 700;
+      map.fitBounds(L.latLngBounds(all), { paddingTopLeft: [wide ? 40 : 20, 60], paddingBottomRight: [wide ? 40 : 20, ph + 30], maxZoom: 17 });
+    }
+  }
+  async function calcTransit(res, my) {
+    const a = res[0].ll, b = res[res.length - 1].ll;
+    const qs = new URLSearchParams({ fromPlace: a.lat.toFixed(6) + ',' + a.lng.toFixed(6), toPlace: b.lat.toFixed(6) + ',' + b.lng.toFixed(6), numItineraries: '4' });
+    if (rt.trTime) { const d = new Date(rt.trTime); if (!isNaN(d)) qs.set('time', d.toISOString()); }
+    let data = null, reached = false;
+    for (const v of trVersions) {
+      try {
+        const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 20000);
+        const r = await fetch(TR_BASE + v + '/plan?' + qs, { signal: ctrl.signal });
+        clearTimeout(tm);
+        if (r.status === 404) continue;
+        reached = true;
+        const j = await r.json();
+        if (Array.isArray(j.itineraries)) { data = j; trVersions = [v, ...trVersions.filter(x => x !== v)]; try { localStorage.setItem('gmh-tr-ver', v); } catch (x) {} break; }
+      } catch (e) { if (reached) break; }
+    }
+    if (my !== rt.req) return;
+    if (!data) { rt.status = 'tr_err'; renderRoute(); return; }
+    const its = data.itineraries.filter(x => x.legs && x.legs.some(l => !isWalk(l))).slice(0, 4);
+    if (!its.length) { rt.status = 'tr_none'; renderRoute(); return; }
+    rt.status = 'ok'; rt.tr = its; rt.trSel = 0;
+    renderRoute(); drawTransit(true);
+  }
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('[data-rk]'); if (!b) return;
     e.preventDefault(); map.closePopup(); openRoute(b.dataset.rk);
