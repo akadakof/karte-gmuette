@@ -1205,6 +1205,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
   html .rt-modes button { justify-content: center; padding: 8px 6px; min-width: 0; }
   html .rt-modes button span { display: inline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (max-width: 380px) { html .rt-modes button { flex-direction: column; gap: 1px; padding: 6px 2px; font-size: 11.5px; } }
+
+  /* ---- PC: Routen-Fenster als Leiste links (wie Google Maps); Handy/Tablet unverändert ---- */
+  @media (min-width: 1001px) {
+    html #rt-panel { left: 12px; right: auto; top: calc(12px + env(safe-area-inset-top, 0px)); bottom: auto; transform: none;
+      width: 480px; max-height: calc(100vh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+    body.rt-on .mk-panel, body.rt-on #gsearch { display: none !important; }
+    body.rt-on .leaflet-left { left: 492px; }
+    body.rt-on .coord-box { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -2782,14 +2791,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
       dashArray: rt.mode === 'foot' ? '0.1 12' : rt.mode === 'bike' ? '10 8' : null, lineCap: 'round' }).addTo(rt.layer);
     rt.layer.eachLayer(l => l.bringToFront && l.bringToFront());
     renderRoute();
-    const ph = rtEl.offsetHeight || 0, wide = innerWidth >= 700;
-    map.fitBounds(L.latLngBounds(line), { paddingTopLeft: [wide ? 40 : 20, 60], paddingBottomRight: [wide ? 40 : 20, ph + 30], maxZoom: 17 });
+    map.fitBounds(L.latLngBounds(line), rtPad());
   }
   function openRoute(toKey, fromKey) {
     rt.open = true;
     if (toKey) rt.stops = [fromKey || (rt.stops[0] && rt.stops[0] !== toKey ? rt.stops[0] : 'me'), toKey];
     if (rt.stops.length < 2) rt.stops = ['me', ''];
     calcRoute();
+  }
+  // Platz für das Routen-Fenster beim Zoomen auf die Route: am PC links, sonst unten
+  function rtPad() {
+    if (innerWidth > 1000) return { paddingTopLeft: [(rtEl.offsetWidth || 480) + 50, 90], paddingBottomRight: [90, 50], maxZoom: 17 };
+    const ph = rtEl.offsetHeight || 0, wide = innerWidth >= 700;
+    return { paddingTopLeft: [wide ? 40 : 20, 60], paddingBottomRight: [wide ? 40 : 20, ph + 30], maxZoom: 17 };
   }
   function closeRoute() { rt.open = false; rt.req++; clearTimeout(waitTimer); rt.layer.clearLayers(); rt.trLayer.clearLayers(); rt.res = null; rt.tr = null; renderRoute(); }
 
@@ -2891,8 +2905,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     });
     rt.layer.eachLayer(l => l.bringToFront && l.bringToFront());
     if (fit && all.length) {
-      const ph = rtEl.offsetHeight || 0, wide = innerWidth >= 700;
-      map.fitBounds(L.latLngBounds(all), { paddingTopLeft: [wide ? 40 : 20, 60], paddingBottomRight: [wide ? 40 : 20, ph + 30], maxZoom: 17 });
+      map.fitBounds(L.latLngBounds(all), rtPad());
     }
   }
   async function calcTransit(res, my) {
