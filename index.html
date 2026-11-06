@@ -777,7 +777,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   #mk-favf:hover { color: #c79a00; }
   #mk-favf.on { background: #ffd54f; color: #5c4600; }
   .fav-mark { margin-left: auto; color: #f2b400; font-size: 14px; flex: none; }
-  .fav-mark + .np { margin-left: 6px; }
+  #mk-list .np + .fav-mark { margin-left: 6px; }   /* Foto-Zahl und Stern als Gruppe rechts, Stern ganz außen */
   .fav-star { color: #f2b400; }
   html .leaflet-tooltip.fav-tip { background: #fffbea; } html .leaflet-tooltip-top.fav-tip::before { border-top-color: #fffbea; }
   @media (max-width: 700px) { .mk-panel.collapsed .srch-row { display: none !important; } }
@@ -1705,7 +1705,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         nm = esc(m.data.name.slice(0, i)) + '<mark>' + esc(m.data.name.slice(i, i + q.length)) + '</mark>' + esc(m.data.name.slice(i + q.length));
       }
       const np = (m.data.photos || []).length;
-      li.innerHTML = `${sel.on ? `<input type="checkbox" class="sel-cb" tabindex="-1" aria-hidden="true"${sel.set.has(m) ? ' checked' : ''}>` : ''}<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${m.data.fav ? '<span class="fav-mark" aria-hidden="true">★</span>' : ''}${np ? `<span class="np">📷 ${np}</span>` : ''}`;
+      li.innerHTML = `${sel.on ? `<input type="checkbox" class="sel-cb" tabindex="-1" aria-hidden="true"${sel.set.has(m) ? ' checked' : ''}>` : ''}<span class="dot" style="background:${m.data.color}"></span><span class="nm">${nm}</span>${np ? `<span class="np">📷 ${np}</span>` : ''}${m.data.fav ? '<span class="fav-mark" aria-hidden="true">★</span>' : ''}`;
       if (sel.on) {
         li.classList.add('sel-item'); li.classList.toggle('picked', sel.set.has(m));
         li.setAttribute('role', 'checkbox'); li.setAttribute('aria-checked', sel.set.has(m)); li.tabIndex = 0;
