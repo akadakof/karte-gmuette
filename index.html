@@ -1736,9 +1736,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <button id="mk-more" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="mk-menu" title="${T('menu')}" aria-label="${T('menu')}">⋮</button></div>
       <div id="mk-msg"></div>
       <ul id="gs-list" role="listbox" hidden></ul>
+      <div hidden><button id="mk-export" type="button"></button><input type="file" id="mk-import" hidden></div>
       <div id="mk-menu" role="menu" hidden>
-        <button id="mk-export" role="menuitem" title="${T('export_t')}">${T('export')}</button>
-        <label class="imp" role="menuitem" tabindex="0" title="${T('import_t')}">${T('import')}<input type="file" id="mk-import" accept=".json,application/json,text/plain" hidden></label>
         <button id="sh-open" role="menuitem">${T('shared_lock')}<span class="sh-dot" hidden></span></button>
         <button id="live-open" role="menuitem">${T('live_btn')}</button>
         <button id="sel-open" role="menuitem">${T('sel_menu')}</button>
