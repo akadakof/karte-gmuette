@@ -1239,6 +1239,20 @@ svg.leaflet-image-layer.leaflet-interactive path {
     html #mk-menu { top: 50px; }
     html .lang-sw button { padding: 5px 9px; }
   }
+
+  /* ---- Suchleiste mit Knöpfen für Freunde und Auswählen ---- */
+  html .mk-panel .gs-box { padding-right: 4px; gap: 2px; }
+  #gs-in { text-overflow: ellipsis; }
+  .gs-sep { width: 1px; height: 22px; background: var(--line, #e5e8e4); margin: 0 4px; flex: none; }
+  html .mk-panel .gs-act { position: relative; flex: none; width: 36px; height: 34px; border: none; border-radius: 9px; background: none; cursor: pointer; font-size: 18px; line-height: 1; padding: 0; }
+  html .mk-panel .gs-act:hover, html .mk-panel .gs-act:focus-visible { background: var(--brand-soft, #e5f1eb); outline: none; }
+  .gs-act .sh-dot { position: absolute; top: 4px; right: 4px; margin: 0; width: 8px; height: 8px; border: 2px solid #fff; }
+  html .mk-panel { width: 420px; }
+  @media (max-width: 700px) {
+    html .mk-panel { width: calc(100vw - 24px); }
+    html .mk-panel .gs-act { width: 32px; height: 30px; font-size: 16px; }
+    .gs-sep { margin: 0 2px; }
+  }
 </style>
 </head>
 <body>
@@ -1732,15 +1746,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div class="gs-box" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-owns="gs-list">
         <span class="gs-ic" aria-hidden="true"></span>
         <input type="search" id="gs-in" placeholder="${T('gs_ph')}" aria-label="${T('gs_ph')}" autocomplete="off" spellcheck="false" enterkeyhint="search">
-        <button type="button" id="gs-x" aria-label="${T('gs_clear')}" title="${T('gs_clear')}" hidden>✕</button></div>
-      <button id="mk-more" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="mk-menu" title="${T('menu')}" aria-label="${T('menu')}">⋮</button></div>
+        <button type="button" id="gs-x" aria-label="${T('gs_clear')}" title="${T('gs_clear')}" hidden>✕</button>
+        <span class="gs-sep" aria-hidden="true"></span>
+        <button type="button" id="sh-open" class="gs-act" title="${T('friends_btn')}" aria-label="${T('friends_btn')}">👥<span class="sh-dot" hidden></span></button>
+        <button type="button" id="sel-open" class="gs-act" title="${T('sel_menu')}" aria-label="${T('sel_menu')}">☑️</button></div></div>
       <div id="mk-msg"></div>
       <ul id="gs-list" role="listbox" hidden></ul>
       <div hidden><button id="mk-export" type="button"></button><input type="file" id="mk-import" hidden></div>
-      <div id="mk-menu" role="menu" hidden>
-        <button id="sh-open" role="menuitem">${T('friends_btn')}<span class="sh-dot" hidden></span></button>
-        <button id="sel-open" role="menuitem">${T('sel_menu')}</button>
-      </div>
       <input type="hidden" id="mk-search" value="">
       <div id="sel-bar" hidden></div>
       <ul id="mk-list" hidden></ul>
@@ -1752,13 +1764,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   };
   panel.addTo(map);
   // ---- Drei-Punkte-Menü ----
-  const moreBtn = document.getElementById('mk-more'), menuEl = document.getElementById('mk-menu');
-  const setMenu = open => { menuEl.hidden = !open; moreBtn.setAttribute('aria-expanded', open); moreBtn.classList.toggle('on', open); };
-  moreBtn.onclick = e => { e.stopPropagation(); setMenu(menuEl.hidden); if (!menuEl.hidden) menuEl.querySelector('button, label').focus(); };
-  menuEl.addEventListener('click', () => setTimeout(() => setMenu(false), 0));
-  document.addEventListener('click', e => { if (!menuEl.hidden && !menuEl.contains(e.target) && e.target !== moreBtn) setMenu(false); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menuEl.hidden) { setMenu(false); moreBtn.focus(); } });
-  map.on('movestart', () => setMenu(false));
+  // Das ⋮-Menü gibt es nicht mehr: „Freunde“ und „Auswählen“ sitzen als Knöpfe in der Suchleiste
+  const setMenu = () => {};
   var sel = { on: false, set: new Set(), shown: [] };   // Auswahl-Modus
   function updatePanel() {
     const list = document.getElementById('mk-list');
@@ -2105,8 +2112,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function renderShared() {
     const avail = !!sharedFile && !shared;
     const dot = document.querySelector('#sh-open .sh-dot'); if (dot) dot.hidden = !avail;
-    document.getElementById('mk-more').classList.toggle('has-dot', avail);
-    document.getElementById('mk-more').title = avail ? T('sh_avail') : T('menu');
+    document.getElementById('sh-open').title = avail ? T('sh_avail') : T('friends_btn');
     if (!sharedFile || !shared) { shBox.hidden = true; shBox.innerHTML = ''; return; }
     shBox.hidden = false;
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
