@@ -1253,6 +1253,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
     html .mk-panel .gs-act { width: 32px; height: 30px; font-size: 16px; }
     .gs-sep { margin: 0 2px; }
   }
+
+  /* ---- Freunde/Auswählen oben in der Suchliste ---- */
+  .gs-action .gs-i { position: relative; }
+  .gs-action .sh-dot { position: absolute; top: -2px; right: -1px; margin: 0; width: 8px; height: 8px; border: 2px solid #fff; }
+  .gs-action small.hot { color: #c62828; font-weight: 600; }
+  .gs-split { height: 1px; background: var(--line, #e5e8e4); margin: 6px 8px; list-style: none; }
+  .mk-panel .gs-ic { position: relative; }
+  .mk-panel .gs-ic.has-dot::after { content: ""; position: absolute; top: -3px; right: -4px; width: 8px; height: 8px; border-radius: 50%; background: #e53935; border: 2px solid #fff; }
 </style>
 </head>
 <body>
@@ -1299,7 +1307,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Schick deinen Freunden den Link zur Karte und das Passwort – das Passwort am besten auf einem anderen Weg.',
       done_after: 'Wer die Karte öffnet, sieht ein Passwortfeld. Mit dem richtigen Passwort erscheinen die geteilten Punkte.',
       finish: 'Fertig', enc_fail: 'Verschlüsseln hat nicht geklappt.',
-      shared_lock: '🔒 Geteilte Punkte', friends_btn: '👥 Freunde', friends_title: '👥 Freunde', fr_tab_live: '📡 Live', sh_tab_view: '🔓 Ansehen', sh_tab_share: '📤 Teilen', sh_view_sub: 'Gib das Passwort ein, das du von deinen Freunden bekommen hast.', sh_none_site: 'Auf dieser Karte sind gerade keine geteilten Punkte. Unter „Teilen“ kannst du selbst welche erstellen.', sh_open_n: n => n + (n === 1 ? ' geteilter Punkt ist' : ' geteilte Punkte sind') + ' geöffnet und auf der Karte zu sehen.', sh_avail: 'Es gibt geteilte Punkte – öffne sie mit dem Passwort.', pw_enter: 'Passwort eingeben', pw_aria: 'Passwort für geteilte Punkte', open: 'Öffnen', checking: 'Wird geprüft …',
+      shared_lock: '🔒 Geteilte Punkte', friends_btn: '👥 Freunde', fr_sub: 'Live-Standort und geteilte Punkte', friends_title: '👥 Freunde', fr_tab_live: '📡 Live', sh_tab_view: '🔓 Ansehen', sh_tab_share: '📤 Teilen', sh_view_sub: 'Gib das Passwort ein, das du von deinen Freunden bekommen hast.', sh_none_site: 'Auf dieser Karte sind gerade keine geteilten Punkte. Unter „Teilen“ kannst du selbst welche erstellen.', sh_open_n: n => n + (n === 1 ? ' geteilter Punkt ist' : ' geteilte Punkte sind') + ' geöffnet und auf der Karte zu sehen.', sh_avail: 'Es gibt geteilte Punkte – öffne sie mit dem Passwort.', pw_enter: 'Passwort eingeben', pw_aria: 'Passwort für geteilte Punkte', open: 'Öffnen', checking: 'Wird geprüft …',
       wrong_pw: 'Falsches Passwort.', shared_head: '👥 Geteilt', lock: 'Sperren', lock_t: 'Geteilte Punkte wieder ausblenden', no_hit: 'Kein Treffer',
       point: 'Punkt', shared_point: 'Geteilter Punkt', take: 'In meine Punkte übernehmen', taken: 'Übernommen ✓',
       offline: 'Offline – gespeicherte Karte', off_progress: p => 'Offline-Karte wird gespeichert … ' + p + ' %', off_done: 'Karte ist jetzt offline verfügbar ✓',
@@ -1363,7 +1371,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Отправь друзьям ссылку на карту и пароль — пароль лучше другим способом.',
       done_after: 'Кто открывает карту, видит поле для пароля. С правильным паролем появляются общие точки.',
       finish: 'Готово', enc_fail: 'Не удалось зашифровать.',
-      shared_lock: '🔒 Общие точки', friends_btn: '👥 Друзья', friends_title: '👥 Друзья', fr_tab_live: '📡 Онлайн', sh_tab_view: '🔓 Смотреть', sh_tab_share: '📤 Поделиться', sh_view_sub: 'Введи пароль, который тебе дали друзья.', sh_none_site: 'На этой карте сейчас нет общих точек. Во вкладке «Поделиться» можно создать свои.', sh_open_n: n => 'Открыто общих точек: ' + n + '. Они видны на карте.', sh_avail: 'Есть общие точки — открой их паролем.', pw_enter: 'Введи пароль', pw_aria: 'Пароль для общих точек', open: 'Открыть', checking: 'Проверка …',
+      shared_lock: '🔒 Общие точки', friends_btn: '👥 Друзья', fr_sub: 'Местоположение онлайн и общие точки', friends_title: '👥 Друзья', fr_tab_live: '📡 Онлайн', sh_tab_view: '🔓 Смотреть', sh_tab_share: '📤 Поделиться', sh_view_sub: 'Введи пароль, который тебе дали друзья.', sh_none_site: 'На этой карте сейчас нет общих точек. Во вкладке «Поделиться» можно создать свои.', sh_open_n: n => 'Открыто общих точек: ' + n + '. Они видны на карте.', sh_avail: 'Есть общие точки — открой их паролем.', pw_enter: 'Введи пароль', pw_aria: 'Пароль для общих точек', open: 'Открыть', checking: 'Проверка …',
       wrong_pw: 'Неверный пароль.', shared_head: '👥 Общие', lock: 'Скрыть', lock_t: 'Снова скрыть общие точки', no_hit: 'Ничего не найдено',
       point: 'Точка', shared_point: 'Общая точка', take: 'Добавить в мои точки', taken: 'Добавлено ✓',
       offline: 'Офлайн — сохранённая карта', off_progress: p => 'Карта сохраняется для офлайна … ' + p + ' %', off_done: 'Карта теперь доступна офлайн ✓',
@@ -1427,7 +1435,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       step2: 'Send your friends the map link and the password – ideally the password by a different route.',
       done_after: 'Anyone who opens the map sees a password field. With the right password the shared points appear.',
       finish: 'Done', enc_fail: 'Encryption failed.',
-      shared_lock: '🔒 Shared points', friends_btn: '👥 Friends', friends_title: '👥 Friends', fr_tab_live: '📡 Live', sh_tab_view: '🔓 View', sh_tab_share: '📤 Share', sh_view_sub: 'Enter the password your friends gave you.', sh_none_site: 'There are no shared points on this map right now. Use “Share” to create some yourself.', sh_open_n: n => n + (n === 1 ? ' shared point is' : ' shared points are') + ' open and shown on the map.', sh_avail: 'There are shared points – open them with the password.', pw_enter: 'Enter password', pw_aria: 'Password for shared points', open: 'Open', checking: 'Checking …',
+      shared_lock: '🔒 Shared points', friends_btn: '👥 Friends', fr_sub: 'Live location and shared points', friends_title: '👥 Friends', fr_tab_live: '📡 Live', sh_tab_view: '🔓 View', sh_tab_share: '📤 Share', sh_view_sub: 'Enter the password your friends gave you.', sh_none_site: 'There are no shared points on this map right now. Use “Share” to create some yourself.', sh_open_n: n => n + (n === 1 ? ' shared point is' : ' shared points are') + ' open and shown on the map.', sh_avail: 'There are shared points – open them with the password.', pw_enter: 'Enter password', pw_aria: 'Password for shared points', open: 'Open', checking: 'Checking …',
       wrong_pw: 'Wrong password.', shared_head: '👥 Shared', lock: 'Lock', lock_t: 'Hide shared points again', no_hit: 'No match',
       point: 'Point', shared_point: 'Shared point', take: 'Add to my points', taken: 'Added ✓',
       offline: 'Offline – saved map', off_progress: p => 'Saving map for offline … ' + p + ' %', off_done: 'Map is now available offline ✓',
@@ -1747,9 +1755,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <span class="gs-ic" aria-hidden="true"></span>
         <input type="search" id="gs-in" placeholder="${T('gs_ph')}" aria-label="${T('gs_ph')}" autocomplete="off" spellcheck="false" enterkeyhint="search">
         <button type="button" id="gs-x" aria-label="${T('gs_clear')}" title="${T('gs_clear')}" hidden>✕</button>
-        <span class="gs-sep" aria-hidden="true"></span>
-        <button type="button" id="sh-open" class="gs-act" title="${T('friends_btn')}" aria-label="${T('friends_btn')}">👥<span class="sh-dot" hidden></span></button>
-        <button type="button" id="sel-open" class="gs-act" title="${T('sel_menu')}" aria-label="${T('sel_menu')}">☑️</button></div></div>
+        </div></div>
+      <div hidden><button type="button" id="sh-open"><span class="sh-dot" hidden></span></button><button type="button" id="sel-open"></button></div>
       <div id="mk-msg"></div>
       <ul id="gs-list" role="listbox" hidden></ul>
       <div hidden><button id="mk-export" type="button"></button><input type="file" id="mk-import" hidden></div>
@@ -2112,7 +2119,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function renderShared() {
     const avail = !!sharedFile && !shared;
     const dot = document.querySelector('#sh-open .sh-dot'); if (dot) dot.hidden = !avail;
-    document.getElementById('sh-open').title = avail ? T('sh_avail') : T('friends_btn');
+    const ic = document.querySelector('.mk-panel .gs-ic'); if (ic) ic.classList.toggle('has-dot', avail);
+    window.__shAvail = avail;
     if (!sharedFile || !shared) { shBox.hidden = true; shBox.innerHTML = ''; return; }
     shBox.hidden = false;
     const q = (document.getElementById('mk-search').value || '').trim().toLowerCase();
@@ -2987,11 +2995,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function gsRender(state) {
     gsList.innerHTML = '';
     const box = gsEl.querySelector('.gs-box');
-    if (state) { gsList.innerHTML = `<li class="gs-msg">${esc(state)}</li>`; gsList.hidden = false; box.setAttribute('aria-expanded', 'true'); return; }
-    if (!gsItems.length) { gsList.hidden = true; box.setAttribute('aria-expanded', 'false'); return; }
+    if (!gsItems.length && !state) { gsList.hidden = true; box.setAttribute('aria-expanded', 'false'); return; }
     let lastKind = null;
     gsItems.forEach((it, i) => {
-      if (it.kind !== lastKind) {
+      if (it.kind !== lastKind && it.kind !== 'action') {
         const hd = document.createElement('li'); hd.className = 'gs-hd';
         if (it.kind === 'mine') {
           hd.innerHTML = `<span>${T('gs_mine')} (${gsItems.filter(x => x.kind === 'mine').length})</span>${markers.some(m => m.data.fav) || gsFavOnly() ? `<button type="button" class="gs-favf${gsFavOnly() ? ' on' : ''}" aria-pressed="${gsFavOnly()}">${T('gs_favonly')}</button>` : ''}`;
@@ -3001,11 +3008,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
         gsList.appendChild(hd); lastKind = it.kind;
       }
       const li = document.createElement('li'); li.className = 'gs-it' + (i === gsAct ? ' on' : ''); li.setAttribute('role', 'option'); li.id = 'gs-o' + i;
-      li.innerHTML = `<span class="gs-i">${it.icon}</span><span class="gs-t"><b>${esc(it.title)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span>`;
+      if (it.kind === 'action') li.classList.add('gs-action');
+      li.innerHTML = `<span class="gs-i">${it.icon}${it.dot ? '<span class="sh-dot"></span>' : ''}</span><span class="gs-t"><b>${esc(it.title)}</b>${it.sub ? `<small${it.dot ? ' class="hot"' : ''}>${esc(it.sub)}</small>` : ''}</span>`;
       li.onmousedown = e => e.preventDefault();
       li.onclick = () => gsPick(it);
       gsList.appendChild(li);
+      if (it.kind === 'action' && (!gsItems[i + 1] || gsItems[i + 1].kind !== 'action')) { const sp = document.createElement('li'); sp.className = 'gs-split'; gsList.appendChild(sp); }
     });
+    if (state) { const m = document.createElement('li'); m.className = 'gs-msg'; m.textContent = state; gsList.appendChild(m); }
     gsList.hidden = false; box.setAttribute('aria-expanded', 'true');
   }
   function gsFavOnly() { try { return localStorage.getItem('gmh-fav-only') === '1'; } catch (x) { return false; } }
@@ -3027,10 +3037,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if (q.length >= 3) { gsQuery(q); return; }
     gsShowMine(q);
   }
+  // Freunde und Auswählen stehen oben in der Liste, solange nichts eingetippt ist
+  function gsActions() {
+    const strip = s => s.replace(/^\S+\s/, '');
+    return [
+      { kind: 'action', icon: '👥', title: strip(T('friends_btn')), sub: window.__shAvail ? T('sh_avail') : T('fr_sub'), dot: !!window.__shAvail, run: () => openSharedDlg() },
+      { kind: 'action', icon: '☑️', title: strip(T('sel_menu')), sub: '', run: () => document.getElementById('sel-open').click() }
+    ];
+  }
   function gsShowMine(q) {
-    gsReq++; gsItems = gsMine(q || ''); gsAct = -1;
+    gsReq++; gsItems = (q ? [] : gsActions()).concat(gsMine(q || '')); gsAct = -1;
     if (!markers.length) gsRender(T('empty', TOUCH));
-    else if (!gsItems.length) gsRender(gsFavOnly() && !q ? T('fav_none') : T('no_match', q));
+    else if (!gsItems.some(x => x.kind === 'mine')) gsRender(gsFavOnly() && !q ? T('fav_none') : T('no_match', q));
     else gsRender();
   }
   async function gsQuery(q) {
@@ -3090,6 +3108,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function gsClose() { gsList.hidden = true; gsEl.querySelector('.gs-box').setAttribute('aria-expanded', 'false'); }
   function gsPick(it) {
     gsClose(); gsIn.blur();
+    if (it.kind === 'action') { it.run(); return; }
     if (it.kind === 'mine') {
       const m = it.m; map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 17), { duration: .8 }); map.once('moveend', () => m.openPopup()); return;
     }
