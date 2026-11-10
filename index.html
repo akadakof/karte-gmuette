@@ -1261,6 +1261,51 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .gs-split { height: 1px; background: var(--line, #e5e8e4); margin: 6px 8px; list-style: none; }
   .mk-panel .gs-ic { position: relative; }
   .mk-panel .gs-ic.has-dot::after { content: ""; position: absolute; top: -3px; right: -4px; width: 8px; height: 8px; border-radius: 50%; background: #e53935; border: 2px solid #fff; }
+
+  /* ---- Feinschliff: kompaktes Markierungs-Fenster ---- */
+  html .mk-pop.mp { min-width: 230px; }
+  .mp-head { display: flex; align-items: center; gap: 6px; margin-right: 18px; }
+  html .mk-pop .mp-name { flex: 1; min-width: 0; margin: 0; font-size: 16px; font-weight: 700; padding: 7px 10px; }
+  html .mk-pop .mp-fav { flex: none; width: 38px; height: 38px; border: none; border-radius: 10px; background: var(--soft, #f3f5f2); color: #9aa09a; font-size: 21px; line-height: 1; cursor: pointer; }
+  html .mk-pop .mp-fav:hover { color: #e0a800; }
+  html .mk-pop .mp-fav.on { background: #fff4cc; color: #f2b400; }
+  .mp-coords { margin: 5px 2px 8px; font: 12px var(--mono, monospace); color: var(--muted, #6b7671); user-select: all; }
+  html .mk-pop .mp-sw { gap: 5px; margin: 0 0 6px; flex-wrap: wrap; }
+  html .mk-pop .mp-sw .sw { width: 24px; height: 24px; }
+  .mp-custom { width: 26px; height: 26px; padding: 0; border: none; background: none; cursor: pointer; border-radius: 50%; }
+  html .mk-pop .rt-go { margin: 10px 0 8px; }
+  .mp-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  html .mk-pop .mp-act { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 8px 6px; border: none; border-radius: 10px;
+    background: var(--soft, #f3f5f2); color: var(--ink, #1c2622) !important; font: 600 13px var(--font, system-ui); text-decoration: none; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html .mk-pop .mp-act:hover { background: #e8ebe7; }
+  html .mk-pop .mp-act.danger { color: var(--danger, #c62828) !important; }
+  html .mk-pop .mp-act.danger:hover { background: #fdecec; }
+  html .mk-pop .photos { margin: 2px 0 4px; }
+  /* Sprache in der Suchliste (Handy) */
+  .gs-langs { display: flex; gap: 2px; margin-left: auto; background: var(--soft, #f3f5f2); border-radius: 999px; padding: 2px; flex: none; }
+  .gs-langs button { border: none; background: none; border-radius: 999px; padding: 5px 9px; font: 700 12px var(--font, system-ui); color: var(--muted, #6b7671); cursor: pointer; }
+  .gs-langs button.on { background: var(--brand, #1f6f54); color: #fff; }
+  /* Offline-Hinweis unten links, dezent */
+  html .leaflet-bottom.leaflet-left .off-box { margin-bottom: 6px !important; }
+  @media (max-width: 700px) {
+    html .rt-modes button { flex-direction: column; gap: 2px; padding: 6px 2px; font-size: 11.5px; }
+    html .rt-modes button span { white-space: nowrap; }
+    html .leaflet-control-attribution { font-size: 8.5px !important; max-width: 58vw; line-height: 1.25; }
+    html .mk-pop .mp-sw .sw { width: 22px; height: 22px; }
+    html .leaflet-popup-content { margin: 12px 12px 12px; }
+  }
+
+  .gs-star { color: #f2b400; font-size: 13px; }
+  .mp-custom { -webkit-appearance: none; appearance: none; width: 24px !important; height: 24px !important; padding: 3px !important; border-radius: 50% !important;
+    background: conic-gradient(#e53935, #fdd835, #43a047, #1e88e5, #8e24aa, #e53935) !important; box-sizing: border-box; flex: none; }
+  .mp-custom::-webkit-color-swatch-wrapper { padding: 0; }
+  .mp-custom::-webkit-color-swatch { border: 2px solid #fff; border-radius: 50%; }
+  .mp-custom::-moz-color-swatch { border: 2px solid #fff; border-radius: 50%; }
+  @media (max-width: 700px) {
+    html .mk-pop .mp-sw { gap: 4px; flex-wrap: nowrap; }
+    html .mk-pop .mp-sw .sw { width: 22px; height: 22px; flex: none; border-width: 2px; }
+    .mp-custom { width: 22px !important; height: 22px !important; }
+  }
 </style>
 </head>
 <body>
@@ -1483,6 +1528,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   const T = (k, ...a) => { const v = I18N[LANG][k] ?? I18N.de[k]; return typeof v === 'function' ? v(...a) : v; };
   const map = L.map('map').setView(CENTER, ZOOM);
   map.zoomControl.setPosition('bottomright');   // + und − unten rechts
+  // Fenster beim Öffnen so verschieben, dass sie nicht unter der Suchleiste oder den Knöpfen rechts liegen
+  L.Popup.prototype.options.autoPanPaddingTopLeft = L.point(12, 80);
+  L.Popup.prototype.options.autoPanPaddingBottomRight = L.point(64, 24);
 
   // Mehrere Kartendienste ohne API-Schlüssel. Fällt einer aus, wird automatisch der nächste genommen.
   const layers = {
@@ -1514,7 +1562,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
     });
   });
-  const langCtl = L.control({ position: innerWidth <= 700 ? 'bottomright' : 'topright' });
+  const langCtl = L.control({ position: 'topright' });
   langCtl.onAdd = () => {
     const d = L.DomUtil.create('div', 'lang-sw leaflet-bar');
     d.setAttribute('role', 'group'); d.setAttribute('aria-label', T('lang'));
@@ -1528,7 +1576,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return d;
   };
   L.control.layers(layers, null, { collapsed: true, position: 'bottomright' }).addTo(map);   // kleines Symbol unten rechts
-  langCtl.addTo(map);
+  if (innerWidth > 700) langCtl.addTo(map);   // am Handy steht die Sprache in der Suchliste
   L.control.scale({ imperial: false }).addTo(map);
 
   // --- Live-Koordinaten unter der Maus ---
@@ -1622,24 +1670,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
     };
     const popupHtml = () => {
       const t = fmt(m.getLatLng());
-      return `<div class="mk-pop">
-        <button type="button" class="fav-btn${m.data.fav ? ' on' : ''}" data-a="fav" aria-pressed="${!!m.data.fav}">${m.data.fav ? T('fav_on') : T('fav_add')}</button>
-        <div class="lbl">${T('name')}</div>
-        <input type="text" data-a="name" value="${esc(m.data.name)}" placeholder="${T('name_ph')}">
-        <div class="lbl">${T('color')}</div>
-        <div class="swatches">${COLORS.map(c => `<button class="sw${c === m.data.color ? ' on' : ''}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join('')}
-          <input type="color" data-a="custom" value="${m.data.color}" title="${T('own_color')}" style="width:28px;height:26px;padding:0;border:none;background:none;cursor:pointer"></div>
-        <div class="lbl">${T('photos')}</div>
+      return `<div class="mk-pop mp">
+        <div class="mp-head">
+          <input type="text" class="mp-name" data-a="name" value="${esc(m.data.name)}" placeholder="${T('name_ph')}" aria-label="${T('name')}">
+          <button type="button" class="mp-fav${m.data.fav ? ' on' : ''}" data-a="fav" aria-pressed="${!!m.data.fav}" title="${m.data.fav ? T('fav_on') : T('fav_add')}" aria-label="${m.data.fav ? T('fav_on') : T('fav_add')}">${m.data.fav ? '★' : '☆'}</button>
+        </div>
+        <div class="mp-coords" title="${T('coords')}">${t}</div>
+        <div class="swatches mp-sw" role="group" aria-label="${T('color')}">${COLORS.map(c => `<button class="sw${c === m.data.color ? ' on' : ''}" data-c="${c}" style="background:${c}" title="${c}" aria-label="${T('color')} ${c}"></button>`).join('')}<input type="color" class="mp-custom" data-a="custom" value="${m.data.color}" title="${T('own_color')}" aria-label="${T('own_color')}"></div>
         <div class="photos" data-a="photos"></div>
-        <label class="add-photo">${T('add_photo')}<input type="file" data-a="addphoto" accept="image/*" multiple hidden></label>
         <div class="photo-msg"></div>
-        <div class="lbl">${T('coords')}</div>
-        <code>${t}</code>
         <button type="button" class="rt-go" data-rk="m:${rid(m)}">${T('rt_here')}</button>
-        <div class="row">
-          <button data-a="copy">${T('copy')}</button>
-          <button data-a="del">${T('del')}</button>
-          <a href="https://www.google.com/maps?q=${t.replace(' ', '')}" target="_blank">Google Maps</a>
+        <div class="mp-acts">
+          <label class="mp-act" tabindex="0">📷 ${T('photo')}<input type="file" data-a="addphoto" accept="image/*" multiple hidden></label>
+          <button type="button" class="mp-act" data-a="copy">📋 ${T('copy')}</button>
+          <a class="mp-act" href="https://www.google.com/maps?q=${t.replace(' ', '')}" target="_blank" rel="noopener">🗺️ Google Maps</a>
+          <button type="button" class="mp-act danger" data-a="del">🗑 ${T('del')}</button>
         </div></div>`;
     };
     const setColor = c => { m.data.color = c; m.setIcon(pinIcon(c, m.data.fav)); save(); };
@@ -1680,7 +1725,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         if (b.dataset.a === 'fav') {
           m.data.fav = !m.data.fav;
           m.setIcon(pinIcon(m.data.color, m.data.fav)); m.setZIndexOffset(m.data.fav ? 400 : 0);
-          b.classList.toggle('on', m.data.fav); b.setAttribute('aria-pressed', m.data.fav); b.textContent = m.data.fav ? T('fav_on') : T('fav_add');
+          b.classList.toggle('on', m.data.fav); b.setAttribute('aria-pressed', m.data.fav); b.textContent = m.data.fav ? '★' : '☆';
+          b.title = b.ariaLabel = m.data.fav ? T('fav_on') : T('fav_add');
           if (m.data.fav) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
           refreshLabel(); save(); return;
         }
@@ -1689,7 +1735,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           el.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s === b));
         } else if (b.dataset.a === 'copy') {
           navigator.clipboard.writeText(m.data.name + ': ' + fmt(m.getLatLng()))
-            .then(() => b.textContent = T('copied'))
+            .then(() => b.textContent = '✓ ' + T('copied').replace(' ✓', ''))
             .catch(() => b.textContent = T('copy_fail'));
         } else if (b.dataset.pid) {
           const id = b.dataset.pid;
@@ -2176,7 +2222,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   updatePanel();
 
   // ---------- Offline-Modus (App auf dem Startbildschirm) ----------
-  const offBox = L.control({ position: 'bottomright' });
+  const offBox = L.control({ position: 'bottomleft' });
   offBox.onAdd = () => { const d = L.DomUtil.create('div', 'off-box'); d.hidden = true; return d; };
   offBox.addTo(map);
   const offEl = document.querySelector('.off-box');
@@ -3009,7 +3055,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
       const li = document.createElement('li'); li.className = 'gs-it' + (i === gsAct ? ' on' : ''); li.setAttribute('role', 'option'); li.id = 'gs-o' + i;
       if (it.kind === 'action') li.classList.add('gs-action');
-      li.innerHTML = `<span class="gs-i">${it.icon}${it.dot ? '<span class="sh-dot"></span>' : ''}</span><span class="gs-t"><b>${esc(it.title)}</b>${it.sub ? `<small${it.dot ? ' class="hot"' : ''}>${esc(it.sub)}</small>` : ''}</span>`;
+      li.innerHTML = `<span class="gs-i">${it.icon}${it.dot ? '<span class="sh-dot"></span>' : ''}</span><span class="gs-t"><b>${esc(it.title)}${it.fav ? ' <span class="gs-star" aria-label="★">★</span>' : ''}</b>${it.sub ? `<small${it.dot ? ' class="hot"' : ''}>${esc(it.sub)}</small>` : ''}</span>`
+        + (it.langRow ? `<span class="gs-langs">${LANGS.map(([c, nm]) => `<button type="button" data-l="${c}" title="${nm}" class="${c === LANG ? 'on' : ''}">${c.toUpperCase()}</button>`).join('')}</span>` : '');
+      if (it.langRow) li.querySelectorAll('[data-l]').forEach(bt => { bt.onmousedown = e => e.preventDefault(); bt.onclick = e => { e.stopPropagation(); if (bt.dataset.l === LANG) return; try { localStorage.setItem('gmh-lang', bt.dataset.l); } catch (x) {} location.reload(); }; });
       li.onmousedown = e => e.preventDefault();
       li.onclick = () => gsPick(it);
       gsList.appendChild(li);
@@ -3026,7 +3074,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .sort((a, b) => (b.data.fav ? 1 : 0) - (a.data.fav ? 1 : 0))
       .map(m => {
         const np = (m.data.photos || []).length;
-        return { kind: 'mine', title: m.data.name, sub: [m.data.fav ? '★' : '', np ? '📷 ' + np : ''].filter(Boolean).join('  '), icon: `<span class="dot" style="background:${m.data.color}"></span>`, m };
+        return { kind: 'mine', title: m.data.name, fav: !!m.data.fav, sub: np ? '📷 ' + np : '', icon: `<span class="dot" style="background:${m.data.color}"></span>`, m };
       });
   }
   // Liste neu aufbauen (z. B. nach Änderungen an Markierungen), nur wenn sie gerade offen ist
@@ -3043,7 +3091,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return [
       { kind: 'action', icon: '👥', title: strip(T('friends_btn')), sub: window.__shAvail ? T('sh_avail') : T('fr_sub'), dot: !!window.__shAvail, run: () => openSharedDlg() },
       { kind: 'action', icon: '☑️', title: strip(T('sel_menu')), sub: '', run: () => document.getElementById('sel-open').click() }
-    ];
+    ].concat(innerWidth <= 700 ? [{ kind: 'action', icon: '🌐', title: T('lang'), langRow: true, run: () => {} }] : []);
   }
   function gsShowMine(q) {
     gsReq++; gsItems = (q ? [] : gsActions()).concat(gsMine(q || '')); gsAct = -1;
